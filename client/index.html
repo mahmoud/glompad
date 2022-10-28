@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <link rel="stylesheet" href="./index.css" />
 
+    <script src="static/code-input.min.js"></script>
+    <link rel="stylesheet" href="static/code-input.min.css">
+    <script src="static/prism.min.js"></script>
+    <link rel="stylesheet" href="static/prism.min.css">
+
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <script>
         function createObject(object, variableName){
@@ -19,6 +24,8 @@
             console.log("Running '" + execString + "'");
             eval(execString)
         }
+
+        codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism, []));
     </script>
 
   </head>
@@ -33,16 +40,16 @@
       <div id="gp-container">
         <div id="glom-spec-container">
           <h3>Spec</h3>
-          <input id="glom-spec-input" type="text" value="a.b.c" />
-          <button id="run-button">Run</button>
+          <code-input id="glom-spec-input" lang="python" value="a.b.c" template="syntax-highlighted"></code-input>
+          <button id="run-button">Glom it!</button>
         </div>
         <div>
           <h3>Target</h3>
-          <textarea class="code-input" id="glom-target-input">{'a': {'b': {'c': 'd'}}}</textarea>
+          <code-input id="glom-target-input" lang="python" value="{'a': {'b': {'c': 'd'}}}" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
         </div>
         <div>
           <h3>Result</h3>
-          <textarea class="code-input" id="glom-result-input">Result</textarea>
+          <code-input id="glom-result-input" lang="python" value="d" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
         </div>
       </div>
       <div id="glom-ref-container">

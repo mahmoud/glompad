@@ -1,3 +1,34 @@
+/* Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+input, button, textarea, select {
+    font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+#root, #__next {
+    isolation: isolate;
+}
+
+/* CSS */
+
+
 #container {
     display: grid;
     gap: 0.5em;
@@ -30,14 +61,6 @@
 #gp-container > div {
     background-color: lightgray;
 }
-
-.code-input {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-    font-size: 10px;
-    line-height: 1.5;
-    height: 100%;
-}
-
 
 .header {
     grid-area: header;

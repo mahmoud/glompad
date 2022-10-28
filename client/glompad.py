@@ -1,6 +1,7 @@
 
 import ast
 import json
+from os import POSIX_FADV_SEQUENTIAL
 
 import js
 from pyodide.ffi import create_proxy
@@ -20,16 +21,22 @@ def run():
 
     load_error = None
     try:
-        target = json.loads(target_input)
-    except json.JSONDecodeError:
-        try:
-            target = ast.literal_eval(target_input)
-        except SyntaxError:
-            load_error = "Target must JSON or Python literal."
+        spec = build_spec(spec)
+    except Exception as e:
+        load_error = str(e)
 
     if not load_error:
         try:
-            result = glom.glom(target, spec)
+            target = json.loads(target_input)
+        except json.JSONDecodeError:
+            try:
+                target = ast.literal_eval(target_input)
+            except SyntaxError:
+                load_error = "Target must JSON or Python literal."
+
+    if not load_error:
+        try:
+            result = repr(glom.glom(target, spec))
         except glom.GlomError as ge:
             err = str(ge)
             result = err
@@ -37,7 +44,32 @@ def run():
     result_box.element.value = load_error or result
 
 
-def run_event(e):
+def build_spec(spec_str):
+    try:
+        res = eval(spec_str, dict(glom.__dict__))
+    except NameError:
+        res = spec_str  # probably? may need a better heuristic
+    except SyntaxError:
+        raise
+    return res
+
+
+def run_click(e):
     run()
 
-run_button.element.onclick = run_event
+
+def run_enter(e):
+    if e.key == 'Enter' and e.ctrlKey:
+        e.preventDefault()
+        e.stopPropagation()
+        run()
+        return False
+    return True
+
+
+run_button.element.onclick = run_click
+spec_box.element.onkeydown = run_enter
+# spec_box.element.addEventListener("keydown", run_enter, False)
+
+
+run()
