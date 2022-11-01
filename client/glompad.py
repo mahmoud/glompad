@@ -1,7 +1,6 @@
 
 import ast
 import json
-from os import POSIX_FADV_SEQUENTIAL
 
 import js
 from pyodide.ffi import create_proxy
