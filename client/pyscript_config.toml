@@ -1,2 +1,0 @@
-packages = ["glom"]
-paths = ['./glompad.py']

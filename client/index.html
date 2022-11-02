@@ -1,75 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/img/comet.png" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>glompad</title>
 
-    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <link rel="stylesheet" href="./index.css" />
+    <script defer type="module" src="/js/pyscript.js"></script>
 
-    <script src="static/code-input.min.js"></script>
-    <link rel="stylesheet" href="static/code-input.min.css">
-    <script src="static/prism.min.js"></script>
-    <link rel="stylesheet" href="static/prism.min.css">
+    <script src="/js/code-input.min.js"></script>
+    <link rel="stylesheet" href="/js/code-input.min.css">
+    <script src="/js/prism.min.js"></script>
+    <link rel="stylesheet" href="/js/prism.min.css">
 
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <script>
-        function createObject(object, variableName){
-            //Bind a variable whose name is the string variableName
-            // to the object called 'object'
-            let execString = variableName + " = object"
-            console.log("Running '" + execString + "'");
-            eval(execString)
-        }
+      codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism, []));
 
-        codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism, []));
+      function createObject(object, variableName) {
+        //Bind a variable whose name is the string variableName
+        // to the object called 'object'
+        let execString = variableName + ' = object';
+        console.log("Running '" + execString + "'");
+        eval(execString);
+      }
     </script>
-
   </head>
-
   <body>
-    <py-config src="./pyscript_config.toml"></py-config>
-    <py-script src="./glompad.py"></py-script>
-    <div id="container">
-      <div class="header">
-          <h1>glompad</h1>
-      </div>
-      <div id="gp-container">
-        <div id="glom-spec-container">
-          <h3>Spec</h3>
-          <code-input id="glom-spec-input" lang="python" value="a.b.c" template="syntax-highlighted"></code-input>
-          <button id="run-button">Glom it!</button>
-        </div>
-        <div>
-          <h3>Target</h3>
-          <code-input id="glom-target-input" lang="python" value="{'a': {'b': {'c': 'd'}}}" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
-        </div>
-        <div>
-          <h3>Result</h3>
-          <code-input id="glom-result-input" lang="python" value="d" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
-        </div>
-      </div>
-      <div id="glom-ref-container">
-        <h3>Reference</h3>
-        <ul>
-          <li><code>glom(target, 'a.b.c')</code></li>
-        </ul>
-      </div>
-      <div class="footer">
-          <p>          
-            <py-script>
-              import glom
-              print(f'glom version {glom.__version__}')
-            </py-script>
-          </p>
-          <p>(c) Mahmoud Hashemi 2022</p>
-      </div>
-  </div>
-  <div>
-    <py-repl id="my-repl" auto-generate="true"> </py-repl>
-  </div>
+    <py-config src="./src/pyscript_config.toml"></py-config>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts">
+    </script>
   </body>
 </html>
