@@ -7,6 +7,9 @@ from pyodide.ffi import create_proxy
 
 import glom
 
+# global object access. TODO: test wiring to a svelte store
+# print(list(js.window.SvelteApp.object_entries()))
+
 run_button = Element('run-button')
 spec_box = Element('glom-spec-input')
 target_box = Element('glom-target-input')
@@ -66,18 +69,9 @@ def run_enter(e):
     return True
 
 
-# run_button.element.onclick = run_click
-# spec_box.element.onkeydown = run_enter
-
-# was commented:
-# spec_box.element.addEventListener("keydown", run_enter, False)
-
+run_button.element.onclick = run_click
+spec_box.element.onkeydown = run_enter
 
 run()
 
 
-#js.createObject(create_proxy(globals()), "pyg")
-
-print(dir(js)[:3])
-
-print(list(js.window.SvelteApp.object_entries()))

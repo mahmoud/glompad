@@ -2,13 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/img/comet.png" /> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Svelte + TS</title>
+    <title>glompad</title>
 
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer type="module" src="/js/pyscript.js"></script>
+
+    <script src="/js/code-input.min.js"></script>
+    <link rel="stylesheet" href="/js/code-input.min.css">
+    <script src="/js/prism.min.js"></script>
+    <link rel="stylesheet" href="/js/prism.min.css">
+
     <script>
+      codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism, []));
+
       function createObject(object, variableName) {
         //Bind a variable whose name is the string variableName
         // to the object called 'object'
