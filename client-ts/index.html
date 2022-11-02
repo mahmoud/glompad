@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Svelte + TS</title>
+
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer type="module" src="/js/pyscript.js"></script>
+    <script>
+      function createObject(object, variableName) {
+        //Bind a variable whose name is the string variableName
+        // to the object called 'object'
+        let execString = variableName + ' = object';
+        console.log("Running '" + execString + "'");
+        eval(execString);
+      }
+    </script>
+  </head>
+  <body>
+    <py-config src="./src/pyscript_config.toml"></py-config>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts">
+    </script>
+  </body>
+</html>

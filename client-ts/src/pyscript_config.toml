@@ -1,0 +1,2 @@
+packages = ["glom"]
+paths = ['./src/glompad.py']
