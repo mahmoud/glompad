@@ -13,4 +13,12 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: [
+      "codemirror", 
+      "@codemirror/language-python",
+			'@codemirror/commands',
+			'@codemirror/lint',
+			'@codemirror/state', /* ... */],
+  }
 });

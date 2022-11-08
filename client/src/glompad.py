@@ -16,9 +16,15 @@ target_box = Element('glom-target-input')
 result_box = Element('glom-result-input')
 
 def run():
+    store_val = []
+    def set_val(val):
+        store_val[:] = [val]
+    unsub = js.window.SvelteApp.specStore.subscribe(set_val)
+    unsub()
+
     js.createObject(create_proxy(globals()), "pyg")
 
-    spec = spec_box.value.strip()
+    spec = store_val[0].strip()
     target_input = target_box.value.strip()
 
     load_error = None
@@ -69,9 +75,9 @@ def run_enter(e):
     return True
 
 
-run_button.element.onclick = run_click
-spec_box.element.onkeydown = run_enter
+# run_button.element.onclick = run_click
+# spec_box.element.onkeydown = run_enter
 
 run()
-
+js.createObject(create_proxy(globals()), "pyg")
 
