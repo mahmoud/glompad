@@ -1,12 +1,11 @@
 import './app.css'; 
 import App from './App.svelte';
-import { specStore } from './lib/stores';
-import { writable } from 'svelte/store';
+import { padStore } from './lib/stores';
 
 const app = new App({
   target: document.getElementById('app'),
 });
-app.specStore = specStore;
+app.padStore = padStore;
 
 window.SvelteApp = app;
 

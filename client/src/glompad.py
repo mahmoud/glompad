@@ -15,21 +15,27 @@ spec_box = Element('glom-spec-input')
 target_box = Element('glom-target-input')
 result_box = Element('glom-result-input')
 
-def run():
-    store_val = []
-    def set_val(val):
-        store_val[:] = [val]
-    unsub = js.window.SvelteApp.specStore.subscribe(set_val)
+def get_store_value(store):
+    "Get the current value of a Svelte store."
+    ret = None
+    def set_ret(val):
+        nonlocal ret
+        ret = val
+    unsub = store.subscribe(set_ret)
     unsub()
+    return ret
+
+
+def run():
+    spec_val = get_store_value(js.window.SvelteApp.padStore.specValue)
 
     js.createObject(create_proxy(globals()), "pyg")
 
-    spec = store_val[0].strip()
     target_input = target_box.value.strip()
 
     load_error = None
     try:
-        spec = build_spec(spec)
+        spec = build_spec(spec_val)
     except Exception as e:
         load_error = str(e)
 
