@@ -1,12 +1,5 @@
 <script lang="ts">
-  import CodeMirror from "svelte-codemirror-editor";
-  import { padStore } from './stores.js';
-  import { python } from "@codemirror/lang-python";
-  import { keymap } from '@codemirror/view';
-  import { type Command } from '@codemirror/view'
   import CodeInput from './CodeInput.svelte'
-
-  const {specValue, targetValue} = padStore;
 
   const onclick = () => {
     if (!window.pyg) {
@@ -16,19 +9,11 @@
     }
   }
   
-  const ctrlEnterKeymap = keymap.of([{
-    key: "Ctrl-Enter",
-    run: (view) => {onclick(); return true;}, // can get the event, too, with any
-  }])
-  
 </script>
 
 <div class="gp-container">
   <div id="glom-spec-container">
     <h3>Spec</h3>
-    <!-- <code-input id="glom-spec-input" lang="python" value="a.b.c" template="syntax-highlighted"></code-input> -->
-
-    <CodeMirror bind:value={$specValue} lang={python()} extensions={[ctrlEnterKeymap]} basic={false} />
 
     <CodeInput />
 

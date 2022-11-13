@@ -2,10 +2,9 @@
 import ast
 import json
 
+import glom
 import js
 from pyodide.ffi import create_proxy
-
-import glom
 
 # global object access. TODO: test wiring to a svelte store
 # print(list(js.window.SvelteApp.object_entries()))
@@ -71,18 +70,6 @@ def build_spec(spec_str):
 def run_click(e=None):
     run()
 
-
-def run_enter(e):
-    if e.key == 'Enter' and e.ctrlKey:
-        e.preventDefault()
-        e.stopPropagation()
-        run()
-        return False
-    return True
-
-
-# run_button.element.onclick = run_click
-# spec_box.element.onkeydown = run_enter
 
 run()
 js.createObject(create_proxy(globals()), "pyg")

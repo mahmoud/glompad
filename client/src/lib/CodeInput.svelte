@@ -22,19 +22,19 @@
 
 	const { specValue, targetValue } = padStore;
 
-	const onclick = (e) => {
+	const onclick = () => {
 		if (!window.pyg) {
 			console.log("no pyscript yet");
 		} else {
-			window.pyg.get("run_click")(e);
+			window.pyg.get("run_click")();
 		}
 	};
 
 	const ctrlEnterKeymap = keymap.of([
 		{
 			key: "Ctrl-Enter",
-			run: (view, event) => {
-				onclick(event);
+			run: (view) => {  // can get the event, too, by defining "any" 
+				onclick();
 				return true;
 			},
 		},
@@ -100,7 +100,6 @@
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: row;
-		font-family: inherit;
 		font-family: "monospace";
 		font-size: 0.95rem;
 		outline: 0;
@@ -126,12 +125,10 @@
 		justify-content: center;
 		border-bottom-right-radius: 3px;
 		border-left: 1px solid var(--label-border-color) !important;
-		border-top-right-radius: 3px;
+		border-radius: 3px;
 		cursor: pointer;
 		flex: 1 0 auto;
 		padding: 0 12px;
-		-webkit-user-select: none;
-		-moz-user-select: none;
 		user-select: none;
 	}
 </style>
