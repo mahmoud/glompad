@@ -6,7 +6,11 @@
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
 
+	import copyText from "./actions/copyText";
 	import tooltip from "./actions/tooltip";
+	import unstyledTooltip from "./actions/unstyledTooltip";
+	import focusOnMount from "./actions/focusOnMount"
+
 	import { padStore } from "./stores";
 
 	import kebab from '../assets/kebab.svg'
@@ -18,6 +22,11 @@
 		count += 1;
 		curVal = "opts clicked " + count;
 		showMenu = !showMenu;
+	}
+
+
+	function copySuccess() {
+		curVal = "copy success!"
 	}
 
 	const { specValue, targetValue } = padStore;
@@ -41,6 +50,7 @@
 	]);
 
 	let showMenu = false;
+	let optionsMenu;
 </script>
 
 <!------html-->
@@ -54,16 +64,23 @@
 		tabindex="0"
 		on:click={optsClick}
 		on:keydown={optsClick}
+		use:unstyledTooltip={{
+			content: optionsMenu,
+			placement: "bottom",
+			trigger: "click",
+			interactive: true,
+		}}
 		use:tooltip={{
 			content: "Options",
 			placement: "right",
-		}}>
+		}}
+		>
 		<img alt="options" src="{kebab}"/>
 	</div>
 
 	<CodeMirror
 		bind:value={$specValue}
-		class="cmwrap"
+		class="cm-wrap"
 		lang={python()}
 		extensions={[ctrlEnterKeymap]}
 		basic={false}
@@ -74,15 +91,24 @@
 			},
 		}}
 	/>
-	<button class="copyButton">Clip</button>
+	<button class="copyButton" use:copyText={".cm-wrap .cm-content"}>Clip</button>
 
-	{#if showMenu}
-		<div id="optionsMenu">Menu</div>
-	{/if}
+	<div id="optionsMenu" bind:this={optionsMenu}>
+		<ul>
+			<li use:tooltip={{
+				content: "Test",
+				placement: "right"
+			}}>Test</li>
+			<li><a href="https://mahmoud.photos">Photos</a></li>
+		</ul>
+
+	</div>
 </div>
 
+<svelte:window on:copysuccess={copySuccess} />
+
 <style>
-	.padInput :global(.cmwrap) {
+	.padInput :global(.cm-wrap) {
 		background: lightgray;
 		flex: 1 1 100%;
 		min-width: 140px;
