@@ -1,1 +1,4 @@
-declare interface Window { SvelteApp: any; }
+declare interface Window { 
+    SvelteApp: any; 
+    pyg: any; 
+}

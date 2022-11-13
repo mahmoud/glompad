@@ -2,65 +2,98 @@
 	// TODO: factor out tooltip, popover, add clickOutside closing of modal
 
 	import CodeMirror from "svelte-codemirror-editor";
-  
+
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
-  
-	import { createPopperActions } from "svelte-popperjs";
 
-	import tooltip from './actions/tooltip'
-	import { padStore } from './stores';
+	import tooltip from "./actions/tooltip";
+	import { padStore } from "./stores";
 
-	
+	import kebab from '../assets/kebab.svg'
+
 	let curVal = "first";
 	let count = 0;
-  
+
 	function optsClick(event) {
-	  count += 1;
-	  curVal = "opts clicked " + count;
-	  showMenu = !showMenu;
+		count += 1;
+		curVal = "opts clicked " + count;
+		showMenu = !showMenu;
 	}
-	
-	const {specValue, targetValue} = padStore;
+
+	const { specValue, targetValue } = padStore;
 
 	const onclick = (e) => {
 		if (!window.pyg) {
-			console.log('no pyscript yet')
+			console.log("no pyscript yet");
 		} else {
-		window.pyg.get('run_click')(e);
-	}
-	}
-
-	const ctrlEnterKeymap = keymap.of([{
-	key: "Ctrl-Enter",
-	run: (view, event) => {onclick(event); return true;},
-	}])
-  
-	const [popperRef, popperContent] = createPopperActions({
-	  placement: "right",
-	  strategy: "fixed"
-	});
-	const extraOpts = {
-	  modifiers: [{ name: "offset", options: { offset: [0, 8] } }]
+			window.pyg.get("run_click")(e);
+		}
 	};
-  
-	let showTooltip = false;
+
+	const ctrlEnterKeymap = keymap.of([
+		{
+			key: "Ctrl-Enter",
+			run: (view, event) => {
+				onclick(event);
+				return true;
+			},
+		},
+	]);
+
 	let showMenu = false;
-  </script>
-  
-  <style>
-	  .padInput :global(.cmwrap) {
+</script>
+
+<!------html-->
+
+<p>{curVal}</p>
+
+<div class="padInput">
+	<div
+		class="optsButton"
+		role="button"
+		tabindex="0"
+		on:click={optsClick}
+		on:keydown={optsClick}
+		use:tooltip={{
+			content: "Options",
+			placement: "right",
+		}}>
+		<img alt="options" src="{kebab}"/>
+	</div>
+
+	<CodeMirror
+		bind:value={$specValue}
+		class="cmwrap"
+		lang={python()}
+		extensions={[ctrlEnterKeymap]}
+		basic={false}
+		styles={{
+			"&": {
+				"max-width": "500px",
+				"min-width": "100px",
+			},
+		}}
+	/>
+	<button class="copyButton">Clip</button>
+
+	{#if showMenu}
+		<div id="optionsMenu">Menu</div>
+	{/if}
+</div>
+
+<style>
+	.padInput :global(.cmwrap) {
 		background: lightgray;
 		flex: 1 1 100%;
 		min-width: 140px;
 		padding: 5px 0;
-	  }
-  
-	  .padInput :global(.childClass) {
+	}
+
+	.padInput :global(.childClass) {
 		color: red;
-	  }
-  
-	  .padInput {
+	}
+
+	.padInput {
 		background: #eee;
 		border: 1px solid #aaa;
 		border-radius: 3px;
@@ -76,14 +109,15 @@
 		transition-property: border-color, box-shadow, background;
 		width: 100%;
 		max-width: 100vw;
-	  }
-  
-	  .optsButton {
+	}
+
+	.optsButton {
+		padding-top: 8px;
 		cursor: pointer;
 		color: #555;
-	  }
-  
-	  .copyButton {
+	}
+
+	.copyButton {
 		margin: 0;
 		padding: 12;
 		align-items: center;
@@ -99,94 +133,5 @@
 		-webkit-user-select: none;
 		-moz-user-select: none;
 		user-select: none;
-	  }
-  
-	  #tooltip {
-		background: #333;
-		color: white;
-		font-weight: bold;
-		padding: 4px 8px;
-		font-size: 13px;
-		border-radius: 4px;
-	  }
-  
-	  #arrow,
-	  #arrow::before {
-		position: absolute;
-		width: 8px;
-		height: 8px;
-		background: inherit;
-	  }
-  
-	  #arrow {
-		visibility: hidden;
-	  }
-  
-	  #arrow::before {
-		visibility: visible;
-		content: "";
-		transform: rotate(45deg);
-	  }
-  
-	  :global(#tooltip[data-popper-placement^="top"]) > #arrow {
-		bottom: -4px;
-	  }
-  
-	  :global(#tooltip[data-popper-placement^="bottom"]) > #arrow {
-		top: -4px;
-	  }
-  
-	  :global(#tooltip[data-popper-placement^="left"]) > #arrow {
-		right: -4px;
-	  }
-  
-	  :global(#tooltip[data-popper-placement^="right"]) > #arrow {
-		left: -4px;
-	  }
-  </style>
-  
-  
-  <!------html-->
-  
-  <p>{curVal}</p>
-  
-  <div class="padInput">
-	<div class="optsButton" role="button" tabindex="0" 
-		  on:click={optsClick}   
-		  use:tooltip={{
-			content: 'yo',
-			placement: 'right'
-		}}
-	  >
-		  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 192 512" height="12" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"></path></svg>
-	  </div>
-  
-	  <CodeMirror 
-		  bind:value={$specValue} 
-		  class="cmwrap"
-		  lang={python()} 
-		  extensions={[ctrlEnterKeymap]} 
-		  basic={false} 
-		  styles={{
-			  "&": {
-					  "max-width": "500px",
-					  "min-width": "100px"
-			  },
-		  }}
-	  />
-	  <button class="copyButton">Clip</button>
-  
-  
-	  {#if showTooltip && false}
-		  <div id="tooltip" use:popperContent={extraOpts}>
-			  Options
-			  <div id="arrow" data-popper-arrow />
-		  </div>
-	  {/if}
-	  {#if showMenu}
-		  <div id="optionsMenu">
-			  Menu
-		  </div>
-	  {/if}
-  </div>
-  
+	}
+</style>

@@ -68,7 +68,7 @@ def build_spec(spec_str):
     return res
 
 
-def run_click(e):
+def run_click(e=None):
     run()
 
 

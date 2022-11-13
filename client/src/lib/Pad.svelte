@@ -3,21 +3,22 @@
   import { padStore } from './stores.js';
   import { python } from "@codemirror/lang-python";
   import { keymap } from '@codemirror/view';
+  import { type Command } from '@codemirror/view'
   import CodeInput from './CodeInput.svelte'
 
   const {specValue, targetValue} = padStore;
 
-  const onclick = (e) => {
+  const onclick = () => {
     if (!window.pyg) {
       console.log('no pyscript yet')
     } else {
-     window.pyg.get('run_click')(e);
+     window.pyg.get('run_click')();
     }
   }
-
+  
   const ctrlEnterKeymap = keymap.of([{
     key: "Ctrl-Enter",
-    run: (view, event) => {onclick(event); return true;},
+    run: (view) => {onclick(); return true;}, // can get the event, too, with any
   }])
   
 </script>
