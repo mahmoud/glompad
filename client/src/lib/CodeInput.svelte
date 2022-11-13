@@ -9,7 +9,6 @@
 	import copyText from "./actions/copyText";
 	import tooltip from "./actions/tooltip";
 	import unstyledTooltip from "./actions/unstyledTooltip";
-	import focusOnMount from "./actions/focusOnMount"
 
 	import { padStore } from "./stores";
 
