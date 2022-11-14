@@ -15,3 +15,4 @@ Mostly ideas.
 * mode selector dropdown
 * glom version selector
 * Autoformat target
+* Optional scope field

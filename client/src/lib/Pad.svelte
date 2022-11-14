@@ -1,5 +1,7 @@
 <script lang="ts">
-  import CodeInput from './CodeInput.svelte'
+  import SpecInput from './SpecInput.svelte'
+  import { padStore } from './stores';
+  import Panel from './Panel.svelte'
 
   const onclick = () => {
     if (!window.pyg) {
@@ -8,24 +10,26 @@
      window.pyg.get('run_click')();
     }
   }
+
+  let specStatus = padStore.specStatus;
   
 </script>
 
 <div class="gp-container">
-  <div id="glom-spec-container">
-    <h3>Spec</h3>
-
-    <CodeInput />
+  <Panel title="Spec" status={$specStatus} class="glom-spec-container">
+    <SpecInput />
 
     <button id="run-button" on:click={onclick}>Glom it!</button>
+  </Panel>
+  <div>
+    <Panel title="Target">
+      <code-input id="glom-target-input" lang="python" value="{`{'a': {'b': {'c': 'd'}}}`}" template="syntax-highlighted" ></code-input>
+    </Panel>
   </div>
   <div>
-    <h3>Target</h3>
-    <code-input id="glom-target-input" lang="python" value="{`{'a': {'b': {'c': 'd'}}}`}" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
-  </div>
-  <div>
-    <h3>Result</h3>
-    <code-input id="glom-result-input" lang="python" value="d" template="syntax-highlighted" onchange="console.log('Your code is', this.value)"></code-input>
+    <Panel title="Result">
+      <code-input id="glom-result-input" lang="python" value="d" template="syntax-highlighted" ></code-input>
+    </Panel>
   </div>
 </div>
 
@@ -41,7 +45,7 @@
                        "target result";
 }
 
-#glom-spec-container {
+:global(.glom-spec-container) {
   grid-area: spec;
 }
 

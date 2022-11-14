@@ -39,6 +39,7 @@ def run():
         load_error = str(e)
 
     if not load_error:
+        js.window.SvelteApp.padStore.specStatus.set('OK')
         try:
             target = json.loads(target_input)
         except json.JSONDecodeError:

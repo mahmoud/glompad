@@ -23,6 +23,9 @@
 		showMenu = !showMenu;
 	}
 
+	function onchange(e) {
+		window.location.hash = "spec=" + $specValue;
+	}
 
 	function copySuccess() {
 		curVal = "copy success!"
@@ -54,8 +57,6 @@
 
 <!------html-->
 
-<p>{curVal}</p>
-
 <div class="padInput">
 	<div
 		class="optsButton"
@@ -72,9 +73,10 @@
 		use:tooltip={{
 			content: "Options",
 			placement: "right",
+			delay: [400, 0],
 		}}
 		>
-		<img alt="options" src="{kebab}"/>
+		<img alt="options" height=14px src="{kebab}"/>
 	</div>
 
 	<CodeMirror
@@ -83,9 +85,9 @@
 		lang={python()}
 		extensions={[ctrlEnterKeymap]}
 		basic={false}
+		on:change={onchange}
 		styles={{
 			"&": {
-				"max-width": "500px",
 				"min-width": "100px",
 			},
 		}}
@@ -108,7 +110,7 @@
 
 <style>
 	.padInput :global(.cm-wrap) {
-		background: lightgray;
+		background: #eee;
 		flex: 1 1 100%;
 		min-width: 140px;
 		padding: 5px 0;
@@ -138,7 +140,7 @@
 	.optsButton {
 		padding-top: 8px;
 		cursor: pointer;
-		color: #555;
+		color: #aaa;
 	}
 
 	.copyButton {
