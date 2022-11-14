@@ -2,7 +2,7 @@
 	// TODO: factor out tooltip, popover, add clickOutside closing of modal
 
 	import CodeMirror from "svelte-codemirror-editor";
-
+	import { githubLight } from '@uiw/codemirror-theme-github';
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
 
@@ -84,10 +84,12 @@
 		lang={python()}
 		extensions={[ctrlEnterKeymap]}
 		basic={false}
+		theme={githubLight}
 		on:change={onchange}
 		styles={{
 			"&": {
 				"min-width": "100px",
+				"background": "#eee",
 			},
 		}}
 	/>

@@ -9,6 +9,7 @@ specifiers:
   '@sveltejs/vite-plugin-svelte': ^1.1.0
   '@tsconfig/svelte': ^3.0.0
   '@types/codemirror': ^5.60.5
+  '@uiw/codemirror-theme-github': ^4.13.2
   codemirror: ^6.0.1
   feather-icons: ^4.29.0
   svelte: ^3.52.0
@@ -27,6 +28,7 @@ dependencies:
   '@codemirror/state': 6.1.2
   '@codemirror/view': 6.4.1
   '@popperjs/core': 2.11.6
+  '@uiw/codemirror-theme-github': 4.13.2_5wwb2heh3r2pvuei6evbleu7ke
   feather-icons: 4.29.0
   svelte-codemirror-editor: 1.1.0_codemirror@6.0.1
   svelte-icons: 2.1.0
@@ -242,6 +244,26 @@ packages:
     dependencies:
       '@types/estree': 1.0.0
     dev: true
+
+  /@uiw/codemirror-theme-github/4.13.2_5wwb2heh3r2pvuei6evbleu7ke:
+    resolution: {integrity: sha512-1RgeX30HFhujCqx/LgCaiaG5+qtGyGLe4Y3ATx/Uk5ZX0Y8v+4gdnvli3v4naLukapFk3f8hUUZXWANwGa3tEQ==}
+    dependencies:
+      '@uiw/codemirror-themes': 4.13.2_5wwb2heh3r2pvuei6evbleu7ke
+    transitivePeerDependencies:
+      - '@codemirror/state'
+      - '@codemirror/view'
+    dev: false
+
+  /@uiw/codemirror-themes/4.13.2_5wwb2heh3r2pvuei6evbleu7ke:
+    resolution: {integrity: sha512-IPkHzt5SjLjXRPGmFOpRjXzRA9VWomJjWYETq21jXTTnFtZeEjAuhucgKMydt11ALUyGjwTzdReTA9yt9VNskA==}
+    peerDependencies:
+      '@codemirror/state': '>=6.0.0'
+      '@codemirror/view': '>=6.0.0'
+    dependencies:
+      '@codemirror/language': 6.3.0
+      '@codemirror/state': 6.1.2
+      '@codemirror/view': 6.4.1
+    dev: false
 
   /anymatch/3.1.2:
     resolution: {integrity: sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg==}

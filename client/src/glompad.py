@@ -26,20 +26,22 @@ def get_store_value(store):
 
 
 def run():
-    spec_val = get_store_value(js.window.SvelteApp.padStore.specValue)
+    spec_val = get_store_value(js.window.SvelteApp.padStore.specValue).strip()
 
     js.createObject(create_proxy(globals()), "pyg")
 
-    target_input = target_box.value.strip()
+    target_input = get_store_value(js.window.SvelteApp.padStore.targetValue).strip()
 
     load_error = None
     try:
         spec = build_spec(spec_val)
     except Exception as e:
         load_error = str(e)
+        js.window.SvelteApp.padStore.specStatus.set('Error')
+    else:
+        js.window.SvelteApp.padStore.specStatus.set('OK')
 
     if not load_error:
-        js.window.SvelteApp.padStore.specStatus.set('OK')
         try:
             target = json.loads(target_input)
         except json.JSONDecodeError:
@@ -47,6 +49,12 @@ def run():
                 target = ast.literal_eval(target_input)
             except SyntaxError:
                 load_error = "Target must JSON or Python literal."
+                js.window.SvelteApp.padStore.targetStatus.set('Error')
+            else:
+                js.window.SvelteApp.padStore.targetStatus.set('OK: Python')
+        else:
+            js.window.SvelteApp.padStore.targetStatus.set('OK: JSON')
+
 
     if not load_error:
         try:

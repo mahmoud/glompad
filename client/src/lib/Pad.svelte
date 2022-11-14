@@ -3,6 +3,10 @@
   import { padStore } from './stores';
   import Panel from './Panel.svelte'
 
+	import CodeMirror from "svelte-codemirror-editor";
+  import { python } from "@codemirror/lang-python";
+  import { githubLight } from '@uiw/codemirror-theme-github';
+
   const onclick = () => {
     if (!window.pyg) {
       console.log('no pyscript yet')
@@ -12,6 +16,7 @@
   }
 
   let specStatus = padStore.specStatus;
+  let {targetValue, targetStatus} = padStore;
   
 </script>
 
@@ -21,11 +26,23 @@
 
     <button id="run-button" on:click={onclick}>Glom it!</button>
   </Panel>
-  <div>
-    <Panel title="Target">
-      <code-input id="glom-target-input" lang="python" value="{`{'a': {'b': {'c': 'd'}}}`}" template="syntax-highlighted" ></code-input>
+    <Panel title="Target" class="glom-target-container" status={$targetStatus}>
+      <!-- <code-input id="glom-target-input" lang="python" value="{`{'a': {'b': {'c': 'd'}}}`}" template="syntax-highlighted" ></code-input> -->
+      <CodeMirror
+        bind:value={$targetValue}
+        class="cm-target-wrap"
+        lang={python()}
+        basic={false}
+        on:change={onchange}
+        theme={githubLight}
+        styles={{
+          "&": {
+            "min-width": "100px",
+            "height": "100%",
+          },
+        }}
+      />
     </Panel>
-  </div>
   <div>
     <Panel title="Result">
       <code-input id="glom-result-input" lang="python" value="d" template="syntax-highlighted" ></code-input>
@@ -51,6 +68,18 @@
 
 .gp-container > div {
   background-color: lightgray;
+}
+
+:global(.cm-target-wrap) { 
+  height: 100%;
+  background: #fff;
+  border: 1px solid silver;
+}
+
+:global(.glom-target-container) { 
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 }
 
 </style>
