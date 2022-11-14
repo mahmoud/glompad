@@ -5,17 +5,21 @@
 </script>
 
 <div class="panel {classes}">
-<div class="panel-label">
-    <h3 class="panel-label-text">{title}</h3>
-    {#if status}
-        <div class="panel-status-badge">{status}</div>
-    {/if}
+    <div class="panel-label">
+        <h3 class="panel-label-text">{title}</h3>
+        {#if status}
+            <div class="panel-status-badge">{status}</div>
+        {/if}
     </div>
-    
     <slot></slot>
-</div>
+</div>        
+
 
 <style>
+    .panel {
+        overflow: hidden;
+    }
+
     .panel-label {
       display: flex;
       margin-bottom: 6px;
@@ -38,7 +42,6 @@
       background: silver;
       display:inline-flexbox;
       margin-left: auto;
-      text-transform: lowercase;
       font-size: .85rem;
       padding: 0.15rem 1rem 0 1rem;
       border-radius: 7px;

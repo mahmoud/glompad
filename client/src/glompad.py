@@ -6,13 +6,6 @@ import glom
 import js
 from pyodide.ffi import create_proxy
 
-# global object access. TODO: test wiring to a svelte store
-# print(list(js.window.SvelteApp.object_entries()))
-
-run_button = Element('run-button')
-spec_box = Element('glom-spec-input')
-target_box = Element('glom-target-input')
-result_box = Element('glom-result-input')
 
 def get_store_value(store):
     "Get the current value of a Svelte store."
@@ -55,16 +48,20 @@ def run():
         else:
             js.window.SvelteApp.padStore.targetStatus.set('OK: JSON')
 
-
     if not load_error:
         try:
             result = repr(glom.glom(target, spec))
         except glom.GlomError as ge:
             err = str(ge)
             result = err
+            js.window.SvelteApp.padStore.resultStatus.set(type(ge).__name__)
+            js.window.SvelteApp.padStore.resultValue.set(err)
+        else:
+            js.window.SvelteApp.padStore.resultStatus.set('OK')
+            js.window.SvelteApp.padStore.resultValue.set(result)
 
-    result_box.element.value = load_error or result
-
+    return
+    
 
 def build_spec(spec_str):
     try:
