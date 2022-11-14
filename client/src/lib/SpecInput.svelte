@@ -11,8 +11,7 @@
 	import unstyledTooltip from "./actions/unstyledTooltip";
 
 	import { padStore } from "./stores";
-
-	import kebab from '../assets/kebab.svg'
+	import Icon from './Icon.svelte';
 
 	let curVal = "first";
 	let count = 0;
@@ -76,7 +75,7 @@
 			delay: [400, 0],
 		}}
 		>
-		<img alt="options" height=14px src="{kebab}"/>
+		<Icon name="more-vertical" height=1.5em width=1.2em/>
 	</div>
 
 	<CodeMirror
@@ -92,7 +91,8 @@
 			},
 		}}
 	/>
-	<button class="copyButton" use:copyText={".cm-wrap .cm-content"}>Clip</button>
+	<button class="copyButton" use:copyText={".cm-wrap .cm-content"}><Icon name="copy" /></button>
+	<button class="linkButton" use:copyText={".cm-wrap .cm-content"}><Icon name="link" /></button>
 
 	<div id="optionsMenu" bind:this={optionsMenu}>
 		<ul>
