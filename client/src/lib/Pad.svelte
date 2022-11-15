@@ -1,6 +1,6 @@
 <script lang="ts">
   import SpecInput from './SpecInput.svelte'
-  import { padStore } from './stores';
+  import { padStore, urlStore } from './stores';
   import Panel from './Panel.svelte'
 
 	import CodeMirror from "svelte-codemirror-editor";
@@ -8,24 +8,22 @@
   
   import { githubLight } from '@uiw/codemirror-theme-github';
 
-  const onclick = () => {
-    if (!window.pyg) {
-      console.log('no pyscript yet')
-    } else {
-     window.pyg.get('run_click')();
-    }
-  }
-
-  let specStatus = padStore.specStatus;
-  let {targetValue, targetStatus, resultValue, resultStatus} = padStore;
+  let classes = "";
+  export {classes as class};
+  let {specStatus, targetValue, targetStatus, resultValue, resultStatus} = padStore;
   
+
+  urlStore.subscribe(value => {
+    console.log('got ' + value);
+    if (window && window.location.href != value) {
+      window.location.href = value;
+    }
+  });
 </script>
 
-<div class="gp-container">
+<div class="gp-container {classes}">
   <Panel title="Spec" status={$specStatus} class="glom-spec-container">
     <SpecInput />
-
-    <button id="run-button" on:click={onclick}>Glom it!</button>
   </Panel>
     <Panel title="Target" class="glom-target-container" status={$targetStatus}>
       <CodeMirror
@@ -50,6 +48,7 @@
         bind:value={$resultValue}
         class="cm-result-wrap"
         basic={false}
+        lang={$resultStatus.match(/error/ig) ? null : python()}
         theme={githubLight}
         editable={false}
         styles={{

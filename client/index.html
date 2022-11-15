@@ -10,13 +10,11 @@
     <script defer type="module" src="/js/pyscript.js"></script>
 
     <script>
-      codeInput.registerTemplate("syntax-highlighted", codeInput.templates.prism(Prism, []));
 
       function createObject(object, variableName) {
         //Bind a variable whose name is the string variableName
         // to the object called 'object'
         let execString = variableName + ' = object';
-        console.log("Running '" + execString + "'");
         eval(execString);
       }
     </script>

@@ -40,7 +40,7 @@
     
     .panel-status-badge {
       background: silver;
-      display:inline-flexbox;
+      display: inline-flexbox;
       margin-left: auto;
       font-size: .85rem;
       padding: 0.15rem 1rem 0 1rem;

@@ -10,7 +10,7 @@
 	import tooltip from "./actions/tooltip";
 	import unstyledTooltip from "./actions/unstyledTooltip";
 
-	import { padStore } from "./stores";
+	import { padStore, urlStore } from "./stores";
 	import Icon from './Icon.svelte';
 
 	let curVal = "first";
@@ -23,7 +23,7 @@
 	}
 
 	function onchange(e) {
-		window.location.hash = "spec=" + $specValue;
+		console.log(padStore.specValue)
 	}
 
 	function copySuccess() {
@@ -32,19 +32,35 @@
 
 	const { specValue, targetValue } = padStore;
 
-	const onclick = () => {
+	const executeGlom = () => {
 		if (!window.pyg) {
 			console.log("no pyscript yet");
-		} else {
-			window.pyg.get("run_click")();
+			return;
 		}
+
+		window.pyg.get("run_click")();
+		const state = {
+			"spec": $specValue,
+			"target": $targetValue,
+			"v": "1",
+		}
+
+		// window.location.hash = new URLSearchParams(Object.entries(state)).toString();
+		// $urlStore.hash =  ... 
+
+		let new_url = new URL(window.location.toString())
+		new_url.hash =  new URLSearchParams(Object.entries(state)).toString();
+		// history.pushState(state, '', new_url)
+
+		$urlStore = new_url; 
 	};
 
 	const ctrlEnterKeymap = keymap.of([
 		{
 			key: "Ctrl-Enter",
 			run: (view) => {  // can get the event, too, by defining "any" 
-				onclick();
+				// TODO: deal with delays either coming from codemirror or svelte storage
+				executeGlom();
 				return true;
 			},
 		},
@@ -52,13 +68,14 @@
 
 	let showMenu = false;
 	let optionsMenu;
+	let specEditor;
 </script>
 
 <!------html-->
 
 <div class="padInput">
 	<div
-		class="optsButton"
+		class="opts-button"
 		role="button"
 		tabindex="0"
 		on:click={optsClick}
@@ -80,6 +97,7 @@
 
 	<CodeMirror
 		bind:value={$specValue}
+		bind:this={specEditor}
 		class="cm-wrap"
 		lang={python()}
 		extensions={[ctrlEnterKeymap]}
@@ -93,8 +111,24 @@
 			},
 		}}
 	/>
-	<button class="copyButton" use:copyText={".cm-wrap .cm-content"}><Icon name="copy" /></button>
-	<button class="linkButton" use:copyText={".cm-wrap .cm-content"}><Icon name="link" /></button>
+	<button class="run-button" on:click={executeGlom}><Icon name="play" /></button>
+
+	<button class="copy-button" 
+		use:tooltip={{
+			content: "Copy spec to clipboard",
+			placement: "top",
+		}}
+	  	use:copyText={".cm-wrap .cm-content"}>
+	  <Icon name="copy" />
+	</button>
+	<button class="link-button" 
+		use:tooltip={{
+			content: "Copy link to clipboard",
+			placement: "top",
+		}}
+		use:copyText={".cm-wrap .cm-content"}>
+	  <Icon name="link" />
+	</button>
 
 	<div id="optionsMenu" bind:this={optionsMenu}>
 		<ul>
@@ -139,21 +173,20 @@
 		max-width: 100vw;
 	}
 
-	.optsButton {
+	.opts-button {
 		padding-top: 8px;
 		cursor: pointer;
 		color: #aaa;
 	}
 
-	.copyButton {
+	.run-button {
 		margin: 0;
 		padding: 12;
 		align-items: center;
 		cursor: pointer;
 		display: flex;
 		justify-content: center;
-		border-bottom-right-radius: 3px;
-		border-left: 1px solid var(--label-border-color) !important;
+		border: 1px solid silver !important;
 		border-radius: 3px;
 		cursor: pointer;
 		flex: 1 0 auto;

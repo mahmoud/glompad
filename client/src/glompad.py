@@ -2,10 +2,10 @@
 import ast
 import json
 
-import glom
 import js
 from pyodide.ffi import create_proxy
 
+import glom
 
 def get_store_value(store):
     "Get the current value of a Svelte store."
@@ -61,13 +61,13 @@ def run():
             js.window.SvelteApp.padStore.resultValue.set(result)
 
     return
-    
+
 
 def build_spec(spec_str):
     try:
         res = eval(spec_str, dict(glom.__dict__))
     except NameError:
-        res = spec_str  # probably? may need a better heuristic
+        res = spec_str.partition('#')[0]  # probably? may need a better heuristic
     except SyntaxError:
         raise
     return res
