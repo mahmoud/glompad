@@ -30,7 +30,7 @@
 		curVal = "copy success!"
 	}
 
-	const { specValue, targetValue } = padStore;
+	const { specValue, targetValue, stateStack } = padStore;
 
 	const executeGlom = () => {
 		if (!window.pyg) {
@@ -45,15 +45,15 @@
 			"v": "1",
 		}
 
-		// window.location.hash = new URLSearchParams(Object.entries(state)).toString();
-		// $urlStore.hash =  ... 
-
 		let new_url = new URL(window.location.toString())
 		new_url.hash =  new URLSearchParams(Object.entries(state)).toString();
-		// history.pushState(state, '', new_url)
 
-		$urlStore = new_url; 
+		if (new_url.toString() != window.location.toString()) {
+			$urlStore = new_url; 
+		}
 	};
+
+	stateStack.subscribe(executeGlom);
 
 	const ctrlEnterKeymap = keymap.of([
 		{
@@ -74,6 +74,7 @@
 <!------html-->
 
 <div class="padInput">
+	<!--
 	<div
 		class="opts-button"
 		role="button"
@@ -94,6 +95,7 @@
 		>
 		<Icon name="more-vertical" height=1.5em width=1.2em/>
 	</div>
+	-->
 
 	<CodeMirror
 		bind:value={$specValue}
@@ -107,7 +109,6 @@
 		styles={{
 			"&": {
 				"min-width": "100px",
-				"background": "#eee",
 			},
 		}}
 	/>
@@ -126,38 +127,36 @@
 			content: "Copy link to clipboard",
 			placement: "top",
 		}}
-		use:copyText={".cm-wrap .cm-content"}>
+		use:copyText={() => window.location.href}>
 	  <Icon name="link" />
 	</button>
 
+	<!--
 	<div id="optionsMenu" bind:this={optionsMenu}>
 		<ul>
 			<li use:tooltip={{
 				content: "Test",
 				placement: "right"
-			}}>Test</li>
+			}}>Test</li>		background: #eee;
+
 			<li><a href="https://mahmoud.photos">Photos</a></li>
 		</ul>
 
 	</div>
+	-->
 </div>
 
 <svelte:window on:copysuccess={copySuccess} />
 
 <style>
 	.padInput :global(.cm-wrap) {
-		background: #eee;
 		flex: 1 1 100%;
 		min-width: 140px;
 		padding: 5px 0;
 	}
 
-	.padInput :global(.childClass) {
-		color: red;
-	}
-
 	.padInput {
-		background: #eee;
+		
 		border: 1px solid #aaa;
 		border-radius: 3px;
 		box-sizing: border-box;
@@ -179,18 +178,19 @@
 		color: #aaa;
 	}
 
-	.run-button {
-		margin: 0;
-		padding: 12;
-		align-items: center;
-		cursor: pointer;
+	button {
 		display: flex;
-		justify-content: center;
+		margin: 0;
 		border: 1px solid silver !important;
 		border-radius: 3px;
 		cursor: pointer;
+		justify-content: center;
+		align-items: center;
+		user-select: none;
+	}
+
+	.run-button {
 		flex: 1 0 auto;
 		padding: 0 12px;
-		user-select: none;
 	}
 </style>

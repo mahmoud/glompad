@@ -1,5 +1,6 @@
 <script lang="ts">
   import Pad from './lib/Pad.svelte'
+  const example_url = '#spec=%7B%27names%27%3A+%28%27system.planets%27%2C+%5BT%5B%27name%27%5D.title%28%29%5D%29%2C+%27moons%27%3A+%28%27system.planets%27%2C+%5B%27moons%27%5D%29%7D&target=%7B%27system%27%3A+%7B%27planets%27%3A+%5B%7B%27name%27%3A+%27earth%27%2C+%27moons%27%3A+1%7D%2C+%7B%27name%27%3A+%27jupiter%27%2C+%27moons%27%3A+69%7D%5D%7D%7D&v=1';
 </script>
 
 <main>
@@ -7,12 +8,12 @@
   <div id="container">
     <div class="header">
         <h1>☄️ glompad</h1>
+        <p><a href={example_url}>Example</a></p>
     </div>
 
     <Pad class="glompad" />
 
     <div class="footer">
-      <p><a href='{`#spec={"d"%3A+"a.b.c"}&target={'a'%3A+{'b'%3A+{'c'%3A+'d'}}}&v=1`}'>Example</a></p>
       <p>(c) Mahmoud Hashemi 2022</p>
     </div>
   </div> 
@@ -23,21 +24,24 @@
 
 <style>
 #container {
+  background: #efefef;
   display: grid;
   gap: 0.5em;
   grid-template-columns: 2fr;
-  grid-template-rows: 100px 1fr 100px;
+  grid-template-rows: 80px 1fr 40px;
   grid-template-areas: "header"
                        "glompad"
                        "footer";
 }
 
 #container > div {
-  background-color: lightsteelblue;
+  background-color: #efefef;
 }
 
 :global(.glompad) {
-  padding: 0 15px;
+  margin: 0 0.5rem;
+  padding: 0.5rem;
+  background: #fff;
 }
 
 .header {
@@ -46,6 +50,7 @@
 
 .footer {
   grid-area: footer;
+  text-align: center;
 }
 
 </style>

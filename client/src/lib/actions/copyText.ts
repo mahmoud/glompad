@@ -15,11 +15,18 @@
  *
  */
 
-export function clickToCopy(node: HTMLElement, target?: string) {
+type GetTarget = (node) => string;
+
+export function clickToCopy(node: HTMLElement, target?: string | GetTarget) {
   async function copyText() {
-    let text: string = target
-      ? (document.querySelector(target) as HTMLElement).innerText
-      : node.innerText;
+    let text: string;
+    if (!target) {
+      text = node.innerText;
+    } else if (typeof target === "function") {
+      text = target(node);
+    } else {
+      text = (document.querySelector(target) as HTMLElement).innerText;
+    }
 
     try {
       await navigator.clipboard.writeText(text);
@@ -27,6 +34,7 @@ export function clickToCopy(node: HTMLElement, target?: string) {
       node.dispatchEvent(
         new CustomEvent("copysuccess", {
           bubbles: true,
+          detail: {"node": node},
         })
       );
     } catch (error) {

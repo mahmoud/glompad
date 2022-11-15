@@ -19,10 +19,9 @@ def get_store_value(store):
 
 
 def run():
-    spec_val = get_store_value(js.window.SvelteApp.padStore.specValue).strip()
-
     js.createObject(create_proxy(globals()), "pyg")
 
+    spec_val = get_store_value(js.window.SvelteApp.padStore.specValue).strip()
     target_input = get_store_value(js.window.SvelteApp.padStore.targetValue).strip()
 
     load_error = None
