@@ -2,9 +2,11 @@
 	// TODO: factor out tooltip, popover, add clickOutside closing of modal
 
 	import CodeMirror from "svelte-codemirror-editor";
+	import { basicSetup } from 'codemirror';
 	import { githubLight } from '@uiw/codemirror-theme-github';
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
+	import { Prec } from "@codemirror/state";
 
 	import copyText from "./actions/copyText";
 	import tooltip from "./actions/tooltip";
@@ -20,10 +22,6 @@
 		count += 1;
 		curVal = "opts clicked " + count;
 		showMenu = !showMenu;
-	}
-
-	function onchange(e) {
-		console.log(padStore.specValue)
 	}
 
 	function copySuccess() {
@@ -69,6 +67,7 @@
 	let showMenu = false;
 	let optionsMenu;
 	let specEditor;
+	let extensions = [basicSetup, Prec.highest(ctrlEnterKeymap)];
 </script>
 
 <!------html-->
@@ -102,10 +101,9 @@
 		bind:this={specEditor}
 		class="cm-wrap"
 		lang={python()}
-		extensions={[ctrlEnterKeymap]}
+		extensions={extensions}
 		basic={false}
 		theme={githubLight}
-		on:change={onchange}
 		styles={{
 			"&": {
 				"min-width": "100px",
@@ -163,7 +161,6 @@
 		display: flex;
 		flex-direction: row;
 		font-family: "monospace";
-		font-size: 0.95rem;
 		outline: 0;
 		padding: 0;
 		transition: all 0.1s ease;

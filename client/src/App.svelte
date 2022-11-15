@@ -1,6 +1,6 @@
 <script lang="ts">
   import Pad from './lib/Pad.svelte'
-  const example_url = '#spec=%7B%27names%27%3A+%28%27system.planets%27%2C+%5BT%5B%27name%27%5D.title%28%29%5D%29%2C+%27moons%27%3A+%28%27system.planets%27%2C+%5B%27moons%27%5D%29%7D&target=%7B%27system%27%3A+%7B%27planets%27%3A+%5B%7B%27name%27%3A+%27earth%27%2C+%27moons%27%3A+1%7D%2C+%7B%27name%27%3A+%27jupiter%27%2C+%27moons%27%3A+69%7D%5D%7D%7D&v=1';
+  const example_url = 'http://localhost:5173/#spec=%7B%0A++%27moons%27%3A+%28%27system.planets%27%2C+%5B%27moons%27%5D%29%2C%0A++%27names%27%3A+%28%27system.planets%27%2C+%5BT%5B%27name%27%5D.title%28%29%5D%29%2C%0A%7D&target=%7B%0A++%27system%27%3A+%7B%0A++++%27planets%27%3A+%5B%0A++++++%7B%27name%27%3A+%27earth%27%2C+%27moons%27%3A+1%7D%2C+%0A++++++%7B%27name%27%3A+%27jupiter%27%2C+%27moons%27%3A+69%7D%0A++++%5D%0A++%7D%0A%7D&v=1';
 </script>
 
 <main>

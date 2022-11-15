@@ -25,42 +25,43 @@
   <Panel title="Spec" status={$specStatus} class="glom-spec-container">
     <SpecInput />
   </Panel>
-    <Panel title="Target" class="glom-target-container" status={$targetStatus}>
-      <CodeMirror
-        bind:value={$targetValue}
-        class="cm-target-wrap"
-        lang={python()}
-        basic={false}
-        on:change={onchange}
-        theme={githubLight}
-        styles={{
-          "&": {
-            "min-width": "100px",
-            "max-width": "100%",
-            "height": "100%",
-            "overflow": "scroll",
-          },
-        }}
-      />
-    </Panel>
-    <Panel title="Result" class="glom-result-container" status={$resultStatus}>
-      <CodeMirror
-        bind:value={$resultValue}
-        class="cm-result-wrap"
-        basic={false}
-        lang={$resultStatus.match(/error/ig) ? null : python()}
-        theme={githubLight}
-        editable={false}
-        styles={{
-          "&": {
-            "min-width": "100px",
-            "max-width": "100%",
-            "height": "100%",
-            "overflow": "scroll",
-          },
-        }}
-      />
-    </Panel>
+  <Panel title="Target" class="glom-target-container" status={$targetStatus}>
+    <CodeMirror
+      bind:value={$targetValue}
+      class="cm-target-wrap"
+      lang={python()}
+      basic={true}
+      on:change={onchange}
+      theme={githubLight}
+      styles={{
+        "&": {
+          "min-width": "100px",
+          "max-width": "100%",
+          "height": "100%",
+          "overflow": "scroll",
+        },
+      }}
+    />
+  </Panel>
+  <Panel title="Result" class="glom-result-container" status={$resultStatus}>
+    <CodeMirror
+      bind:value={$resultValue}
+      class="cm-result-wrap"
+      basic={true}
+      lang={$resultStatus.match(/error/ig) ? null : python()}
+      theme={githubLight}
+      editable={false}
+      readonly={true}
+      styles={{
+        "&": {
+          "min-width": "100px",
+          "max-width": "100%",
+          "height": "100%",
+          "overflow": "scroll",
+        },
+      }}
+    />
+  </Panel>
 </div>
 
 <style>

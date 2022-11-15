@@ -1,6 +1,7 @@
 
 import ast
 import json
+import pprint
 
 import js
 from pyodide.ffi import create_proxy
@@ -49,7 +50,8 @@ def run():
 
     if not load_error:
         try:
-            result = repr(glom.glom(target, spec))
+            result = glom.glom(target, spec)
+            result = pprint.pformat(result)
         except glom.GlomError as ge:
             err = str(ge)
             result = err

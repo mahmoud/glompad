@@ -16,3 +16,4 @@ Mostly ideas.
 * glom version selector
 * Autoformat target
 * Optional scope field
+* Autoformat button (black?)
