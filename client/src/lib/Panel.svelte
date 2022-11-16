@@ -17,13 +17,17 @@
 
 <style>
     .panel {
-        overflow: hidden;
+      overflow: hidden;
+      height: 100%;
+      padding-bottom: 3px;
+      margin-bottom: 15px;
     }
 
     .panel-label {
       display: flex;
       margin-bottom: 6px;
     }
+
     .panel-label-text {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -41,11 +45,10 @@
     .panel-status-badge {
       background: silver;
       display: inline-flexbox;
-      margin-left: auto;
       font-size: .85rem;
       padding: 0.15rem 1rem 0 1rem;
       border-radius: 7px;
-      margin: 0 5px;
+      margin: 0 5px 0 auto;
       white-space: nowrap;
     }
 </style>

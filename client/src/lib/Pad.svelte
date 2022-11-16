@@ -66,19 +66,15 @@
 
 <style>
 .gp-container {
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-auto-flow: row;
-
-  grid-template-areas: "spec"
-                       "target"
-                       "result";
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  position: relative;
 }
 
 :global(.glom-spec-container) {
-  grid-area: spec;
+  min-height: 100px;
 }
 
 .gp-container > div {
@@ -105,8 +101,8 @@
 
 :global(.glom-result-container) { 
   display: flex;
-  flex-flow: column;
-  height: 100%;
+  flex-direction: column;
+  flex: 1 1 auto !important;
 }
 
 </style>

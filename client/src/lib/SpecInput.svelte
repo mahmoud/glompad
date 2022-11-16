@@ -106,7 +106,7 @@
 		theme={githubLight}
 		styles={{
 			"&": {
-				"min-width": "100px",
+				"min-width": "70px",
 			},
 		}}
 	/>
