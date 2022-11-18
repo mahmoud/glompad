@@ -2,6 +2,11 @@
 
 Mostly ideas.
 
+* Vertical fill
+* Finish state refactor (cleanup)
+* Black autoformat
+* Improve deployment
+* Status object refactor
 * fetch() target
 * multiple targets/results (tabbed)
 * mobile support (stacked spec over tabbable target/result)

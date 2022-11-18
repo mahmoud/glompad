@@ -68,6 +68,7 @@
 .gp-container {
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 100%;
   padding: 10px;
   position: relative;
@@ -91,6 +92,7 @@
   display: flex;
   flex-flow: column;
   height: 100%;
+  min-height: 200px;
 }
 
 :global(.cm-result-wrap) { 
