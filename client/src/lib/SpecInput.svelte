@@ -163,8 +163,6 @@
 		font-family: "monospace";
 		outline: 0;
 		padding: 0;
-		transition: all 0.1s ease;
-		transition-property: border-color, box-shadow, background;
 		width: 100%;
 		max-width: 100vw;
 	}

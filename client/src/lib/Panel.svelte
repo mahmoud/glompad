@@ -11,16 +11,20 @@
             <div class="panel-status-badge">{status}</div>
         {/if}
     </div>
-    <slot></slot>
+    <div class="panel-content">
+      <slot></slot>
+    </div>
+
 </div>        
 
 
 <style>
     .panel {
       overflow: hidden;
-      height: 100%;
       padding-bottom: 3px;
       margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
     }
 
     .panel-label {
@@ -50,5 +54,13 @@
       border-radius: 7px;
       margin: 0 5px 0 auto;
       white-space: nowrap;
+    }
+
+    .panel-content {
+      flex-grow: 1;
+    }
+
+    .panel-content :global(> :first-child) {
+      height: 100%;
     }
 </style>

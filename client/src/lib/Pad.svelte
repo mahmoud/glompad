@@ -69,13 +69,12 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
   padding: 10px;
-  position: relative;
 }
 
 :global(.glom-spec-container) {
   min-height: 100px;
+  flex-grow: 1;
 }
 
 .gp-container > div {
@@ -83,28 +82,24 @@
 }
 
 :global(.cm-target-wrap) { 
-  height: 100%;
   background: #fff;
   border: 1px solid silver;
 }
 
 :global(.glom-target-container) { 
-  display: flex;
-  flex-flow: column;
-  height: 100%;
   min-height: 200px;
+  flex-grow: 1;
 }
 
 :global(.cm-result-wrap) { 
-  height: 100%;
   background: #fff;
   border: 1px solid silver;
 }
 
+
 :global(.glom-result-container) { 
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto !important;
+  flex-grow: 2;
 }
+
 
 </style>
