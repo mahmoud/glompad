@@ -12,7 +12,7 @@
 	import tooltip from "./actions/tooltip";
 	import unstyledTooltip from "./actions/unstyledTooltip";
 
-	import { padStore, urlStore } from "./stores";
+	import { padStore } from "./stores";
 	import Icon from './Icon.svelte';
 
 	let curVal = "first";
@@ -28,7 +28,7 @@
 		curVal = "copy success!"
 	}
 
-	const { specValue, targetValue, stateStack } = padStore;
+	const { specValue, stateStack } = padStore;
 
 	const executeGlom = () => {
 		if (!window.pyg) {
@@ -37,18 +37,7 @@
 		}
 
 		window.pyg.get("run_click")();
-		const state = {
-			"spec": $specValue,
-			"target": $targetValue,
-			"v": "1",
-		}
-
-		let new_url = new URL(window.location.toString())
-		new_url.hash =  new URLSearchParams(Object.entries(state)).toString();
-
-		if (new_url.toString() != window.location.toString()) {
-			$urlStore = new_url; 
-		}
+		padStore.saveState() // TODO: option to only save successful specs?
 	};
 
 	stateStack.subscribe(executeGlom);

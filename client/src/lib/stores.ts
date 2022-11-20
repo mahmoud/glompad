@@ -13,20 +13,45 @@ class PadStore {
         public specValue: Writable<string> = writable(''),
         public specStatus: Writable<string> = writable(''),
 
-        public targetValue: Writable<string> = writable("{'a': {'b': {'c': 'd'}}}"),
+        public targetValue: Writable<string> = writable(''),
         public targetStatus: Writable<string> = writable(''),
 
         public resultValue: Writable<string> = writable(''),
         public resultStatus: Writable<string> = writable(''),
 
-        public stateStack: Writable<Array<PadState>> = writable([]),
+        public stateStack: Writable<Array<PadState>> = writable([{'specValue': '', 'targetValue': ''}]),
 
-    ) {}
+    ) {};
+
+    saveState() {
+      const newState = {
+        "specValue": get(this.specValue),
+        "targetValue": get(this.targetValue),
+      }
+      const curStack = get(this.stateStack)
+      if (curStack.length > 0 && shallowEqual(curStack[0], newState)) {
+        return;
+      }
+      padStore.stateStack.update((curVal) => [newState, ...curVal])
+
+      const urlParams = {
+        "spec": newState.specValue,
+        "target": newState.targetValue,
+        "v": "1"
+      }
+
+      let new_url = new URL(window.location.toString())
+      new_url.hash =  new URLSearchParams(Object.entries(urlParams)).toString();
+  
+      if (new_url.toString() != window.location.toString()) {
+        urlStore.set(new_url.toString());
+      }
+    }
 }
 
 export const padStore = new PadStore();
 
-export const urlStore = createUrlStore(window && window.location) // TODO: handle initial state?
+export const urlStore = createUrlStore(window && window.location)
 
 urlStore.subscribe((val) => {
     const hash = val.hash && val.hash.slice(1)
@@ -41,7 +66,6 @@ urlStore.subscribe((val) => {
     if (curStack.length == 0 || !shallowEqual(curStack[0], newState)) {
         padStore.stateStack.update((curVal) => [newState, ...curVal])
     }
-    console.log(curStack)
 });
 
 
