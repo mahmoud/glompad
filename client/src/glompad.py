@@ -27,6 +27,8 @@ def run():
     spec_val = glom.glom(stateStack, glom.T[0].specValue, default='').strip()
     target_input = glom.glom(stateStack, glom.T[0].targetValue, default='').strip()
 
+    enable_autoformat = bool(get_store_value(js.window.SvelteApp.padStore.enableAutoformat))
+
     load_error = None
     try:
         spec = build_spec(spec_val)
@@ -54,6 +56,8 @@ def run():
         try:
             result = glom.glom(target, spec)
             result = pprint.pformat(result)
+            if enable_autoformat:
+                result = autoformat(result)
         except glom.GlomError as ge:
             err = str(ge)
             result = err

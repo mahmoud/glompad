@@ -1,11 +1,13 @@
-import tippy from 'tippy.js';
+import tippy, {followCursor} from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
 	
 function tooltip(node, params) {
-    let tip = tippy(node, params);
+    const baseParams = {plugins: [followCursor]}
+    let tip = tippy(node, {...baseParams, ...params});
     return {
         update: (newParams) => {
-            tip.setProps(newParams);
+            tip.setProps({...baseParams, ...newParams});
         },
         destroy: () => {
             tip.destroy();

@@ -52,7 +52,7 @@
       font-size: .85rem;
       padding: 0.15rem 1rem 0 1rem;
       border-radius: 7px;
-      margin: 0 5px 0 auto;
+      margin: 1px 0 0 auto;
       white-space: nowrap;
     }
 

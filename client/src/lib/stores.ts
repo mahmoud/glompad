@@ -23,6 +23,8 @@ class PadStore {
 
         public stateStack: Writable<Array<PadState>> = writable([new PadState()]),
 
+        public enableAutoformat: Writable<boolean> = writable(false),
+
     ) {};
 
     saveState() {

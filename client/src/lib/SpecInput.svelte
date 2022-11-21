@@ -8,10 +8,11 @@
 
 	import copyText from "./actions/copyText";
 	import tooltip from "./actions/tooltip";
-	import unstyledTooltip from "./actions/unstyledTooltip";
 
 	import { padStore } from "./stores";
 	import Icon from './Icon.svelte';
+	import OptionsMenu from './OptionsMenu.svelte';
+    import { followCursor } from "tippy.js";
 
 	let curVal = "first";
 	let count = 0;
@@ -26,7 +27,7 @@
 		curVal = "copy success!"
 	}
 
-	const { specValue, targetValue, stateStack } = padStore;
+	const { specValue, targetValue, enableAutoformat, stateStack } = padStore;
 
 	const executeGlom = () => {
 		if (!window.pyg) {
@@ -34,13 +35,16 @@
 			return;
 		}
 
-		window.pyg.get("run_click")();
-		const specFormatted = window.pyg.get("autoformat")($specValue);
-		$specValue = specFormatted;
-		const targetFormatted = window.pyg.get("autoformat")($targetValue);
-		$targetValue = targetFormatted;
-
 		padStore.saveState() // TODO: option to only save successful specs?
+		window.pyg.get("run_click")();
+
+		if (enableAutoformat) {
+			const autoformat = window.pyg.get("autoformat");
+			const specFormatted = autoformat($specValue);
+			$specValue = specFormatted;
+			const targetFormatted = autoformat($targetValue);
+			$targetValue = targetFormatted;
+		}
 	};
 
 	// doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
@@ -66,7 +70,7 @@
 	]);
 
 	let showMenu = false;
-	let optionsMenu;
+	let optionsMenuElement;
 	let specEditor;
 	let extensions = [basicSetup, Prec.highest(ctrlEnterKeymap)];
 </script>
@@ -80,11 +84,13 @@
 		tabindex="0"
 		on:click={optsClick}
 		on:keydown={optsClick}
-		use:unstyledTooltip={{
-			content: optionsMenu,
+		use:tooltip={{
+			content: optionsMenuElement,
 			placement: "bottom",
 			trigger: "click",
 			interactive: true,
+			theme: "light",
+			followCursor: "initial",
 		}}
 		use:tooltip={{
 			content: "Options",
@@ -102,7 +108,6 @@
 		lang={python()}
 		extensions={extensions}
 		basic={false}
-		theme={githubLight}
 		styles={{
 			"&": {
 				"min-width": "70px",
@@ -135,15 +140,7 @@
 	  <Icon name="link" />
 	</button>
 
-	<div id="optionsMenu" bind:this={optionsMenu}>
-		<ul>
-			<li use:tooltip={{
-				content: "Test",
-				placement: "right"
-			}}>Test</li>
-			<li><a href="https://mahmoud.photos">Photos</a></li>
-		</ul>
-	</div>
+	<OptionsMenu bind:domNode={optionsMenuElement} />
 </div>
 
 <svelte:window on:copysuccess={copySuccess} />
