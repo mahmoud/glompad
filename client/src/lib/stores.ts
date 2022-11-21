@@ -3,9 +3,11 @@ import { writable, readable, derived, get } from 'svelte/store';
 
 import {createUrlStore} from './urlStore'
 
-type PadState = {
-    specValue: string,
-    targetValue: string
+class PadState {
+    constructor( 
+      public specValue: string = '',
+      public targetValue: string = '',
+    ) {};
 }
 
 class PadStore {
@@ -19,7 +21,7 @@ class PadStore {
         public resultValue: Writable<string> = writable(''),
         public resultStatus: Writable<string> = writable(''),
 
-        public stateStack: Writable<Array<PadState>> = writable([{'specValue': '', 'targetValue': ''}]),
+        public stateStack: Writable<Array<PadState>> = writable([new PadState()]),
 
     ) {};
 

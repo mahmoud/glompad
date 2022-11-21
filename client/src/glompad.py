@@ -7,6 +7,7 @@ import js
 from pyodide.ffi import create_proxy
 
 import glom
+import black
 
 def get_store_value(store):
     "Get the current value of a Svelte store."
@@ -78,6 +79,9 @@ def build_spec(spec_str):
 def run_click(e=None):
     run()
 
+
+def autoformat(code):
+    return black.format_str(code, mode=black.Mode())
 
 run()
 js.createObject(create_proxy(globals()), "pyg")

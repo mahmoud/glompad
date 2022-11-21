@@ -2,8 +2,6 @@
 
 Mostly ideas.
 
-* Vertical fill
-* Finish state refactor (cleanup)
 * Black autoformat
 * Improve deployment
 * Status object refactor

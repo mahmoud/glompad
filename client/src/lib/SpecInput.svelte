@@ -1,6 +1,4 @@
 <script>
-	// TODO: factor out tooltip, popover, add clickOutside closing of modal
-
 	import CodeMirror from "svelte-codemirror-editor";
 	import { basicSetup } from 'codemirror';
 	import { githubLight } from '@uiw/codemirror-theme-github';
@@ -28,7 +26,7 @@
 		curVal = "copy success!"
 	}
 
-	const { specValue, stateStack } = padStore;
+	const { specValue, targetValue, stateStack } = padStore;
 
 	const executeGlom = () => {
 		if (!window.pyg) {
@@ -37,17 +35,31 @@
 		}
 
 		window.pyg.get("run_click")();
+		const specFormatted = window.pyg.get("autoformat")($specValue);
+		$specValue = specFormatted;
+		const targetFormatted = window.pyg.get("autoformat")($targetValue);
+		$targetValue = targetFormatted;
+
 		padStore.saveState() // TODO: option to only save successful specs?
 	};
 
-	stateStack.subscribe(executeGlom);
+	// doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
+	stateStack.subscribe(executeGlom);  
 
 	const ctrlEnterKeymap = keymap.of([
 		{
 			key: "Ctrl-Enter",
 			run: (view) => {  // can get the event, too, by defining "any" 
 				// TODO: deal with delays either coming from codemirror or svelte storage
-				executeGlom();
+				setTimeout(executeGlom, 100);
+				return true;
+			},
+		},
+		{
+			key: "Shift-Enter",
+			run: (view) => {  // can get the event, too, by defining "any" 
+				// TODO: deal with delays either coming from codemirror or svelte storage
+				setTimeout(executeGlom, 100);
 				return true;
 			},
 		},
@@ -62,7 +74,6 @@
 <!------html-->
 
 <div class="padInput">
-	<!--
 	<div
 		class="opts-button"
 		role="button"
@@ -77,13 +88,12 @@
 		}}
 		use:tooltip={{
 			content: "Options",
-			placement: "right",
+			placement: "top",
 			delay: [400, 0],
 		}}
 		>
 		<Icon name="more-vertical" height=1.5em width=1.2em/>
 	</div>
-	-->
 
 	<CodeMirror
 		bind:value={$specValue}
@@ -96,10 +106,17 @@
 		styles={{
 			"&": {
 				"min-width": "70px",
+				"height": "100%",
 			},
 		}}
 	/>
-	<button class="run-button" on:click={executeGlom}><Icon name="play" /></button>
+	<button class="run-button" 
+		on:click={executeGlom}
+		use:tooltip={{
+			content: "Run (or Ctrl-Enter via keyboard)",
+			placement: "top",
+		}}
+	><Icon name="play" /></button>
 
 	<button class="copy-button" 
 		use:tooltip={{
@@ -118,19 +135,15 @@
 	  <Icon name="link" />
 	</button>
 
-	<!--
 	<div id="optionsMenu" bind:this={optionsMenu}>
 		<ul>
 			<li use:tooltip={{
 				content: "Test",
 				placement: "right"
-			}}>Test</li>		background: #eee;
-
+			}}>Test</li>
 			<li><a href="https://mahmoud.photos">Photos</a></li>
 		</ul>
-
 	</div>
-	-->
 </div>
 
 <svelte:window on:copysuccess={copySuccess} />
@@ -139,7 +152,6 @@
 	.padInput :global(.cm-wrap) {
 		flex: 1 1 100%;
 		min-width: 140px;
-		padding: 5px 0;
 	}
 
 	.padInput {
@@ -160,17 +172,28 @@
 		padding-top: 8px;
 		cursor: pointer;
 		color: #aaa;
+		border-right: 1px solid silver;
 	}
 
 	button {
 		display: flex;
 		margin: 0;
-		border: 1px solid silver !important;
-		border-radius: 3px;
+		border: 0;
+		border-left: 1px solid silver !important;
+		color: #aaa;
 		cursor: pointer;
 		justify-content: center;
 		align-items: center;
 		user-select: none;
+		background: #fff;
+	}
+
+	.opts-button:hover {
+		background: #ededed;
+	}
+
+	button:hover {
+		background: #ededed;
 	}
 
 	.run-button {

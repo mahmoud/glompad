@@ -1,2 +1,2 @@
-packages = ["glom"]
+packages = ["glom", "black"]
 paths = ['./src/glompad.py']
