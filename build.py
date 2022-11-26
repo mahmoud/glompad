@@ -31,6 +31,7 @@ def _build_client(out_base, base_url_path, version, is_latest):
 
     # TODO: until transclusion is implemented, copy over individual files
     shutil.copytree('./client/src/py/', out_dir + 'src/py/')
+    # Also TODO: add glom version, build time element
 
     pyscript_config = json.load(open(PYSCRIPT_CONFIG_PATH))
     packages = list(pyscript_config['packages'])
@@ -50,7 +51,7 @@ def _build_client(out_base, base_url_path, version, is_latest):
     return
 
 
-
+# TODO: Deploy
 
 def run(latest, versions, deploy, basepath='/'):
     # make build directory
@@ -81,10 +82,6 @@ def run(latest, versions, deploy, basepath='/'):
     else:
         versions = all_versions
 
-    # capture current version, iterate over versions
-    # copy over dist directory
-    # pip download glom==version to dist/assets/wheels/
-
     assert 'v18' in os.getenv('NVM_BIN', 'v18.'), 'expected node 18'
     shutil.rmtree('./build')
     mkdir_p('./build/dist/')
@@ -96,22 +93,20 @@ def run(latest, versions, deploy, basepath='/'):
             version=version, 
             is_latest=(version == latest_version)
         )
+        # TODO: future: build manifest
 
+    if not deploy:
+        return
 
-    # 
-    # add glom version, build time element
+    _subproc_run(['rsync', '-avzP', 'build/dist/', deploy])
 
-    # TODO: future: build manifest
+ 
 
 cmd = face.Command(run)
 cmd.add('--latest', parse_as=True, doc='only build/deploy latest version of glom')
 cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
-cmd.add('--deploy', parse_as=True, doc='whether to deploy')
+cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
 cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
 
 if __name__ == '__main__':
     cmd.run()
-
-'''
-rsync -avzP dist/* sedimental.org:/home/mahmoud/sedimental/public/glompad
-'''
