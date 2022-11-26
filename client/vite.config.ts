@@ -13,6 +13,9 @@ export default defineConfig({
       },
     },
   },
+  assetsInclude: [
+    './src/py/**',
+  ],
   optimizeDeps: {
     exclude: [
       "codemirror", 

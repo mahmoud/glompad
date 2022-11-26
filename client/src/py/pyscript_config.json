@@ -1,0 +1,4 @@
+{
+    "packages": ["glom", "black"],
+    "paths": ["./src/py/glompad.py"]
+}

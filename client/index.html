@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/img/comet.png" /> 
+    <!-- <link rel="manifest" href="manifest.json" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>glompad</title>
 
@@ -10,7 +11,6 @@
     <script defer type="module" src="/js/pyscript.js"></script>
 
     <script>
-
       function createObject(object, variableName) {
         //Bind a variable whose name is the string variableName
         // to the object called 'object'
@@ -20,7 +20,7 @@
     </script>
   </head>
   <body>
-    <py-config src="./src/pyscript_config.toml"></py-config>
+    <py-config type="json" src="./src/py/pyscript_config.json"></py-config>
     <div id="app" style="height: 100vh"></div>
     <script type="module" src="/src/main.ts">
     </script>

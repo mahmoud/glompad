@@ -2,7 +2,6 @@
 
 Mostly ideas.
 
-* Black autoformat
 * Improve deployment
 * Status object refactor
 * fetch() target
