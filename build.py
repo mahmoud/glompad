@@ -13,6 +13,9 @@ PYSCRIPT_CONFIG_PATH = CUR_DIR + PYSCRIPT_CONFIG_REL_PATH
 
 WHEEL_PLATFORM = 'emscripten-3.1.14-wasm32'
 
+# These historical versions don't have wheels: (TODO: could upload wheels for these)
+IGNORED_VERSIONS = ['20.5.0', '19.10.0', '19.2.0', '19.1.0', '18.4.0', '18.3.1', '18.3.0', '18.2.0', '18.1.1', '18.1.0', '18.0.0', '0.0.3', '0.0.2']
+
 def _subproc_run(*a, **kw):
     print(f'{a} -- {kw}')
     return subprocess.run(*a, **kw)
@@ -69,7 +72,8 @@ def run(latest, versions, deploy, basepath='/'):
     assert len(output_lines) == 2, 'unexpected number of lines from pip'
     all_versions = [
         v.strip() for v in 
-        output_lines[1].partition(':')[2].split(',')]
+        output_lines[1].partition(':')[2].split(',')
+        if v.strip() not in IGNORED_VERSIONS]
     latest_version = all_versions[0]
     if latest:
         if versions:
