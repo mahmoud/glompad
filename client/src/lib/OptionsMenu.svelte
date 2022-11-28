@@ -12,11 +12,15 @@
     margin-bottom: 6px;
 }
 
+#autoformat-item, #autoformat-item > * {
+    cursor: pointer;
+}
+
 </style>
 
 <div id="optionsMenu" bind:this={domNode}>
     <p class="menu-title">Options</p>
-    <div use:tooltip={{
+    <div id="autoformat-item" use:tooltip={{
             content: "Automatically format spec and target on execution using the black autoformatter. Also use black for result formatting instead of pprint.",
             placement: "right",
             delay: [400, 0],

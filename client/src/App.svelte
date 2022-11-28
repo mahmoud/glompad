@@ -7,7 +7,7 @@
 <div id="container">
   <div class="box header">
       <h1>☄️ glompad</h1>
-      <p><a href={example_url}>Example</a></p>
+      <p><a href={example_url}>Example</a> | <a href="https://glom.readthedocs.io/en/latest/">Docs</a></p>
   </div>
 
   <Pad class="box glompad" />

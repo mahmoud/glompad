@@ -108,6 +108,7 @@
 		lang={python()}
 		extensions={extensions}
 		basic={false}
+		placeholder="Insert your glom spec here."
 		styles={{
 			"&": {
 				"min-width": "70px",
@@ -151,8 +152,7 @@
 		min-width: 140px;
 	}
 
-	.padInput {
-		
+	.padInput {	
 		border: 1px solid #aaa;
 		border-radius: 3px;
 		box-sizing: border-box;

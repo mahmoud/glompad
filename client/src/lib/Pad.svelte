@@ -33,6 +33,7 @@
       basic={true}
       on:change={onchange}
       theme={githubLight}
+      placeholder="Insert your target data here. JSON and Python literals supported."
       styles={{
         "&": {
           "min-width": "100px",
@@ -52,6 +53,7 @@
       theme={githubLight}
       editable={false}
       readonly={true}
+      placeholder="Result will be displayed here after executing your glom spec."
       styles={{
         "&": {
           "min-width": "100px",
