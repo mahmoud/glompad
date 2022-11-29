@@ -12,9 +12,7 @@
   export {classes as class};
   let {specStatus, targetValue, targetStatus, resultValue, resultStatus} = padStore;
   
-
   urlStore.subscribe(value => {
-    console.log('got ' + value);
     if (window && window.location.href != value) {
       window.location.href = value;
     }
@@ -77,10 +75,6 @@
 :global(.glom-spec-container) {
   min-height: 100px;
   flex-grow: 1;
-}
-
-.gp-container > div {
-  background-color: lightgray;
 }
 
 :global(.cm-target-wrap) { 

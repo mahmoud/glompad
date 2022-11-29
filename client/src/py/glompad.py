@@ -41,7 +41,8 @@ def run():
     if not load_error:
         try:
             target = json.loads(target_input)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as jde:
+            # js.window.console.log(repr(jde))
             try:
                 target = ast.literal_eval(target_input)
             except SyntaxError:

@@ -72,7 +72,7 @@
 	let showMenu = false;
 	let optionsMenuElement;
 	let specEditor;
-	let extensions = [basicSetup, Prec.highest(ctrlEnterKeymap)];
+	let extensions = [Prec.highest(ctrlEnterKeymap)];
 </script>
 
 <!------html-->
@@ -107,7 +107,8 @@
 		class="cm-wrap"
 		lang={python()}
 		extensions={extensions}
-		basic={false}
+		theme={githubLight}
+		basic={true}
 		placeholder="Insert your glom spec here."
 		styles={{
 			"&": {
