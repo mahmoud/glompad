@@ -3,9 +3,11 @@ import os.path
 import json
 import subprocess
 import shutil
+import datetime
 
 import face
 from boltons.fileutils import mkdir_p, atomic_save
+import html5lib
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__)) + '/'
 PYSCRIPT_CONFIG_REL_PATH = './client/src/py/pyscript_config.json'
@@ -21,7 +23,21 @@ def _subproc_run(*a, **kw):
     return subprocess.run(*a, **kw)
 
 
-def _build_client(out_base, base_url_path, version, is_latest):
+def html_text_to_tree(html_text):
+    return html5lib.parse(html_text, namespaceHTMLElements=False)
+
+
+def html_tree_to_text(html_tree):
+    options = {'quote_attr_values': 'always',
+               'use_trailing_solidus': True,
+               'space_before_trailing_solidus': True}
+    serializer = html5lib.serializer.HTMLSerializer(**options)
+    walker = html5lib.getTreeWalker('etree')
+    stream = serializer.serialize(walker(html_tree))
+    return u''.join(stream)
+
+
+def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     out_dir = out_base
     if not is_latest:
         base_url_path = base_url_path + f'v{version}/'
@@ -31,10 +47,6 @@ def _build_client(out_base, base_url_path, version, is_latest):
         '--outDir', '../' + out_dir,
         '--base', base_url_path], 
       cwd='./client')
-
-    # TODO: until transclusion is implemented, copy over individual files
-    shutil.copytree('./client/src/py/', out_dir + 'src/py/')
-    # Also TODO: add glom version, build time element
 
     pyscript_config = json.load(open(PYSCRIPT_CONFIG_PATH))
     packages = list(pyscript_config['packages'])
@@ -48,8 +60,29 @@ def _build_client(out_base, base_url_path, version, is_latest):
     assert 2 < len(whl_packages) < 50, "unexpected number of packages"
     pyscript_config['packages'] = whl_packages
 
-    with atomic_save(out_dir + 'src/py/pyscript_config.json', text_mode=True) as f:
-        json.dump(pyscript_config, f, indent=2)
+    index_text = open(out_dir + 'index.html').read()
+    html = html_text_to_tree(index_text)
+    py_src = open('client/' + html.find('.//py-script').attrib['src']).read()
+    html.find('.//py-script').text = py_src
+    html.find('.//py-script').attrib.pop('src')
+
+    pyscript_config['paths'].remove('./src/py/glompad.py')
+    html.find('.//py-config').text = json.dumps(pyscript_config, indent=2)
+    html.find('.//py-config').attrib.pop('src')
+
+    build_metadata = {
+        "version": version,
+        "all_versions": all_versions,
+        "build_timestamp": datetime.datetime.utcnow().isoformat()
+    }
+    head_el = html.find('.//head')
+    meta_script_el = html.makeelement('script', {})
+    meta_script_el.text = f"const glompad_meta = {json.dumps(build_metadata, indent=2)};"
+    head_el.insert(len(html), meta_script_el)
+
+    new_index_text = html_tree_to_text(html)
+    with atomic_save(out_dir + 'index.html', text_mode=True) as f:
+        f.write(new_index_text)
 
     return
 
@@ -74,6 +107,7 @@ def run(latest, versions, deploy, basepath='/'):
         v.strip() for v in 
         output_lines[1].partition(':')[2].split(',')
         if v.strip() not in IGNORED_VERSIONS]
+    # NB: we rely on pip to sort the versions in version order (glompad's calver is not 0-padded, so lexical order doesn't help)
     latest_version = all_versions[0]
     if latest:
         if versions:
@@ -95,7 +129,8 @@ def run(latest, versions, deploy, basepath='/'):
             out_base='./build/dist/', 
             base_url_path=basepath,
             version=version, 
-            is_latest=(version == latest_version)
+            is_latest=(version == latest_version),
+            all_versions=all_versions,
         )
         # TODO: future: build manifest
 
