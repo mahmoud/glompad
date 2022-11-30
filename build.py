@@ -84,6 +84,14 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     with atomic_save(out_dir + 'index.html', text_mode=True) as f:
         f.write(new_index_text)
 
+    if is_latest:
+        _build_client(
+            out_base=out_base, 
+            base_url_path=base_url_path, 
+            version=version, 
+            is_latest=False, 
+            all_versions=all_versions)
+
     return
 
 
