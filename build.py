@@ -85,6 +85,7 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
         f.write(new_index_text)
 
     if is_latest:
+        # Quick way to get the latest version's own version-qualified build dir
         _build_client(
             out_base=out_base, 
             base_url_path=base_url_path, 

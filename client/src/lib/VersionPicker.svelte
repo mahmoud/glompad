@@ -5,9 +5,11 @@ let selected = glompad_meta.version || 'dev';
 const all_versions = glompad_meta.all_versions || ['dev', 'dev2'];
 
 const onVersionChange = (e) => {
+    // version-qualified paths need the version popped off before a new version is added on
+    // this exists to turn the basepath /glompad/v20.0/ into the real basepath /glompad/
+
     const basepath = import.meta.env.BASE_URL;
     const real_basepath = basepath.match(/\/v/) ? basepath.slice(0, basepath.indexOf('/', 1) + 1) : basepath;
-    console.log('basepath: ' + basepath + ' real basepath: ' + real_basepath)
 
     const version = e.target.value;
     let new_url = new URL(window.location.toString())
