@@ -12,8 +12,7 @@
 	import { padStore } from "./stores";
 	import Icon from './Icon.svelte';
 	import OptionsMenu from './OptionsMenu.svelte';
-    import { followCursor } from "tippy.js";
-
+	
 	let curVal = "first";
 	let count = 0;
 

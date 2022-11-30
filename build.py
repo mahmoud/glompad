@@ -77,7 +77,7 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     }
     head_el = html.find('.//head')
     meta_script_el = html.makeelement('script', {})
-    meta_script_el.text = f"const glompad_meta = {json.dumps(build_metadata, indent=2)};"
+    meta_script_el.text = f"window.glompad_meta = {json.dumps(build_metadata, indent=2)};"
     head_el.insert(len(html), meta_script_el)
 
     new_index_text = html_tree_to_text(html)
