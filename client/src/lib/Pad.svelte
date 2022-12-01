@@ -7,6 +7,7 @@
   import { python } from "@codemirror/lang-python";
   
   import { githubLight } from '@uiw/codemirror-theme-github';
+  import Drawer from './Drawer.svelte';
 
   let classes = "";
   export {classes as class};
