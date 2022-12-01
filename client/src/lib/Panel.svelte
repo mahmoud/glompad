@@ -25,6 +25,8 @@
       margin-bottom: 15px;
       display: flex;
       flex-direction: column;
+      max-width: 1200px;
+      width: 100%;
     }
 
     .panel-label {

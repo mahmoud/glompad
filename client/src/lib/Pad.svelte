@@ -4,6 +4,7 @@
   import Panel from './Panel.svelte'
 
 	import CodeMirror from "svelte-codemirror-editor";
+  import MediaQuery from 'svelte-media-queries';
   import { python } from "@codemirror/lang-python";
   
   import { githubLight } from '@uiw/codemirror-theme-github';
@@ -17,7 +18,12 @@
       window.location.href = value;
     }
   });
+
+  let large_screen;
+  
 </script>
+
+<MediaQuery query='(min-width: 500px)' bind:matches={large_screen} />
 
 <div class="gp-container {classes}">
   <Panel title="Spec" status={$specStatus} class="glom-spec-container">
@@ -26,7 +32,7 @@
   <Panel title="Target" class="glom-target-container" status={$targetStatus}>
     <CodeMirror
       bind:value={$targetValue}
-      class="cm-target-wrap"
+      class="{large_screen ? "cm-wrap-large" : "cm-wrap-small"} cm-target-wrap"
       lang={python()}
       basic={true}
       on:change={onchange}
@@ -45,7 +51,7 @@
   <Panel title="Result" class="glom-result-container" status={$resultStatus}>
     <CodeMirror
       bind:value={$resultValue}
-      class="cm-result-wrap"
+      class="{large_screen ? "cm-wrap-large" : "cm-wrap-small"} cm-result-wrap"
       basic={true}
       lang={$resultStatus.match(/error/ig) ? null : python()}
       theme={githubLight}
@@ -65,11 +71,17 @@
 </div>
 
 <style>
+
+:global(.cm-wrap-small) {
+  font-size: 2.4vw !important;
+}
+
 .gp-container {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 10px;
+  align-items: center;
 }
 
 :global(.glom-spec-container) {

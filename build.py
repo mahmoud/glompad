@@ -64,9 +64,9 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     html = html_text_to_tree(index_text)
     py_src = open('client/' + html.find('.//py-script').attrib['src']).read()
     html.find('.//py-script').text = py_src
-    html.find('.//py-script').attrib.pop('src')
+    _script_path = html.find('.//py-script').attrib.pop('src')
+    pyscript_config['paths'].remove(_script_path)
 
-    pyscript_config['paths'].remove('./src/py/glompad.py')
     html.find('.//py-config').text = json.dumps(pyscript_config, indent=2)
     html.find('.//py-config').attrib.pop('src')
 
