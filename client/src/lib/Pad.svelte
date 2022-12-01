@@ -1,10 +1,9 @@
 <script lang="ts">
   import SpecInput from './SpecInput.svelte'
-  import { padStore, urlStore } from './stores';
+  import { padStore, urlStore, largeScreenStore } from './stores';
   import Panel from './Panel.svelte'
 
 	import CodeMirror from "svelte-codemirror-editor";
-  import MediaQuery from 'svelte-media-queries';
   import { python } from "@codemirror/lang-python";
   
   import { githubLight } from '@uiw/codemirror-theme-github';
@@ -19,11 +18,9 @@
     }
   });
 
-  let large_screen;
-  
+  let wrap_class: string;
+  $: wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 </script>
-
-<MediaQuery query='(min-width: 500px)' bind:matches={large_screen} />
 
 <div class="gp-container {classes}">
   <Panel title="Spec" status={$specStatus} class="glom-spec-container">
@@ -32,7 +29,7 @@
   <Panel title="Target" class="glom-target-container" status={$targetStatus}>
     <CodeMirror
       bind:value={$targetValue}
-      class="{large_screen ? "cm-wrap-large" : "cm-wrap-small"} cm-target-wrap"
+      class="{wrap_class} cm-target-wrap"
       lang={python()}
       basic={true}
       on:change={onchange}
@@ -51,7 +48,7 @@
   <Panel title="Result" class="glom-result-container" status={$resultStatus}>
     <CodeMirror
       bind:value={$resultValue}
-      class="{large_screen ? "cm-wrap-large" : "cm-wrap-small"} cm-result-wrap"
+      class="{wrap_class} cm-result-wrap"
       basic={true}
       lang={$resultStatus.match(/error/ig) ? null : python()}
       theme={githubLight}

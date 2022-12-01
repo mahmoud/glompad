@@ -1,6 +1,8 @@
 import type {Writable, Readable} from 'svelte/store';
 import { writable, readable, derived, get } from 'svelte/store';
 
+import { createMediaStore } from 'svelte-media-queries'
+
 import {createUrlStore} from './urlStore'
 
 class PadState {
@@ -56,6 +58,8 @@ class PadStore {
 export const padStore = new PadStore();
 
 export const urlStore = createUrlStore(window && window.location)
+
+export const largeScreenStore = createMediaStore('(min-width: 500px');
 
 urlStore.subscribe((val) => {
     const hash = val.hash && val.hash.slice(1)
