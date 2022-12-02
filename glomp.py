@@ -4,10 +4,15 @@ import json
 import subprocess
 import shutil
 import datetime
+from importlib.machinery import SourceFileLoader
+import textwrap
+
 
 import face
 from boltons.fileutils import mkdir_p, atomic_save
 import html5lib
+from hyperlink import DecodedURL
+import black
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__)) + '/'
 PYSCRIPT_CONFIG_REL_PATH = './client/src/py/pyscript_config.json'
@@ -96,9 +101,7 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     return
 
 
-# TODO: Deploy
-
-def run(latest, versions, deploy, basepath='/'):
+def build(latest, versions, deploy, basepath='/'):
     # make build directory
     if not CUR_DIR.endswith('/glompad/') and os.path.isdir(CUR_DIR + '.git'):
         raise face.UsageError('glompad build expected to run from project root')
@@ -148,13 +151,76 @@ def run(latest, versions, deploy, basepath='/'):
 
     _subproc_run(['rsync', '-avzP', 'build/dist/', deploy])
 
- 
 
-cmd = face.Command(run)
-cmd.add('--latest', parse_as=True, doc='only build/deploy latest version of glom')
-cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
-cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
-cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
+def make_url(spec, target):
+    # v1 format: #spec=a.b.c&target={}&v=1
+    frag_map = {
+        'spec': spec,
+        'target': target,
+        'v': '1',
+    }
+    url = DecodedURL().replace(query=frag_map.items())
+    output = url.to_text().replace('?', '#', 1)
+
+    return output
+
+
+def build_examples():
+    examples_mod = SourceFileLoader('examples', './client/src/py/examples.py').load_module()
+    example_cls = examples_mod.Example
+
+    example_list = []
+    for name, obj in examples_mod.__dict__.items():
+        if not isinstance(obj, type) or not issubclass(obj, example_cls):
+            continue
+        if obj is example_cls:
+            continue
+        print(f'{name} - {obj.label}')
+        try:
+            # sanity check
+            examples_mod.glom(obj.target, obj.spec)
+        except Exception as e:
+            raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
+
+        desc = textwrap.dedent(obj.__doc__ or '')
+        formatted_desc = '\n'.join(['# ' + line for line in textwrap.wrap(desc, width=100, break_long_words=False, break_on_hyphens=False)])
+
+        formatted_spec = black.format_str(repr(obj.spec), mode=black.Mode())
+        formatted_spec = formatted_desc + '\n' + formatted_spec
+
+        example_dict = {
+            'label': obj.label,
+            'icon': obj.icon,
+            'desc': desc,
+            'url': make_url(spec=formatted_spec, target=repr(obj.target)),
+        }
+        example_list.append(example_dict)
+
+    # wrap in an object to give us some flexibility to do sections or something
+    examples_wrapper = {'example_list': example_list} 
+
+    with atomic_save('./client/src/examples.generated.json', text_mode=True) as f:
+        json.dump(examples_wrapper, f, indent=2)
+
+    return
+
+    
+
+    
+
+ 
+cmd = face.Command(name='glomp', func=None)
+
+build_cmd = face.Command(build, doc='build and optionally deploy glompad')
+build_cmd.add('--latest', parse_as=True, doc='only build/deploy latest version of glom')
+build_cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
+build_cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
+build_cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
+
+cmd.add(build_cmd)
+cmd.add(make_url)
+cmd.add(build_examples)
+
 
 if __name__ == '__main__':
     cmd.run()

@@ -20,7 +20,11 @@
   {#if icon}
     <svg
       {...icon.attrs}
-      style="width: {width}; height: {height}; transform: rotate({rotation}deg);"
+      style:width={width}
+      style:height={height}
+      style:transform=rotate({rotation}deg)
+      style:display=inline
+      
     >
       <g>
         {@html icon.contents}
@@ -34,6 +38,7 @@
       height: 1em;
       overflow: visible;
       transform-origin: 50% 50%;
+      margin-bottom: -2px;
     }
   </style>
   
