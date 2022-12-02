@@ -2,21 +2,16 @@
     import clickOutside from './actions/clickOutside';
     import tooltip from "./actions/tooltip";
 
-    let isOpen = true;
+    let isOpen = false;
     const closeDrawer = () => (isOpen = false);
-    const toggleOpen = () => (isOpen = !isOpen);
-
-    const examples = {
-        "Planets Tutorial": 
-        '#spec=%7B%0A++%27moons%27%3A+%28%27system.planets%27%2C+%5B%27moons%27%5D%29%2C%0A++%27names%27%3A+%28%27system.planets%27%2C+%5BT%5B%27name%27%5D.title%28%29%5D%29%2C%0A%7D&target=%7B%0A++%27system%27%3A+%7B%0A++++%27planets%27%3A+%5B%0A++++++%7B%27name%27%3A+%27earth%27%2C+%27moons%27%3A+1%7D%2C+%0A++++++%7B%27name%27%3A+%27jupiter%27%2C+%27moons%27%3A+69%7D%0A++++%5D%0A++%7D%0A%7D&v=1',
-    };
+    export const toggleOpen = () => (isOpen = !isOpen);
 
     import example_info from '../examples.generated.json';
     import VersionPicker from './VersionPicker.svelte';
     import Icon from './Icon.svelte';
-
 </script>
 
+<!--
 <button on:click|stopPropagation={toggleOpen}>
     {#if isOpen}
     close
@@ -24,12 +19,18 @@
     open
     {/if}
 </button>
+-->
 
 <div 
     use:clickOutside on:outsideclick={closeDrawer} 
     class={isOpen ? 'drawer-open drawer-container' : 'drawer-container'}
 >
-    <h1 id="title"><a href="{import.meta.env.BASE_URL}#">glompad ☄️ </a></h1>
+    <h1 id="title">
+        <span on:click|stopPropagation={closeDrawer}>
+            <Icon name="x" stroke="gray" />
+        </span> 
+        <a href="{import.meta.env.BASE_URL}#">glompad</a>
+    </h1>
 
     <a href="https://glom.readthedocs.io/en/latest/">glom docs</a>
 
@@ -65,6 +66,7 @@
 h1 > a {
     text-decoration: none;
     color: black;
+    user-select: none;
 }
 
  .drawer-container {

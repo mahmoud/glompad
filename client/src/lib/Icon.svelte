@@ -38,7 +38,7 @@
       height: 1em;
       overflow: visible;
       transform-origin: 50% 50%;
-      margin-bottom: -2px;
+      margin-bottom: -.15em;
     }
   </style>
   
