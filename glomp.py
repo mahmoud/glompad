@@ -114,7 +114,7 @@ def build(latest, versions, deploy, basepath='/'):
 
     res = _subproc_run(['pip', 'index', 'versions', 'glom'], capture_output=True)
     output_lines = res.stdout.decode('utf8').splitlines()
-    assert len(output_lines) == 2, 'unexpected number of lines from pip'
+    assert 1 < len(output_lines) < 5, 'unexpected number of lines from pip'
     all_versions = [
         v.strip() for v in 
         output_lines[1].partition(':')[2].split(',')

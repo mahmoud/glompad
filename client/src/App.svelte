@@ -1,17 +1,25 @@
 <script lang="ts">
-  import { logException } from '@codemirror/view';
-import Drawer from './lib/Drawer.svelte';
+  import Drawer from './lib/Drawer.svelte';
   import Icon from './lib/Icon.svelte';
   import Pad from './lib/Pad.svelte'
 
   let drawer;
+  let innerWidth = 0;
 </script>
+<svelte:window bind:innerWidth/>
+
 
 <div id="container">
   <Drawer bind:this={drawer} />
   <div class="box header">
       <h1 id="title">
-        <span on:click|stopPropagation={drawer.toggleOpen}><Icon name="menu" stroke="gray" /></span> 
+          <div 
+            class="menu-icon-bg"
+            on:click|stopPropagation={drawer.toggleOpen}
+            on:keydown|stopPropagation={drawer.toggleOpen}
+            >
+            <Icon name="menu" stroke="gray" />
+          </div> 
         <a href="{import.meta.env.BASE_URL}#">
           glompad
         </a>
@@ -32,6 +40,7 @@ import Drawer from './lib/Drawer.svelte';
 </div>
 
 <style>
+
 h1 {
   user-select: none;
 }
@@ -39,6 +48,31 @@ h1 {
 #title * {
   text-decoration: none;
   color: black;
+}
+
+.menu-icon-bg :global(*) { 
+  margin: 0 auto;
+}
+
+.menu-icon-bg {
+  cursor: pointer;
+  border-radius: 50%;
+  background: lightgray;
+  width: 38px;
+  height: 36px;
+  top: 11px;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-align: center;
+  text-decoration: none;
+  transition: color .15s ease, background .15s ease;
+  font-size: 70%;
+  padding: 4px 2px;
+}
+
+.menu-icon-bg:hover {
+  background: silver;
 }
 
 #container {

@@ -1,14 +1,26 @@
 <script>
     import clickOutside from './actions/clickOutside';
     import tooltip from "./actions/tooltip";
-
-    let isOpen = false;
-    const closeDrawer = () => (isOpen = false);
-    export const toggleOpen = () => (isOpen = !isOpen);
-
     import example_info from '../examples.generated.json';
     import VersionPicker from './VersionPicker.svelte';
     import Icon from './Icon.svelte';
+
+    let isWide, isOpen;
+    let innerWidth = 0;
+    let isOpened = false;
+    $: {
+        isWide = innerWidth > 1000;
+        isOpen = isOpened || isWide;
+
+        if (isOpen) {
+            document.body.classList.add('drawer-open')
+        } else {
+            document.body.classList.remove('drawer-open')
+        }
+    }
+    const closeDrawer = () => (isOpened = false);
+    export const toggleOpen = () => (isOpened = !isOpened);
+
 </script>
 
 <!--
@@ -21,13 +33,20 @@
 </button>
 -->
 
+<svelte:window bind:innerWidth/>
+
 <div 
     use:clickOutside on:outsideclick={closeDrawer} 
     class={isOpen ? 'drawer-open drawer-container' : 'drawer-container'}
 >
     <h1 id="title">
-        <span on:click|stopPropagation={closeDrawer}>
-            <Icon name="x" stroke="gray" />
+        <span 
+            on:click|stopPropagation={closeDrawer}
+            on:keydown={closeDrawer}
+            style:cursor=pointer
+            style:display={isWide ? 'none' : 'initial'}
+            role=button>
+            <Icon name="arrow-left" stroke="gray" />
         </span> 
         <a href="{import.meta.env.BASE_URL}#">glompad</a>
     </h1>
@@ -77,8 +96,8 @@ h1 > a {
    display: flex;
    flex-direction: column;
    padding: 6px;
-   width: 300px;
-   left: -300px; /* move it off screen when it’s closed */
+   width: 250px;
+   left: -250px; /* move it off screen when it’s closed */
    transition: left 0.1s ease-out;
  }
 

@@ -6,7 +6,7 @@
 	import CodeMirror from "svelte-codemirror-editor";
   import { python } from "@codemirror/lang-python";
   
-  import { githubLight } from '@uiw/codemirror-theme-github';
+  import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
   import Drawer from './Drawer.svelte';
 
   let classes = "";
@@ -69,6 +69,10 @@
 </div>
 
 <style>
+:global(body.drawer-open) .glompad {
+  margin-left: 250px;
+  transition: all .1s ease-in-out;
+}
 
 :global(.cm-wrap-small) {
   font-size: 2.4vw !important;
