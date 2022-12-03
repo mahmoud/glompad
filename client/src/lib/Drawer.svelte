@@ -4,6 +4,7 @@
     import example_info from '../examples.generated.json';
     import VersionPicker from './VersionPicker.svelte';
     import Icon from './Icon.svelte';
+    import OptionsMenu from './OptionsMenu.svelte';
 
     let isWide, isOpen;
     let innerWidth = 0;
@@ -51,9 +52,16 @@
         <a href="{import.meta.env.BASE_URL}#">glompad</a>
     </h1>
 
-    <a href="https://glom.readthedocs.io/en/latest/">glom docs</a>
-
     <div class="examples-container">
+        <h2 class="section-heading">Docs</h2>
+        <ul>
+            <li>    
+                <Icon name='book'/> <a href="https://glom.readthedocs.io/en/latest/" target="_blank">glom docs</a>
+            </li>
+            <li>
+                <Icon name='coffee'/> <a href="https://glom.readthedocs.io/en/latest/tutorial.html" target="_blank">glom Tutorial</a>
+            </li>
+        </ul>
         <h2 class="section-heading">Examples</h2>
         <ul>
             {#each example_info.example_list as ex}
@@ -75,13 +83,30 @@
             </li>
             {/each}
         </ul>
+        <h2 class="section-heading">Options</h2>
+        <OptionsMenu withTitle={false} />
+
     </div>
 
     <div class='version-picker-container'>
         <VersionPicker />
     </div>
 </div>
+<div class="{isOpen && !isWide ? "shade" : ""}"></div>
 <style>
+
+.shade {
+    background: black;
+    opacity: 0.5;
+    height: 100%;
+    width: 100vw;
+    position:fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    transition: all 0.1s ease-out;
+}
+
 h1 > a {
     text-decoration: none;
     color: black;
@@ -91,14 +116,14 @@ h1 > a {
  .drawer-container {
    background-color: white;
    position: absolute;
-   height: calc(100vh);
+   height: 100vh;
    z-index: 10;
    display: flex;
    flex-direction: column;
    padding: 6px;
    width: 250px;
    left: -250px; /* move it off screen when it’s closed */
-   transition: left 0.1s ease-out;
+   transition: left 0.1s ease-out
  }
 
  .drawer-container * {
@@ -135,5 +160,6 @@ h1 > a {
     list-style: none;
     margin-left: 0;
     padding-left: 0;
+    margin-bottom: 16px;
  }
 </style>

@@ -2,7 +2,8 @@
     import tooltip from "./actions/tooltip";
     import { padStore } from "./stores";
 
-    export let domNode;
+    export let domNode = null;
+    export let withTitle = true;
     let { enableAutoformat } = padStore;
 </script>
 
@@ -19,7 +20,9 @@
 </style>
 
 <div id="optionsMenu" bind:this={domNode}>
+    {#if withTitle}
     <p class="menu-title">Options</p>
+    {/if}
     <div id="autoformat-item" use:tooltip={{
             content: "Automatically format spec and target on execution using the black autoformatter. Also use black for result formatting instead of pprint.",
             placement: "right",

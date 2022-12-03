@@ -11,7 +11,6 @@
 
 	import { padStore } from "./stores";
 	import Icon from './Icon.svelte';
-	import OptionsMenu from './OptionsMenu.svelte';
 	
 	let curVal = "first";
 	let count = 0;
@@ -69,7 +68,6 @@
 	]);
 
 	let showMenu = false;
-	let optionsMenuElement;
 	let specEditor;
 	let extensions = [Prec.highest(ctrlEnterKeymap)];
 </script>
@@ -77,29 +75,6 @@
 <!------html-->
 
 <div class="padInput">
-	<div
-		class="opts-button"
-		role="button"
-		tabindex="0"
-		on:click={optsClick}
-		on:keydown={optsClick}
-		use:tooltip={{
-			content: optionsMenuElement,
-			placement: "bottom",
-			trigger: "click",
-			interactive: true,
-			theme: "light",
-			followCursor: "initial",
-		}}
-		use:tooltip={{
-			content: "Options",
-			placement: "top",
-			delay: [400, 0],
-		}}
-		>
-		<Icon name="more-vertical" height=1.5em width=1.2em/>
-	</div>
-
 	<CodeMirror
 		bind:value={$specValue}
 		bind:this={specEditor}
@@ -140,8 +115,6 @@
 		use:copyText={() => window.location.href}>
 	  <Icon name="link" />
 	</button>
-
-	<OptionsMenu bind:domNode={optionsMenuElement} />
 </div>
 
 <svelte:window on:copysuccess={copySuccess} />
@@ -183,10 +156,6 @@
 		align-items: center;
 		user-select: none;
 		background: #fff;
-	}
-
-	.opts-button:hover {
-		background: #ededed;
 	}
 
 	button:hover {
