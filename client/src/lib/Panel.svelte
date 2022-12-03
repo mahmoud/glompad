@@ -41,7 +41,7 @@
       font-size: 0.95rem;
       border-bottom: 1px solid silver;
       text-transform: uppercase;
-      color: #555;
+      color: var(--gray-5);
       padding-bottom: 3px;
       user-select: none;
       margin-right: auto;
@@ -49,7 +49,7 @@
     }
     
     .panel-status-badge {
-      background: silver;
+      background: var(--gray-4);
       display: inline-flexbox;
       font-size: .85rem;
       padding: 0.15rem 1rem 0 1rem;

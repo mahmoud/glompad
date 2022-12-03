@@ -1,6 +1,7 @@
 <script>
     import tooltip from "./actions/tooltip";
     import { padStore } from "./stores";
+    import DarkModeOption from './DarkModeOption.svelte';
 
     export let domNode = null;
     export let withTitle = true;
@@ -30,5 +31,8 @@
         }}>
         <input id="autoformat-checkbox" type="checkbox" bind:checked={$enableAutoformat} />
         <label for="autoformat-checkbox">Autoformat (black)</label>
+    </div>
+    <div id="darkmode-item">
+        <DarkModeOption />
     </div>
 </div>

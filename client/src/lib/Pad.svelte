@@ -1,13 +1,12 @@
 <script lang="ts">
   import SpecInput from './SpecInput.svelte'
-  import { padStore, urlStore, largeScreenStore } from './stores';
+  import { padStore, darkModeStore, urlStore, largeScreenStore } from './stores';
   import Panel from './Panel.svelte'
 
 	import CodeMirror from "svelte-codemirror-editor";
   import { python } from "@codemirror/lang-python";
   
   import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
-  import Drawer from './Drawer.svelte';
 
   let classes = "";
   export {classes as class};
@@ -24,7 +23,7 @@
 </script>
 
 <div class="gp-container {classes}">
-  <Panel title="Spec" status={$specStatus} class="glom-spec-container">
+  <Panel title="Glom Spec" status={$specStatus} class="glom-spec-container">
     <SpecInput />
   </Panel>
   <Panel title="Target" class="glom-target-container" status={$targetStatus}>
@@ -34,7 +33,7 @@
       lang={python()}
       basic={true}
       on:change={onchange}
-      theme={githubLight}
+      theme={$darkModeStore ? githubDark : githubLight}
       placeholder="Insert your target data here. JSON and Python literals supported."
       styles={{
         "&": {
@@ -52,7 +51,7 @@
       class="{wrap_class} cm-result-wrap"
       basic={true}
       lang={$resultStatus.match(/error/ig) ? null : python()}
-      theme={githubLight}
+      theme={$darkModeStore ? githubDark : githubLight}
       editable={false}
       readonly={true}
       placeholder="Result will be displayed here after executing your glom spec."
@@ -92,7 +91,7 @@
 }
 
 :global(.cm-target-wrap) { 
-  background: #fff;
+  background: var(--gray-1);
   border: 1px solid silver;
 }
 
@@ -102,7 +101,7 @@
 }
 
 :global(.cm-result-wrap) { 
-  background: #fff;
+  background: var(--gray-1);
   border: 1px solid silver;
 }
 

@@ -85,7 +85,6 @@
         </ul>
         <h2 class="section-heading">Options</h2>
         <OptionsMenu withTitle={false} />
-
     </div>
 
     <div class='version-picker-container'>
@@ -109,12 +108,12 @@
 
 h1 > a {
     text-decoration: none;
-    color: black;
+    color: var(--gray-8);
     user-select: none;
 }
 
  .drawer-container {
-   background-color: white;
+   background-color: var(--gray-1);
    position: absolute;
    height: 100vh;
    z-index: 10;
@@ -145,7 +144,7 @@ h1 > a {
     font-size: 0.95rem;
     border-bottom: 1px solid silver;
     text-transform: uppercase;
-    color: #555;
+    color: var(--gray-8);
     padding-bottom: 3px;
     user-select: none;
     margin-right: auto;

@@ -47,7 +47,7 @@ h1 {
 
 #title * {
   text-decoration: none;
-  color: black;
+  color: var(--gray-8);
 }
 
 .menu-icon-bg :global(*) { 
@@ -57,7 +57,7 @@ h1 {
 .menu-icon-bg {
   cursor: pointer;
   border-radius: 50%;
-  background: lightgray;
+  background: var(--gray-2);
   width: 38px;
   height: 36px;
   top: 11px;
@@ -83,7 +83,7 @@ h1 {
 }
 
 #container > div {
-  background-color: #efefef;
+  background-color: var(--gray-2);
 }
 
 .box {
@@ -94,7 +94,7 @@ h1 {
 :global(.glompad) {
   margin: 0 0.5rem;
   padding: 0.5rem;
-  background: #fff;
+  background: var(--gray-1);
   flex: 1;
 }
 

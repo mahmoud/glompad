@@ -12,6 +12,8 @@ class PadState {
     ) {};
 }
 
+export const darkModeStore: Writable<boolean> = writable(false);
+
 class PadStore {
     constructor(
         public specValue: Writable<string> = writable(''),

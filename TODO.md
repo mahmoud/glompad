@@ -1,18 +1,27 @@
 # TODO
 
-Mostly ideas.
+# Tasks
 
-* Examples drawer
+* Select and translate examples
+* Factor out common codemirror (make specinput font sizing match target/result)
+* Message on copy success
+
+# Features
+
 * Dark mode
-* Status object refactor
+* Split run/copy/link buttons into a row
+* Status object color and tooltips (requires refactor to status object)
 * fetch() target
-* multiple targets/results (tabbed)
 * auto-run on change
-* panel for generated glom code
-* error visualization
 * Optional scope field
+* multiple targets/results (tabbed)
+* panel for generated glom code
 
 ## Technical improvements
 
 * Unplugin plugin for autogenerating the examples (currently in glomp.py)
 * Unplugin plugin for transcluding the python (currently in glomp.py build)
+
+# Ideas
+
+* Error visualization (overlaid on target/spec?)

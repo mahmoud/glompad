@@ -1,7 +1,7 @@
 <script>
 	import CodeMirror from "svelte-codemirror-editor";
 	import { basicSetup } from 'codemirror';
-	import { githubLight } from '@uiw/codemirror-theme-github';
+	import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
 	import { Prec } from "@codemirror/state";
@@ -9,7 +9,7 @@
 	import copyText from "./actions/copyText";
 	import tooltip from "./actions/tooltip";
 
-	import { padStore } from "./stores";
+	import { padStore, darkModeStore } from "./stores";
 	import Icon from './Icon.svelte';
 	
 	let curVal = "first";
@@ -81,7 +81,7 @@
 		class="cm-wrap"
 		lang={python()}
 		extensions={extensions}
-		theme={githubLight}
+		theme={$darkModeStore ? githubDark : githubLight}
 		basic={true}
 		placeholder="Insert your glom spec here."
 		styles={{
@@ -138,28 +138,21 @@
 		max-width: 100vw;
 	}
 
-	.opts-button {
-		padding-top: 8px;
-		cursor: pointer;
-		color: #aaa;
-		border-right: 1px solid silver;
-	}
-
 	button {
 		display: flex;
 		margin: 0;
 		border: 0;
 		border-left: 1px solid silver !important;
-		color: #aaa;
+		color: var(--gray-4);
 		cursor: pointer;
 		justify-content: center;
 		align-items: center;
 		user-select: none;
-		background: #fff;
+		background: var(--gray-1);
 	}
 
 	button:hover {
-		background: #ededed;
+		background: var(--gray-2);
 	}
 
 	.run-button {
