@@ -1,6 +1,5 @@
 <script>
 	import CodeMirror from "svelte-codemirror-editor";
-	import { basicSetup } from 'codemirror';
 	import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
@@ -15,17 +14,17 @@
 	let curVal = "first";
 	let count = 0;
 
-	function optsClick(event) {
-		count += 1;
-		curVal = "opts clicked " + count;
-		showMenu = !showMenu;
-	}
-
 	function copySuccess() {
 		curVal = "copy success!"
 	}
 
 	const { specValue, targetValue, enableAutoformat, stateStack } = padStore;
+
+	let theme;
+	$: {
+		theme = $darkModeStore ? githubDark : githubLight;
+		window.console.log($darkModeStore)
+	}
 
 	const executeGlom = () => {
 		if (!window.pyg) {
@@ -67,7 +66,6 @@
 		},
 	]);
 
-	let showMenu = false;
 	let specEditor;
 	let extensions = [Prec.highest(ctrlEnterKeymap)];
 </script>
@@ -81,7 +79,7 @@
 		class="cm-wrap"
 		lang={python()}
 		extensions={extensions}
-		theme={$darkModeStore ? githubDark : githubLight}
+		theme={theme}
 		basic={true}
 		placeholder="Insert your glom spec here."
 		styles={{

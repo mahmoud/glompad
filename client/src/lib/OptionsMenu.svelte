@@ -1,7 +1,6 @@
 <script>
     import tooltip from "./actions/tooltip";
-    import { padStore } from "./stores";
-    import DarkModeOption from './DarkModeOption.svelte';
+    import { padStore, darkModeStore } from "./stores";
 
     export let domNode = null;
     export let withTitle = true;
@@ -25,14 +24,19 @@
     <p class="menu-title">Options</p>
     {/if}
     <div id="autoformat-item" use:tooltip={{
-            content: "Automatically format spec and target on execution using the black autoformatter. Also use black for result formatting instead of pprint.",
-            placement: "right",
-            delay: [400, 0],
-        }}>
+        content: "Automatically format spec and target on execution using the black autoformatter. Also use black for result formatting instead of pprint.",
+        placement: "right",
+        delay: [400, 0],
+    }}>
         <input id="autoformat-checkbox" type="checkbox" bind:checked={$enableAutoformat} />
         <label for="autoformat-checkbox">Autoformat (black)</label>
     </div>
-    <div id="darkmode-item">
-        <DarkModeOption />
+    <div id="darkmode-item" use:tooltip={{
+        content: "Override browser/OS preference and force dark mode.",
+        placement: "right",
+        delay: [400, 0],
+    }}>
+        <input id="darkmode-checkbox" type="checkbox" bind:checked={$darkModeStore}  />
+        <label for="darkmode-checkbox">Dark mode</label>
     </div>
 </div>

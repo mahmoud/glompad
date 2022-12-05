@@ -4,6 +4,7 @@ import { writable, readable, derived, get } from 'svelte/store';
 import { createMediaStore } from 'svelte-media-queries'
 
 import {createUrlStore} from './urlStore'
+export {darkModeStore} from './darkModeStore'
 
 class PadState {
     constructor( 
@@ -11,8 +12,6 @@ class PadState {
       public targetValue: string = '',
     ) {};
 }
-
-export const darkModeStore: Writable<boolean> = writable(false);
 
 class PadStore {
     constructor(
@@ -98,6 +97,6 @@ function shallowEqual(o1, o2) {
     }
   
     return true;
-  }
+}
 
 // State stack. If URL changes, compare to most recent on stack, and if not matching, add new state.

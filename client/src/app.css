@@ -105,7 +105,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  body:not(.light) {
+  body.dark {
     --gray-1: #111111;
     --gray-2: #2d2d2d;
     --gray-3: #4b4b4b;
@@ -135,7 +135,7 @@ body {
     --secondary-color-8: #facbbd;
   }
 
-  body:not(.light) ::selection {
+  body.dark ::selection {
     background: var(--secondary-color-6);
   }
 }

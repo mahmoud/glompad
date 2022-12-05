@@ -21,7 +21,9 @@
 
 * Unplugin plugin for autogenerating the examples (currently in glomp.py)
 * Unplugin plugin for transcluding the python (currently in glomp.py build)
+* iframe-ability for glom docs?
 
 # Ideas
 
 * Error visualization (overlaid on target/spec?)
+* Beginner/Intermediate/Advanced icons on examples?

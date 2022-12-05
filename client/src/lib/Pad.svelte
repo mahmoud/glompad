@@ -19,7 +19,11 @@
   });
 
   let wrap_class: string;
-  $: wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
+  let theme;
+  $: {
+    wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
+    theme = $darkModeStore ? githubDark : githubLight;
+  }
 </script>
 
 <div class="gp-container {classes}">
@@ -51,7 +55,7 @@
       class="{wrap_class} cm-result-wrap"
       basic={true}
       lang={$resultStatus.match(/error/ig) ? null : python()}
-      theme={$darkModeStore ? githubDark : githubLight}
+      theme={theme}
       editable={false}
       readonly={true}
       placeholder="Result will be displayed here after executing your glom spec."
