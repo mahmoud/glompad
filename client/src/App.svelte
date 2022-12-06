@@ -18,7 +18,7 @@
             on:click|stopPropagation={drawer.toggleOpen}
             on:keydown|stopPropagation={drawer.toggleOpen}
             >
-            <Icon name="menu" stroke="gray" />
+            <Icon name="menu" stroke="currentColor" />
           </div> 
         <a href="{import.meta.env.BASE_URL}#">
           glompad
@@ -47,7 +47,10 @@ h1 {
 
 #title * {
   text-decoration: none;
-  color: var(--gray-8);
+  color: var(--primary-color-8);
+  font-weight: 500;
+  font: monospace;
+  letter-spacing: -1.5px;
 }
 
 .menu-icon-bg :global(*) { 
@@ -57,7 +60,8 @@ h1 {
 .menu-icon-bg {
   cursor: pointer;
   border-radius: 50%;
-  background: var(--gray-2);
+  background: var(--primary-color-2);
+  color: var(--primary-color-8);
   width: 38px;
   height: 36px;
   top: 11px;
@@ -72,7 +76,7 @@ h1 {
 }
 
 .menu-icon-bg:hover {
-  background: silver;
+  background: var(--primary-color-3);
 }
 
 #container {
@@ -83,7 +87,7 @@ h1 {
 }
 
 #container > div {
-  background-color: var(--gray-2);
+  /* background-color: var(--primary-color-2); */
 }
 
 .box {
@@ -99,7 +103,7 @@ h1 {
 }
 
 .header {
-  height: 50px;
+  height: 48px;
   padding-left: 10px;
 }
 

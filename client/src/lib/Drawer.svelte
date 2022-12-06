@@ -95,7 +95,7 @@
 <style>
 
 .shade {
-    background: black;
+    background: var(--gray-8);
     opacity: 0.5;
     height: 100%;
     width: 100vw;
@@ -108,22 +108,30 @@
 
 h1 > a {
     text-decoration: none;
-    color: var(--gray-8);
     user-select: none;
+    color: var(--primary-color-8);
 }
 
- .drawer-container {
-   background-color: var(--gray-1);
-   position: absolute;
-   height: 100vh;
-   z-index: 10;
-   display: flex;
-   flex-direction: column;
-   padding: 6px;
-   width: 250px;
-   left: -250px; /* move it off screen when it’s closed */
-   transition: left 0.1s ease-out
- }
+h1 {
+    font-weight: 500;
+    font: monospace;
+    letter-spacing: -1.5px;
+    padding: 0;
+}
+
+.drawer-container {
+    background-color: var(--gray-1);
+    position: absolute;
+    height: 100vh;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    /* padding: 6px; */
+    width: 250px;
+    left: -250px; /* move it off screen when it’s closed */
+    transition: left 0.1s ease-out;
+    border-right: 2px solid var(--primary-color-2);
+}
 
  .drawer-container * {
     width: 100%;
