@@ -126,7 +126,7 @@ h1 {
     z-index: 10;
     display: flex;
     flex-direction: column;
-    /* padding: 6px; */
+    padding: 6px;
     width: 250px;
     left: -250px; /* move it off screen when it’s closed */
     transition: left 0.1s ease-out;

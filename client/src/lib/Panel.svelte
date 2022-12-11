@@ -1,20 +1,57 @@
 <script>
+    import Icon from "./Icon.svelte";
+
     let classes = "";
     export {classes as class};
     export let status = null, title;
+    export let collapsed = false;
+    export let min_height = null;
+    export let flex_grow = null;
+    const orig_flex_grow = flex_grow;
+
+    let content_class = '';
+
+    const toggle = () => {
+      collapsed = !collapsed;
+    }
+
+    const expand = () => {
+      if (collapsed) {
+        collapsed = false;
+      }
+    }
+
+    $: {
+      content_class = collapsed ? 'collapsed-content' : '';
+      flex_grow = collapsed ? 0 : orig_flex_grow;
+    }
 </script>
 
-<div class="panel {classes}">
+<div 
+  class="panel {classes}"
+  style:min-height={min_height}
+  style:flex-grow={flex_grow}
+>
     <div class="panel-label">
-        <h3 class="panel-label-text">{title}</h3>
+        <h3 class="panel-label-text" on:click={expand} on:keydown={expand}>
+          <span class='collapser' on:click|stopPropagation={toggle} on:keydown|stopPropagation={toggle}>
+          {#if !collapsed }
+            <Icon name="chevron-down" />
+          {:else}
+            <Icon name="chevron-right" />
+          {/if}
+          </span>
+          {title}
+        </h3>
         {#if status}
             <div class="panel-status-badge">{status}</div>
         {/if}
     </div>
-    <div class="panel-content">
+    <div 
+      class="panel-content {content_class}"
+    >
       <slot></slot>
     </div>
-
 </div>        
 
 
@@ -27,6 +64,15 @@
       flex-direction: column;
       max-width: 1200px;
       width: 100%;
+    }
+
+    .collapser {
+      cursor: pointer;
+    }
+
+    .collapsed-content {
+      display: none;
+      height: 0;
     }
 
     .panel-label {

@@ -27,10 +27,12 @@
 </script>
 
 <div class="gp-container {classes}">
-  <Panel title="Glom Spec" status={$specStatus} class="glom-spec-container">
+  <Panel title="Glom Spec" status={$specStatus} class="glom-spec-container"
+    min_height="100px" flex_grow="1">
     <SpecInput />
   </Panel>
-  <Panel title="Target" class="glom-target-container" status={$targetStatus}>
+  <Panel title="Target" class="glom-target-container" status={$targetStatus}
+    flex_grow="1">
     <CodeMirror
       bind:value={$targetValue}
       class="{wrap_class} cm-target-wrap"
@@ -49,7 +51,8 @@
       }}
     />
   </Panel>
-  <Panel title="Result" class="glom-result-container" status={$resultStatus}>
+  <Panel title="Result" class="glom-result-container" status={$resultStatus}
+    flex_grow=2>
     <CodeMirror
       bind:value={$resultValue}
       class="{wrap_class} cm-result-wrap"
@@ -89,29 +92,14 @@
   align-items: center;
 }
 
-:global(.glom-spec-container) {
-  min-height: 100px;
-  flex-grow: 1;
-}
-
 :global(.cm-target-wrap) { 
   background: var(--gray-1);
   border: 1px solid silver;
 }
 
-:global(.glom-target-container) { 
-  min-height: 200px;
-  flex-grow: 1;
-}
-
 :global(.cm-result-wrap) { 
   background: var(--gray-1);
   border: 1px solid silver;
-}
-
-
-:global(.glom-result-container) { 
-  flex-grow: 2;
 }
 
 
