@@ -4,7 +4,7 @@
 
     export let domNode = null;
     export let withTitle = true;
-    let { enableAutoformat } = padStore;
+    let { enableAutoformat, enableScope } = padStore;
 </script>
 
 <style>
@@ -13,7 +13,7 @@
     margin-bottom: 6px;
 }
 
-#autoformat-item, #autoformat-item > * {
+.option, .option > * {
     cursor: pointer;
 }
 
@@ -23,7 +23,7 @@
     {#if withTitle}
     <p class="menu-title">Options</p>
     {/if}
-    <div id="autoformat-item" use:tooltip={{
+    <div class="option" id="autoformat-item" use:tooltip={{
         content: "Automatically format spec and target on execution using the black autoformatter. Also use black for result formatting instead of pprint.",
         placement: "right",
         delay: [400, 0],
@@ -31,7 +31,15 @@
         <input id="autoformat-checkbox" type="checkbox" bind:checked={$enableAutoformat} />
         <label for="autoformat-checkbox">Autoformat (black)</label>
     </div>
-    <div id="darkmode-item" use:tooltip={{
+    <div class="option" id="scope-item" use:tooltip={{
+        content: "Show input for glom scope, for advanced glom usage.",
+        placement: "right",
+        delay: [400, 0],
+    }}>
+        <input id="scope-checkbox" type="checkbox" bind:checked={$enableScope} />
+        <label for="scope-checkbox">Enable glom scope {$enableScope}</label>
+    </div>
+    <div class="option" id="darkmode-item" use:tooltip={{
         content: "Override browser/OS preference and force dark mode.",
         placement: "right",
         delay: [400, 0],

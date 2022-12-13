@@ -35,7 +35,8 @@
 		padStore.saveState() // TODO: option to only save successful specs?
 		window.pyg.get("run_click")();
 
-		if (enableAutoformat) {
+		if ($enableAutoformat) {
+			window.console.log('autoformatting')
 			const autoformat = window.pyg.get("autoformat");
 			const specFormatted = autoformat($specValue);
 			$specValue = specFormatted;

@@ -22,9 +22,11 @@ def get_store_value(store):
 
 def run():
     js.createObject(create_proxy(globals()), "pyg")
+    glom_kwargs = {}
 
     stateStack = get_store_value(js.window.SvelteApp.padStore.stateStack)
     spec_val = glom.glom(stateStack, glom.T[0].specValue, default='').strip()
+    scope_val = glom.glom(stateStack, glom.T[0].scopeValue, default='').strip()
     target_input = glom.glom(stateStack, glom.T[0].targetValue, default='').strip()
 
     enable_autoformat = bool(get_store_value(js.window.SvelteApp.padStore.enableAutoformat))
@@ -35,8 +37,19 @@ def run():
     except Exception as e:
         load_error = str(e)
         js.window.SvelteApp.padStore.specStatus.set('Error')
+        js.window.console.log(load_error)
     else:
         js.window.SvelteApp.padStore.specStatus.set('OK')
+
+    try:
+        scope = build_spec(scope_val) if scope_val.strip() else None
+        if scope:
+            glom_kwargs['scope'] = scope
+    except Exception as e:
+        load_error = str(e)
+        js.window.SvelteApp.padStore.scopeStatus.set('Error')
+    else:
+        js.window.SvelteApp.padStore.scopeStatus.set('OK')
 
     if not load_error:
         try:
@@ -55,7 +68,7 @@ def run():
 
     if not load_error:
         try:
-            result = glom.glom(target, spec)
+            result = glom.glom(target, spec, **glom_kwargs)
             result = pprint.pformat(result)
             if enable_autoformat:
                 result = autoformat(result)

@@ -10,6 +10,7 @@ class PadState {
     constructor( 
       public specValue: string = '',
       public targetValue: string = '',
+      public scopeValue: string = '',
     ) {};
 }
 
@@ -17,6 +18,9 @@ class PadStore {
     constructor(
         public specValue: Writable<string> = writable(''),
         public specStatus: Writable<string> = writable(''),
+
+        public scopeValue: Writable<string> = writable(''),
+        public scopeStatus: Writable<string> = writable(''),
 
         public targetValue: Writable<string> = writable(''),
         public targetStatus: Writable<string> = writable(''),
@@ -26,6 +30,7 @@ class PadStore {
 
         public stateStack: Writable<Array<PadState>> = writable([new PadState()]),
 
+        public enableScope: Writable<boolean | null> = writable(null),
         public enableAutoformat: Writable<boolean> = writable(false),
 
     ) {};
@@ -33,6 +38,7 @@ class PadStore {
     saveState() {
       const newState = {
         "specValue": get(this.specValue),
+        "scopeValue": get(this.scopeValue),
         "targetValue": get(this.targetValue),
       }
       const curStack = get(this.stateStack)
@@ -44,13 +50,17 @@ class PadStore {
       const urlParams = {
         "spec": newState.specValue,
         "target": newState.targetValue,
-        "v": "1"
       }
+      if (newState.scopeValue) {
+        urlParams['scope'] = newState.scopeValue;
+      }
+      urlParams['v'] = '1';
 
       let new_url = new URL(window.location.toString())
-      new_url.hash =  new URLSearchParams(Object.entries(urlParams)).toString();
+      new_url.hash = new URLSearchParams(Object.entries(urlParams)).toString();
   
       if (new_url.toString() != window.location.toString()) {
+        console.log(new_url.toString())
         urlStore.set(new_url.toString());
       }
     }
@@ -67,9 +77,16 @@ urlStore.subscribe((val) => {
     const params = new URLSearchParams(hash);
     const newState: PadState = {
         "specValue": params.get('spec') || '',
-        "targetValue": params.get('target') || ''}
+        "targetValue": params.get('target') || '',
+        "scopeValue": params.get('scope') || '',
+      }
     padStore.specValue.set(newState.specValue);
+    padStore.scopeValue.set(newState.scopeValue);
     padStore.targetValue.set(newState.targetValue);
+
+    if (!!newState.scopeValue && get(padStore.enableScope) === null) {
+      padStore.enableScope.set(true);
+    }
 
     const curStack = get(padStore.stateStack)
     if (curStack.length == 0 || !shallowEqual(curStack[0], newState)) {

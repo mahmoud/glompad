@@ -10,7 +10,7 @@
 
   let classes = "";
   export {classes as class};
-  let {specStatus, targetValue, targetStatus, resultValue, resultStatus} = padStore;
+  let {specStatus, targetValue, targetStatus, resultValue, resultStatus, enableScope, scopeValue, scopeStatus} = padStore;
   
   urlStore.subscribe(value => {
     if (window && window.location.href != value) {
@@ -31,6 +31,27 @@
     min_height="100px" flex_grow="1">
     <SpecInput />
   </Panel>
+  {#if $enableScope}
+    <Panel title="Glom Scope" class="glom-scope-container" status={$scopeStatus}
+      flex_grow="1">
+      <CodeMirror
+        bind:value={$scopeValue}
+        class="{wrap_class} cm-scope-wrap"
+        lang={python()}
+        basic={true}
+        theme={$darkModeStore ? githubDark : githubLight}
+        placeholder="Insert your scope data here. JSON and Python literals supported."
+        styles={{
+          "&": {
+            "min-width": "100px",
+            "max-width": "100%",
+            "height": "100%",
+            "overflow": "scroll",
+          },
+        }}
+      />
+    </Panel>
+  {/if}
   <Panel title="Target" class="glom-target-container" status={$targetStatus}
     flex_grow="1">
     <CodeMirror
@@ -38,7 +59,6 @@
       class="{wrap_class} cm-target-wrap"
       lang={python()}
       basic={true}
-      on:change={onchange}
       theme={$darkModeStore ? githubDark : githubLight}
       placeholder="Insert your target data here. JSON and Python literals supported."
       styles={{
@@ -92,15 +112,9 @@
   align-items: center;
 }
 
-:global(.cm-target-wrap) { 
+:global(.cm-target-wrap), :global(.cm-result-wrap), :global(.cm-scope-wrap) { 
   background: var(--gray-1);
   border: 1px solid silver;
 }
-
-:global(.cm-result-wrap) { 
-  background: var(--gray-1);
-  border: 1px solid silver;
-}
-
 
 </style>
