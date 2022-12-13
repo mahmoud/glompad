@@ -1,27 +1,26 @@
-import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { defineConfig } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [svelte()],
   define: {
-    global: 'window', // very required for pyscript
+    global: "window", // very required for pyscript
   },
   build: {
     rollupOptions: {
       output: {
-        name: 'app',
+        name: "app",
       },
     },
   },
-  assetsInclude: [
-    './src/py/**',
-  ],
+  assetsInclude: ["./src/py/**"],
   optimizeDeps: {
     exclude: [
-      "codemirror", 
+      "codemirror",
       "@codemirror/language-python",
-			'@codemirror/commands',
-			'@codemirror/lint',
-			'@codemirror/state', /* ... */],
-  }
+      "@codemirror/commands",
+      "@codemirror/lint",
+      "@codemirror/state" /* ... */,
+    ],
+  },
 });
