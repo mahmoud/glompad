@@ -97,7 +97,7 @@
   }
 
   .panel-status-badge {
-    background: var(--gray-4);
+    background: var(--gray-3);
     display: inline-flexbox;
     font-size: 0.85rem;
     padding: 0.15rem 1rem 0 1rem;

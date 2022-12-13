@@ -135,25 +135,31 @@ body.dark {
   --gray-8: #dfdfdf;
   --gray-9: #fefefe;
 
-  --primary-color-1: #301215;
-  --primary-color-2: #60232a;
-  --primary-color-3: #90353f;
-  --primary-color-4: #c04654;
-  --primary-color-5: #f05869;
-  --primary-color-6: #f37987;
-  --primary-color-7: #f69ba5;
-  --primary-color-8: #f9bcc3;
-  --primary-color-9: #fcdee1;
+  --primary-color-1: #b87700;
+  --primary-color-2: #e09200;
+  --primary-color-3: #ffa500;
+  --primary-color-4: #ffb833;
+  --primary-color-5: #ffc65c;
+  --primary-color-6: #ffd485;
+  --primary-color-7: #ffdb99;
+  --primary-color-8: #ffeac2;
+  --primary-color-9: #fff8eb;
 
-  --secondary-color-2: #613224;
-  --secondary-color-3: #924c37;
-  --secondary-color-4: #c26549;
-  --secondary-color-5: #f37e5b;
-  --secondary-color-6: #f5987c;
-  --secondary-color-7: #f8b29d;
-  --secondary-color-8: #facbbd;
+  --secondary-color-1: #208697;
+  --secondary-color-2: #27a3b9;
+  --secondary-color-3: #2dbad2;
+  --secondary-color-4: #57c7db;
+  --secondary-color-5: #78d3e2;
+  --secondary-color-6: #9adeea;
+  --secondary-color-7: #bce9f1;
+  --secondary-color-8: #ddf4f8;
+
 }
 
 body.dark ::selection {
   background: var(--secondary-color-6);
+}
+
+a {
+  color: var(--secondary-color-6);
 }
