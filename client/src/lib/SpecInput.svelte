@@ -1,6 +1,6 @@
 <script>
 	import CodeMirror from "svelte-codemirror-editor";
-	import { githubLight, githubDark } from '@uiw/codemirror-theme-github';
+	import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 	import { python } from "@codemirror/lang-python";
 	import { keymap } from "@codemirror/view";
 	import { Prec } from "@codemirror/state";
@@ -9,21 +9,20 @@
 	import tooltip from "./actions/tooltip";
 
 	import { padStore, darkModeStore } from "./stores";
-	import Icon from './Icon.svelte';
-	
-	let curVal = "first";
-	let count = 0;
+	import Icon from "./Icon.svelte";
 
-	function copySuccess() {
-		curVal = "copy success!"
+	function copySuccess(e) {
+		// TODO: toast or something
+		window.console.warn("copy success!");
 	}
+
+	window.addEventListener("copysuccess", copySuccess);
 
 	const { specValue, targetValue, enableAutoformat, stateStack } = padStore;
 
 	let theme;
 	$: {
 		theme = $darkModeStore ? githubDark : githubLight;
-		window.console.log($darkModeStore)
 	}
 
 	const executeGlom = () => {
@@ -32,11 +31,11 @@
 			return;
 		}
 
-		padStore.saveState() // TODO: option to only save successful specs?
+		padStore.saveState(); // TODO: option to only save successful specs?
 		window.pyg.get("run_click")();
 
 		if ($enableAutoformat) {
-			window.console.log('autoformatting')
+			window.console.log("autoformatting");
 			const autoformat = window.pyg.get("autoformat");
 			const specFormatted = autoformat($specValue);
 			$specValue = specFormatted;
@@ -46,12 +45,13 @@
 	};
 
 	// doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
-	stateStack.subscribe(executeGlom);  
+	stateStack.subscribe(executeGlom);
 
 	const ctrlEnterKeymap = keymap.of([
 		{
 			key: "Ctrl-Enter",
-			run: (view) => {  // can get the event, too, by defining "any" 
+			run: (view) => {
+				// can get the event, too, by defining "any"
 				// TODO: deal with delays either coming from codemirror or svelte storage
 				setTimeout(executeGlom, 100);
 				return true;
@@ -59,7 +59,8 @@
 		},
 		{
 			key: "Shift-Enter",
-			run: (view) => {  // can get the event, too, by defining "any" 
+			run: (view) => {
+				// can get the event, too, by defining "any"
 				// TODO: deal with delays either coming from codemirror or svelte storage
 				setTimeout(executeGlom, 100);
 				return true;
@@ -79,44 +80,47 @@
 		bind:this={specEditor}
 		class="cm-wrap"
 		lang={python()}
-		extensions={extensions}
-		theme={theme}
+		{extensions}
+		{theme}
 		basic={true}
 		placeholder="Insert your glom spec here."
 		styles={{
 			"&": {
 				"min-width": "70px",
-				"height": "100%",
+				height: "100%",
 			},
 		}}
 	/>
-	<button class="run-button" 
+	<button
+		class="run-button"
 		on:click={executeGlom}
 		use:tooltip={{
 			content: "Run (or Ctrl-Enter via keyboard)",
 			placement: "top",
-		}}
-	><Icon name="play" /></button>
+		}}><Icon name="play" /></button
+	>
 
-	<button class="copy-button" 
+	<button
+		class="copy-button"
 		use:tooltip={{
 			content: "Copy spec to clipboard",
 			placement: "top",
 		}}
-	  	use:copyText={".cm-wrap .cm-content"}>
-	  <Icon name="copy" />
+		use:copyText={".cm-wrap .cm-content"}
+	>
+		<Icon name="copy" />
 	</button>
-	<button class="link-button" 
+	<button
+		class="link-button"
 		use:tooltip={{
 			content: "Copy link to clipboard",
 			placement: "top",
 		}}
-		use:copyText={() => window.location.href}>
-	  <Icon name="link" />
+		use:copyText={() => window.location.href}
+	>
+		<Icon name="link" />
 	</button>
 </div>
-
-<svelte:window on:copysuccess={copySuccess} />
 
 <style>
 	.padInput :global(.cm-wrap) {
@@ -124,7 +128,7 @@
 		min-width: 140px;
 	}
 
-	.padInput {	
+	.padInput {
 		border: 1px solid #aaa;
 		border-radius: 3px;
 		box-sizing: border-box;

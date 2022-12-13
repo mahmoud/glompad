@@ -1,9 +1,9 @@
-import './app.css'; 
-import App from './App.svelte';
-import { padStore } from './lib/stores';
+import "./app.css";
+import App from "./App.svelte";
+import { padStore } from "./lib/stores";
 
 const app = new App({
-  target: document.getElementById('app'),
+  target: document.getElementById("app"),
 });
 app.padStore = padStore;
 

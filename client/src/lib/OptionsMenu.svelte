@@ -37,7 +37,7 @@
         delay: [400, 0],
     }}>
         <input id="scope-checkbox" type="checkbox" bind:checked={$enableScope} />
-        <label for="scope-checkbox">Enable glom scope {$enableScope}</label>
+        <label for="scope-checkbox">Enable glom scope</label>
     </div>
     <div class="option" id="darkmode-item" use:tooltip={{
         content: "Override browser/OS preference and force dark mode.",
