@@ -19,7 +19,6 @@ darkModeStore.subscribe((val) => {
 });
 
 const applyDarkMode = (enabled: boolean) => {
-    window.console.log(enabled)
     if (enabled) {
       document.body.classList.add('dark');
     } else {

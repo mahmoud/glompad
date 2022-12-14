@@ -49,7 +49,9 @@
       {title}
     </h3>
     {#if status}
-      <div class="panel-status-badge">{status}</div>
+      <div class="panel-status-badge">
+        {status.title}
+      </div>
     {/if}
   </div>
   <div class="panel-content {content_class}">

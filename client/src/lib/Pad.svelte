@@ -98,6 +98,7 @@
       }}
     />
   </Panel>
+  <!-- {JSON.stringify( $resultStatus)} -->
   <Panel
     title="Result"
     class="glom-result-container"
@@ -108,7 +109,9 @@
       bind:value={$resultValue}
       class="{wrap_class} cm-result-wrap"
       basic={true}
-      lang={$resultStatus.match(/error/gi) ? null : python()}
+      lang={$resultStatus.title && $resultStatus.title.match(/error/gi)
+        ? null
+        : python()}
       {theme}
       editable={false}
       readonly={true}

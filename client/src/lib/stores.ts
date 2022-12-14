@@ -14,19 +14,45 @@ class PadState {
     ) {};
 }
 
+class InputStatus {
+  constructor(
+    public title: string = 'OK',
+    public subtitle: string = '',
+    public detail: string = '',
+    public timing: number = -0.0
+  ) {};
+}
+
+
+// NB: there's an extra song and dance to getting data out of pyodide, 
+// as most of the objects have to be wrapped in pyproxy objects. 
+// see the other half of the dance in glompad.py
+function deproxyWritable(initial) {
+  const store = writable(initial);
+
+  return {
+    ...store,
+    setProxy: (proxy) => {
+      const copy = proxy.toJs({dict_converter: Object.fromEntries});
+      return store.set(copy);
+    }
+  }
+}
+
+
 class PadStore {
     constructor(
         public specValue: Writable<string> = writable(''),
-        public specStatus: Writable<string> = writable(''),
+        public specStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
 
         public scopeValue: Writable<string> = writable(''),
-        public scopeStatus: Writable<string> = writable(''),
+        public scopeStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
 
         public targetValue: Writable<string> = writable(''),
-        public targetStatus: Writable<string> = writable(''),
+        public targetStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
 
         public resultValue: Writable<string> = writable(''),
-        public resultStatus: Writable<string> = writable(''),
+        public resultStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
 
         public stateStack: Writable<Array<PadState>> = writable([new PadState()]),
 

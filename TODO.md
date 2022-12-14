@@ -5,6 +5,7 @@
 * Select and translate examples
 * Factor out common codemirror (make specinput font sizing match target/result)
 * Message on copy success
+* Clean up autoformatting (just do it all in the python, assuming that plays OK with the urlstore)
 
 # Features
 
