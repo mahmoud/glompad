@@ -146,7 +146,7 @@ def run_click(e=None):
 
 
 def autoformat(code):
-    return black.format_str(code, mode=black.Mode())
+    return black.format_str(code, mode=black.Mode(line_length=50))
 
 run()
 js.createObject(create_proxy(globals()), "pyg")

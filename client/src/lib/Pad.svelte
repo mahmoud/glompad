@@ -7,6 +7,7 @@
     largeScreenStore,
   } from "./stores";
   import Panel from "./Panel.svelte";
+  import CodeInput from "./CodeInput.svelte";
 
   import CodeMirror from "svelte-codemirror-editor";
   import { python } from "@codemirror/lang-python";
@@ -16,6 +17,8 @@
   let classes = "";
   export { classes as class };
   let {
+    executeGlom,
+    specValue,
     specStatus,
     targetValue,
     targetStatus,
@@ -24,6 +27,7 @@
     enableScope,
     scopeValue,
     scopeStatus,
+    stateStack,
   } = padStore;
 
   urlStore.subscribe((value) => {
@@ -31,6 +35,16 @@
       window.location.href = value;
     }
   });
+
+  function copySuccess(e) {
+    // TODO: toast or something
+    window.console.warn("copy success!");
+  }
+
+  window.addEventListener("copysuccess", copySuccess);
+
+  // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
+  stateStack.subscribe(executeGlom);
 
   let wrap_class: string;
   let theme;
@@ -48,7 +62,13 @@
     min_height="100px"
     flex_grow="1"
   >
-    <SpecInput />
+    <CodeInput
+      execute={executeGlom}
+      destStore={specValue}
+      lang={python()}
+      cmClass="{wrap_class} cm-spec-wrap"
+      placeholder="Insert your glom spec here"
+    />
   </Panel>
   {#if $enableScope}
     <Panel
@@ -57,18 +77,16 @@
       status={$scopeStatus}
       flex_grow="1"
     >
-      <CodeMirror
-        bind:value={$scopeValue}
-        class="{wrap_class} cm-scope-wrap"
+      <CodeInput
+        execute={executeGlom}
+        destStore={scopeValue}
         lang={python()}
-        basic={true}
-        theme={$darkModeStore ? githubDark : githubLight}
+        cmClass="{wrap_class} cm-scope-wrap"
         placeholder="Insert your scope data here. JSON and Python literals supported."
         styles={{
           "&": {
             "min-width": "100px",
             "max-width": "100%",
-            height: "100%",
             overflow: "scroll",
           },
         }}
@@ -81,18 +99,16 @@
     status={$targetStatus}
     flex_grow="1"
   >
-    <CodeMirror
-      bind:value={$targetValue}
-      class="{wrap_class} cm-target-wrap"
+    <CodeInput
+      execute={executeGlom}
+      destStore={targetValue}
       lang={python()}
-      basic={true}
-      theme={$darkModeStore ? githubDark : githubLight}
+      cmClass="{wrap_class} cm-target-wrap"
       placeholder="Insert your target data here. JSON and Python literals supported."
       styles={{
         "&": {
           "min-width": "100px",
           "max-width": "100%",
-          height: "100%",
           overflow: "scroll",
         },
       }}
@@ -105,22 +121,17 @@
     status={$resultStatus}
     flex_grow="2"
   >
-    <CodeMirror
-      bind:value={$resultValue}
-      class="{wrap_class} cm-result-wrap"
-      basic={true}
-      lang={$resultStatus.title && $resultStatus.title.match(/error/gi)
-        ? null
-        : python()}
-      {theme}
-      editable={false}
+    <CodeInput
+      execute={executeGlom}
+      destStore={resultValue}
+      lang={$resultStatus.kind == "error" ? null : python()}
       readonly={true}
+      cmClass="{wrap_class} cm-result-wrap"
       placeholder="Result will be displayed here after executing your glom spec."
       styles={{
         "&": {
           "min-width": "100px",
           "max-width": "100%",
-          height: "100%",
           overflow: "scroll",
         },
       }}
@@ -146,6 +157,7 @@
     align-items: center;
   }
 
+  :global(.cm-spec-wrap),
   :global(.cm-target-wrap),
   :global(.cm-result-wrap),
   :global(.cm-scope-wrap) {

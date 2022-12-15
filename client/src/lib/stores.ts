@@ -16,6 +16,7 @@ class PadState {
 
 class InputStatus {
   constructor(
+    public kind: string = 'success',
     public title: string = 'OK',
     public subtitle: string = '',
     public detail: string = '',
@@ -107,6 +108,7 @@ class PadStore {
         this.specValue.set(specFormatted);
         const targetFormatted = autoformat(get(this.targetValue));
         this.targetValue.set(targetFormatted);
+        console.log(targetFormatted);
       }
     };
 }

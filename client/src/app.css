@@ -164,3 +164,7 @@ body.dark ::selection {
 a {
   color: var(--secondary-color-6);
 }
+
+a:hover {
+  color: var(--secondary-color-8);
+}
