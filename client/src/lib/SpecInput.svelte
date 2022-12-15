@@ -91,14 +91,6 @@
       },
     }}
   />
-  <button
-    class="run-button"
-    on:click={executeGlom}
-    use:tooltip={{
-      content: "Run (or Ctrl-Enter via keyboard)",
-      placement: "top",
-    }}><Icon name="play" /></button
-  >
 
   <button
     class="copy-button"
@@ -110,16 +102,6 @@
   >
     <Icon name="copy" />
   </button>
-  <button
-    class="link-button"
-    use:tooltip={{
-      content: "Copy link to clipboard",
-      placement: "top",
-    }}
-    use:copyText={() => window.location.href}
-  >
-    <Icon name="link" />
-  </button>
 </div>
 
 <style>
@@ -129,7 +111,7 @@
   }
 
   .padInput {
-    border: 1px solid #aaa;
+    border: 1px solid var(--gray-3);
     border-radius: 3px;
     box-sizing: border-box;
     display: flex;
@@ -145,7 +127,7 @@
     display: flex;
     margin: 0;
     border: 0;
-    border-left: 1px solid silver !important;
+    border-left: 1px solid var(--gray-3) !important;
     color: var(--gray-4);
     cursor: pointer;
     justify-content: center;
@@ -155,11 +137,8 @@
   }
 
   button:hover {
-    background: var(--gray-2);
-  }
-
-  .run-button {
-    flex: 1 0 auto;
-    padding: 0 12px;
+    background: var(--gray-0);
+    border-color: var(--primary-color-8);
+    color: var(--primary-color-8);
   }
 </style>

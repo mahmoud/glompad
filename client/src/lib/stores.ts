@@ -90,6 +90,25 @@ class PadStore {
         urlStore.set(new_url.toString());
       }
     }
+
+    executeGlom() {
+      if (!window.pyg) {
+        console.log("no pyscript yet");
+        return;
+      }
+
+      padStore.saveState(); // TODO: option to only save successful specs?
+      window.pyg.get("run_click")();
+
+      if (get(this.enableAutoformat)) {
+        window.console.log("autoformatting");
+        const autoformat = window.pyg.get("autoformat");
+        const specFormatted = autoformat(get(this.specValue));
+        this.specValue.set(specFormatted);
+        const targetFormatted = autoformat(get(this.targetValue));
+        this.targetValue.set(targetFormatted);
+      }
+    };
 }
 
 export const padStore = new PadStore();
@@ -142,4 +161,3 @@ function shallowEqual(o1, o2) {
     return true;
 }
 
-// State stack. If URL changes, compare to most recent on stack, and if not matching, add new state.

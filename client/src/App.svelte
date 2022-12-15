@@ -2,15 +2,23 @@
   import Drawer from "./lib/Drawer.svelte";
   import Icon from "./lib/Icon.svelte";
   import Pad from "./lib/Pad.svelte";
+  import tooltip from "./lib/actions/tooltip";
+  import copyText from "./lib/actions/copyText";
+
+  import { padStore, darkModeStore } from "./lib/stores";
+
+  const { executeGlom } = padStore;
 
   let drawer;
   let innerWidth = 0;
+
 </script>
 
 <svelte:window bind:innerWidth />
 
 <div id="container">
   <Drawer bind:this={drawer} />
+
   <div class="box header">
     <h1 id="title">
       <div
@@ -20,8 +28,31 @@
       >
         <Icon name="menu" stroke="currentColor" />
       </div>
+
       <a href="{import.meta.env.BASE_URL}#"> glompad </a>
     </h1>
+    <div id="pad-actions">
+      <button
+        id="run-button"
+        on:click={executeGlom}
+        use:tooltip={{
+          content: "Run (or Ctrl-Enter via keyboard)",
+          placement: "bottom",
+          delay: [400, 0]
+        }}><Icon name="play" /></button
+      >
+      <button
+        class="link-button"
+        use:tooltip={{
+          content: "Copy shareable link to clipboard",
+          placement: "bottom",
+          delay: [400, 0]
+        }}
+        use:copyText={() => window.location.href}
+      >
+        <Icon name="link" />
+      </button>
+    </div>
   </div>
 
   <Pad class="box glompad" />
@@ -89,19 +120,44 @@
 
   .box {
     display: flex;
-    flex-direction: column;
   }
 
   :global(.glompad) {
     margin: 0 0.5rem;
     padding: 0.5rem;
-    background: var(--gray-1);
+    background: var(--gray-0);
     flex: 1;
   }
 
   .header {
     height: 48px;
     padding-left: 10px;
+  }
+
+  #pad-actions {
+    align-self: right;
+    margin: 12px 18px 0 auto;
+    vertical-align: baseline;
+  }
+
+  #pad-actions button {
+    cursor: pointer;
+    background: var(--gray-1);
+    color: var(--gray-5);
+    border: 1px solid var(--gray-5);
+    border-radius: 3px;
+    height: 34px;
+    width: 34px;
+  }
+
+  #pad-actions button:hover {
+    background: var(--gray-0);
+    border-color: var(--primary-color-8);
+    color: var(--primary-color-8);
+  }
+
+  #pad-actions #run-button {
+    width: 100px;
   }
 
   .footer {

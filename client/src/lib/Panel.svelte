@@ -86,23 +86,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 0.95rem;
-    border-bottom: 1px solid silver;
+    border-bottom: 1px solid var(--gray-3);
     text-transform: uppercase;
     color: var(--gray-5);
     padding-bottom: 3px;
     user-select: none;
     margin-right: auto;
     flex: 1;
-  }
-
-  .panel-status-badge {
-    background: var(--gray-3);
-    display: inline-flexbox;
-    font-size: 0.85rem;
-    padding: 0.15rem 1rem 0 1rem;
-    border-radius: 7px;
-    margin: 1px 0 0 auto;
-    white-space: nowrap;
   }
 
   .panel-content {

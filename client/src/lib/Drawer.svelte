@@ -95,15 +95,15 @@
 
 <style>
   .shade {
-    background: var(--gray-8);
-    opacity: 0.5;
+    background: #000; /* var(--gray-8);*/
+    opacity: 0.7;
     height: 100%;
     width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 2;
-    transition: all 0.1s ease-out;
+    transition: all 0.15s ease-out;
   }
 
   h1 > a {
@@ -120,7 +120,7 @@
   }
 
   .drawer-container {
-    background-color: var(--gray-1);
+    background-color: var(--gray-0);
     position: absolute;
     height: 100vh;
     z-index: 10;

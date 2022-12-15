@@ -29,6 +29,7 @@
         disabled: detail == "",
         placement: "bottom",
         delay: [400, 0],
+        interactive: true,
     }}
 >
     {#if status.subtitle}
@@ -40,6 +41,7 @@
 
 <style>
     .panel-status-badge {
+        color: var(--gray-7);
         background: var(--secondary-color-2);
         display: inline-flexbox;
         font-size: 0.85rem;
@@ -50,7 +52,8 @@
     }
 
     .error {
-        background: var(--primary-color-4);
+        color: var(--gray-9);
+        background: var(--primary-color-3);
         font-weight: bold;
     }
 

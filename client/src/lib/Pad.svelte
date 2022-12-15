@@ -149,7 +149,7 @@
   :global(.cm-target-wrap),
   :global(.cm-result-wrap),
   :global(.cm-scope-wrap) {
-    background: var(--gray-1);
-    border: 1px solid silver;
+    background: var(--gray-0);
+    border: 1px solid var(--gray-2);
   }
 </style>

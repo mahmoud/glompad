@@ -72,7 +72,7 @@ body {
   overflow: hidden auto;
   scroll-behavior: smooth;
 
-  background: var(--gray-1);
+  background: var(--gray-0);
 
   color: var(--gray-9);
   font-family: var(--sans-serif);
@@ -81,14 +81,15 @@ body {
 
 ::selection {
   background: var(--secondary-color);
-  color: var(--gray-1);
-  -webkit-text-fill-color: var(--gray-1);
+  color: var(--gray-0);
+  -webkit-text-fill-color: var(--gray-0);
 }
 
 /* Colors */
 
 :root {
-  --gray-1: #fefefe;
+  --gray-0: #fefefe;
+  --gray-1: #efefef;
   --gray-2: #dfdfdf;
   --gray-3: #c2c2c2;
   --gray-4: #a4a4a4;
@@ -125,14 +126,15 @@ body {
 /* @media (prefers-color-scheme: dark) { */
 
 body.dark {
-  --gray-1: #111111;
-  --gray-2: #2d2d2d;
-  --gray-3: #4b4b4b;
-  --gray-4: #686868;
-  --gray-5: #878787;
-  --gray-6: #a4a4a4;
-  --gray-7: #c2c2c2;
-  --gray-8: #dfdfdf;
+  --gray-0: #111111;
+  --gray-1: #2d2d2d;
+  --gray-2: #4b4b4b;
+  --gray-3: #686868;
+  --gray-4: #878787;
+  --gray-5: #a4a4a4;
+  --gray-6: #c2c2c2;
+  --gray-7: #dfdfdf;
+  --gray-8: #efefef;
   --gray-9: #fefefe;
 
   --primary-color-1: #b87700;
