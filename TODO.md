@@ -4,12 +4,13 @@
 
 * Select and translate examples
 * Message on copy success
+* Should a failure above (e.g., in spec) clear fields below (e.g., latest result), or is badge messaging sufficient?
 
 # Features
 
 * fetch() target
 * auto-run on change
-* multiple targets/results (tabbed)
+* Debug developer option
 
 ## Technical improvements
 
@@ -24,3 +25,5 @@
 * Beginner/Intermediate/Advanced icons on examples?
 * Enable more python execution in spec field (setup panel?)
 * panel for generated glom code
+* multiple targets/results (tabbed)
+
