@@ -10,23 +10,43 @@ from pyodide.ffi import create_proxy
 import glom
 import black
 
+# TODO: try dataclasses here again. 
+# First time it seemed to introduce a delay, possibly due to eval/compilation.
 class InputStatus:
-    def __init__(self, title, subtitle='', detail='', timing=-0.0):
+    def __init__(self, kind, title, subtitle='', detail='', timing=-0.0, start_time=None):
         self.title = title
         self.subtitle = subtitle
         self.detail = detail
         self.timing = timing
+        self.kind = kind
+        if not self.timing and start_time is not None:
+            self.timing = time.time() - start_time
+
+    @classmethod
+    def success(cls, **kw):
+        if not kw.get('title'):
+            kw['title'] = 'OK'
+        return cls(kind='success', **kw)
+
+    @classmethod
+    def warning(cls, *a, **kw):
+        if not kw.get('title'):
+            kw['title'] = 'Warning'
+        return cls(kind='warning', *a, **kw)
+
+    @classmethod
+    def error(cls, *a, **kw):
+        if not kw.get('title'):
+            kw['title'] = 'Error'
+        return cls(kind='error', *a, **kw)
 
     def to_dict(self):
-        return glom.glom(
-            self,
-            {
-                'title': 'title',
-                'subtitle': 'subtitle',
-                'detail': 'detail',
-                'timing': 'timing',
-            }
-        )
+        return dict(self.__dict__)
+
+    def store(self, svelte_store):
+        proxy = create_proxy(self.to_dict());
+        svelte_store.setProxy(proxy)
+        return
 
 
 def get_store_value(store):
@@ -38,16 +58,6 @@ def get_store_value(store):
     unsub = store.subscribe(set_ret)
     unsub()
     return ret
-
-
-def set_status(store, **kwargs):
-    start_time = kwargs.pop('start_time', None)
-    if start_time and not kwargs.get('timing'):
-        kwargs['timing'] = time.time() - start_time
-    status = InputStatus(**kwargs)
-    proxy = create_proxy(status.to_dict());
-    store.setProxy(proxy)
-    return status
 
 
 def run():
@@ -67,9 +77,10 @@ def run():
         start_time = time.time()
         spec = build_spec(spec_val)
     except Exception as e:
-        set_status(padStore.specStatus, title="Error", detail=str(e), start_time=start_time)
+        load_error = str(e)
+        InputStatus.error(detail=load_error, start_time=start_time).store(padStore.specStatus)
     else:
-        set_status(padStore.specStatus, title="OK", start_time=start_time)
+        InputStatus.success(start_time=start_time).store(padStore.specStatus)
 
     try:
         start_time = time.time()
@@ -78,9 +89,9 @@ def run():
             glom_kwargs['scope'] = scope
     except Exception as e:
         load_error = str(e)
-        set_status(padStore.scopeStatus, title="Error", detail=load_error, start_time=start_time)
+        InputStatus.error(detail=load_error, start_time=start_time).store(padStore.scopeStatus)
     else:
-        set_status(padStore.scopeStatus, title="OK", start_time=start_time)
+        InputStatus.success(start_time=start_time).store(padStore.scopeStatus)
 
     if not load_error:
         try:
@@ -91,29 +102,30 @@ def run():
             try:
                 start_time = time.time()
                 target = ast.literal_eval(target_input)
-            except SyntaxError:
-                load_error = "Target must JSON or Python literal."
-                set_status(padStore.targetStatus, title="Error", detail=load_error, start_time=start_time)
+            except SyntaxError as se:
+                load_error = f"Target must JSON or Python literal.\n\n{se}"
+                InputStatus.error(detail=load_error, start_time=start_time).store(padStore.targetStatus)
             else:
                 # TODO: subtitle
-                set_status(padStore.targetStatus, title="OK: Python", detail=load_error, start_time=start_time)
+                InputStatus.success(subtitle="Python", start_time=start_time).store(padStore.targetStatus)
         else:
-            set_status(padStore.targetStatus, title="OK: JSON", detail=load_error, start_time=start_time)
+            InputStatus.success(subtitle="JSON", start_time=start_time).store(padStore.targetStatus)
 
     if not load_error:
         try:
             start_time = time.time()
             result = glom.glom(target, spec, **glom_kwargs)
+            # TODO: if the above was json, try to json it first
             result = pprint.pformat(result)
             if enable_autoformat:
                 result = autoformat(result)
         except glom.GlomError as ge:
             err = str(ge)
             result = err
-            set_status(padStore.resultStatus, title=type(ge).__name__, detail=err, start_time=start_time)
+            InputStatus.error(title=type(ge).__name__, detail=err, start_time=start_time).store(padStore.resultStatus)
             padStore.resultValue.set(err)
         else:
-            set_status(padStore.resultStatus, title='OK', start_time=start_time)
+            InputStatus.success(start_time=start_time).store(padStore.resultStatus)
             padStore.resultValue.set(result)
 
     return

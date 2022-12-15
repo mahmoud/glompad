@@ -23,16 +23,6 @@
   export const toggleOpen = () => (isOpened = !isOpened);
 </script>
 
-<!--
-<button on:click|stopPropagation={toggleOpen}>
-    {#if isOpen}
-    close
-    {:else}
-    open
-    {/if}
-</button>
--->
-
 <svelte:window bind:innerWidth />
 
 <div
@@ -58,12 +48,14 @@
     <ul>
       <li>
         <Icon name="book" />
+        <!-- svelte-ignore security-anchor-rel-noreferrer -->
         <a href="https://glom.readthedocs.io/en/latest/" target="_blank"
           >glom docs</a
         >
       </li>
       <li>
         <Icon name="coffee" />
+        <!-- svelte-ignore security-anchor-rel-noreferrer -->
         <a
           href="https://glom.readthedocs.io/en/latest/tutorial.html"
           target="_blank">glom Tutorial</a

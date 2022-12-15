@@ -76,7 +76,7 @@
     </Panel>
   {/if}
   <Panel
-    title="Target"
+    title="Target Data"
     class="glom-target-container"
     status={$targetStatus}
     flex_grow="1"

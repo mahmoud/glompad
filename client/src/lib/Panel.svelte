@@ -1,10 +1,11 @@
 <script>
   import Icon from "./Icon.svelte";
+  import StatusBadge from "./StatusBadge.svelte";
 
   let classes = "";
   export { classes as class };
-  export let status = null,
-    title;
+  export let status;
+  export let title;
   export let collapsed = false;
   export let min_height = null;
   export let flex_grow = null;
@@ -48,11 +49,7 @@
       </span>
       {title}
     </h3>
-    {#if status}
-      <div class="panel-status-badge">
-        {status.title}
-      </div>
-    {/if}
+    <StatusBadge status={status} />
   </div>
   <div class="panel-content {content_class}">
     <slot />
