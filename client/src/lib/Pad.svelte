@@ -1,5 +1,4 @@
 <script lang="ts">
-  import SpecInput from "./SpecInput.svelte";
   import {
     padStore,
     darkModeStore,
