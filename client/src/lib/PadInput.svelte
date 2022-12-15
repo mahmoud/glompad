@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import CodeMirror from "svelte-codemirror-editor";
     import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
-    import { python } from "@codemirror/lang-python";
     import { keymap } from "@codemirror/view";
     import { Prec } from "@codemirror/state";
 

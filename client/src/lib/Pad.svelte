@@ -1,16 +1,9 @@
 <script lang="ts">
-  import {
-    padStore,
-    darkModeStore,
-    urlStore,
-    largeScreenStore,
-  } from "./stores";
+  import { padStore, urlStore, largeScreenStore } from "./stores";
   import Panel from "./Panel.svelte";
-  import CodeInput from "./CodeInput.svelte";
+  import PadInput from "./PadInput.svelte";
 
   import { python } from "@codemirror/lang-python";
-
-  import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
 
   let classes = "";
   export { classes as class };
@@ -45,10 +38,8 @@
   stateStack.subscribe(executeGlom);
 
   let wrap_class: string;
-  let theme;
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
-    theme = $darkModeStore ? githubDark : githubLight;
   }
 </script>
 
@@ -60,7 +51,7 @@
     min_height="100px"
     flex_grow="1"
   >
-    <CodeInput
+    <PadInput
       execute={executeGlom}
       destStore={specValue}
       lang={python()}
@@ -75,7 +66,7 @@
       status={$scopeStatus}
       flex_grow="1"
     >
-      <CodeInput
+      <PadInput
         execute={executeGlom}
         destStore={scopeValue}
         lang={python()}
@@ -97,7 +88,7 @@
     status={$targetStatus}
     flex_grow="1"
   >
-    <CodeInput
+    <PadInput
       execute={executeGlom}
       destStore={targetValue}
       lang={python()}
@@ -119,7 +110,7 @@
     status={$resultStatus}
     flex_grow="2"
   >
-    <CodeInput
+    <PadInput
       execute={executeGlom}
       destStore={resultValue}
       lang={$resultStatus.kind == "error" ? null : python()}

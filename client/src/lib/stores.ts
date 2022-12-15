@@ -1,5 +1,5 @@
-import type {Writable, Readable} from 'svelte/store';
-import { writable, readable, derived, get } from 'svelte/store';
+import type {Writable} from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 import { createMediaStore } from 'svelte-media-queries'
 
