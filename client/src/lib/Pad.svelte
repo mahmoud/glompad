@@ -8,7 +8,6 @@
   import Panel from "./Panel.svelte";
   import CodeInput from "./CodeInput.svelte";
 
-  import CodeMirror from "svelte-codemirror-editor";
   import { python } from "@codemirror/lang-python";
 
   import { githubLight, githubDark } from "@uiw/codemirror-theme-github";

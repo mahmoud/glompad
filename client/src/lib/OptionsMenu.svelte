@@ -60,7 +60,7 @@
 
 <style>
   .menu-title {
-    border-bottom: 1px solid silver;
+    border-bottom: 1px solid var(--gray-3);
     margin-bottom: 6px;
   }
 

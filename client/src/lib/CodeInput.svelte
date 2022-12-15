@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+    import { onMount } from "svelte";
     import CodeMirror from "svelte-codemirror-editor";
     import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
     import { python } from "@codemirror/lang-python";
@@ -24,11 +25,16 @@
     export let styles = {};
     export let copyTooltip = "Copy to clipboard";
 
+    let padInput;
     let editor;
     let theme;
     $: {
         theme = $darkModeStore ? githubDark : githubLight;
     }
+
+    const getText = () => {
+        return padInput.querySelector(".cm-wrap .cm-content").innerText;
+    };
 
     const ctrlEnterKeymap = keymap.of([
         {
@@ -54,7 +60,7 @@
     let extensions = [Prec.highest(ctrlEnterKeymap), ...extraExtensions];
 </script>
 
-<div class="padInput {classes}">
+<div bind:this={padInput} class="padInput {classes}">
     <CodeMirror
         bind:value={$destStore}
         bind:this={editor}
@@ -81,7 +87,7 @@
             content: copyTooltip,
             placement: "top",
         }}
-        use:copyText={".cm-wrap .cm-content"}
+        use:copyText={getText}
     >
         <Icon name="copy" />
     </button>

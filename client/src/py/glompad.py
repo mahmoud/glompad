@@ -76,6 +76,9 @@ def run():
     try:
         start_time = time.time()
         spec = build_spec(spec_val)
+        if enable_autoformat:
+            fmtd_spec_val = autoformat(spec_val)
+            padStore.specValue.set(fmtd_spec_val)
     except Exception as e:
         load_error = str(e)
         InputStatus.error(detail=load_error, start_time=start_time).store(padStore.specStatus)
@@ -87,6 +90,9 @@ def run():
         scope = build_spec(scope_val) if scope_val.strip() else None
         if scope:
             glom_kwargs['scope'] = scope
+        if enable_autoformat:
+            fmtd_scope_val = autoformat(scope_val)
+            padStore.scopeValue.set(fmtd_scope_val)
     except Exception as e:
         load_error = str(e)
         InputStatus.error(detail=load_error, start_time=start_time).store(padStore.scopeStatus)
@@ -110,6 +116,10 @@ def run():
                 InputStatus.success(subtitle="Python", start_time=start_time).store(padStore.targetStatus)
         else:
             InputStatus.success(subtitle="JSON", start_time=start_time).store(padStore.targetStatus)
+
+        if enable_autoformat:
+            fmtd_target_val = autoformat(target_input)
+            padStore.targetValue.set(fmtd_target_val)
 
     if not load_error:
         try:
@@ -146,7 +156,7 @@ def run_click(e=None):
 
 
 def autoformat(code):
-    return black.format_str(code, mode=black.Mode(line_length=50))
+    return black.format_str(code, mode=black.Mode())
 
 run()
 js.createObject(create_proxy(globals()), "pyg")

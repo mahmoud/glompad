@@ -98,17 +98,13 @@ class PadStore {
         return;
       }
 
-      padStore.saveState(); // TODO: option to only save successful specs?
+      // TODO: option to only save successful specs?
+      // Right now (2022-12-15) glompad.run expects to read from stateStack
+      padStore.saveState(); 
       window.pyg.get("run_click")();
-
-      if (get(this.enableAutoformat)) {
-        window.console.log("autoformatting");
-        const autoformat = window.pyg.get("autoformat");
-        const specFormatted = autoformat(get(this.specValue));
-        this.specValue.set(specFormatted);
-        const targetFormatted = autoformat(get(this.targetValue));
-        this.targetValue.set(targetFormatted);
-        console.log(targetFormatted);
+      if (get(padStore.enableAutoformat)) {
+         // TODO: hack in case the spec/scope/target got reformatted updated
+        padStore.saveState();
       }
     };
 }
