@@ -71,6 +71,7 @@ def run():
     target_input = glom.glom(stateStack, glom.T[0].targetValue, default='').strip()
 
     enable_autoformat = bool(get_store_value(padStore.enableAutoformat))
+    enable_scope = bool(get_store_value(padStore.enableScope))
 
     load_error = None
     try:
@@ -85,19 +86,20 @@ def run():
     else:
         InputStatus.success(start_time=start_time).store(padStore.specStatus)
 
-    try:
-        start_time = time.time()
-        scope = build_spec(scope_val) if scope_val.strip() else None
-        if scope:
-            glom_kwargs['scope'] = scope
-        if enable_autoformat:
-            fmtd_scope_val = autoformat(scope_val)
-            padStore.scopeValue.set(fmtd_scope_val)
-    except Exception as e:
-        load_error = str(e)
-        InputStatus.error(detail=load_error, start_time=start_time).store(padStore.scopeStatus)
-    else:
-        InputStatus.success(start_time=start_time).store(padStore.scopeStatus)
+    if enable_scope:
+        try:
+            start_time = time.time()
+            scope = build_spec(scope_val) if scope_val.strip() else None
+            if scope:
+                glom_kwargs['scope'] = scope
+            if enable_autoformat:
+                fmtd_scope_val = autoformat(scope_val)
+                padStore.scopeValue.set(fmtd_scope_val)
+        except Exception as e:
+            load_error = str(e)
+            InputStatus.error(detail=load_error, start_time=start_time).store(padStore.scopeStatus)
+        else:
+            InputStatus.success(start_time=start_time).store(padStore.scopeStatus)
 
     if not load_error:
         try:

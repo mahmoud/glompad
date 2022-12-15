@@ -1,5 +1,6 @@
 <script>
   import tooltip from "./actions/tooltip";
+  import Icon from "./Icon.svelte";
   import { padStore, darkModeStore } from "./stores";
 
   export let domNode = null;
@@ -21,7 +22,7 @@
       }}
     >
       <input type="checkbox" bind:checked={$enableAutoformat} />
-      Autoformat (black)
+      Autoformat
     </label>
   </div>
   <div class="option" id="scope-item">
@@ -34,7 +35,13 @@
     >
       <input type="checkbox" bind:checked={$enableScope} />
 
-      Enable glom scope</label
+      Enable glom scope
+    </label>
+    <!-- svelte-ignore security-anchor-rel-noreferrer -->
+    <a
+      target="_blank"
+      href="https://glom.readthedocs.io/en/latest/api.html#the-glom-scope"
+      ><Icon name="help-circle" /></a
     >
   </div>
   <div class="option" id="darkmode-item">
