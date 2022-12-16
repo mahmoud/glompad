@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { padStore, urlStore, largeScreenStore } from "./stores";
+  import { padStore, urlStore, largeScreenStore, isValidURL } from "./stores";
   import Panel from "./Panel.svelte";
   import PadInput from "./PadInput.svelte";
 
@@ -13,8 +13,7 @@
     specStatus,
     targetValue,
     targetStatus,
-    targetIsValidURL,
-    targetFetchValue,
+    targetURLValue,
     targetFetchStatus,
     resultValue,
     resultStatus,
@@ -42,30 +41,34 @@
   // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
   stateStack.subscribe(executeGlom);
 
-  let tmpdata;
+  let targetDestStore = targetValue;
   let wrap_class: string;
   let showTargetPreview: boolean = false;
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 
-    showTargetPreview = !!$targetValue.match(/https?:\/\//);
-
-    if ($targetIsValidURL) {
-      fetch($targetValue)
+    if (isValidURL($targetValue)) {
+      //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
+      $targetURLValue = $targetValue;
+      //$targetValue = "";
+      targetDestStore = targetURLValue;
+      showTargetPreview = true;
+    }
+    if ($targetURLValue && !isValidURL($targetURLValue)) {
+      //switch back
+      $targetValue = $targetURLValue;
+      $targetURLValue = "";
+      targetDestStore = targetValue;
+      showTargetPreview = false;
+    }
+    if ($targetURLValue) {
+      fetch($targetURLValue)
         .then((resp) => resp.text())
-        .then((data) => ($targetFetchValue = data));
-    } else {
-      tmpdata = null;
+        .then((data) => ($targetValue = data));
     }
   }
 
-  /*
-  - if target data starts with http(s):// (is a valid URL)
-  - shrink down the target data field (no flex-grow)
-  - add read-only target data field
-  - statusbadge needs loading state?
-
-  */
+  // TODO: status badge loading state for preview.
 </script>
 
 <div class="gp-container {classes}">
@@ -73,7 +76,7 @@
     title="Glom Spec"
     status={$specStatus}
     class="glom-spec-container"
-    min_height="100px"
+    min_height="80px"
     flex_grow="1"
   >
     <PadInput
@@ -100,6 +103,9 @@
       />
     </Panel>
   {/if}
+  <!--<div style:max-height="200px" style:overflow="scroll">
+    {$targetDestStore}<br />tuv: {$targetURLValue}<br />tv: {$targetValue}
+  </div> -->
   <Panel
     title="Target Data"
     class="glom-target-container"
@@ -108,7 +114,7 @@
   >
     <PadInput
       execute={executeGlom}
-      destStore={targetValue}
+      destStore={targetDestStore}
       lang={python()}
       cmClass="{wrap_class} cm-target-wrap"
       placeholder="Insert your target data here. JSON and Python literals supported."
@@ -123,14 +129,11 @@
     >
       <PadInput
         execute={executeGlom}
-        destStore={targetFetchValue}
+        destStore={targetValue}
         lang={python()}
         readonly={true}
         cmClass="{wrap_class} cm-target-preview-wrap"
-        placeholder={"Data from the target API will be shown here once run. " +
-          $targetIsValidURL +
-          "   " +
-          tmpdata}
+        placeholder={"Data from the target API will be shown here once run."}
         styles={{
           "&": {
             "max-height": "25vh",

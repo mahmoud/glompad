@@ -40,7 +40,7 @@ function deproxyWritable(initial) {
   }
 }
 
-const isValidURL = (text) => {
+export const isValidURL = (text) => {
   try {
     return !!(text.match(/https?:\/\/.+[./].+/) && new URL(text));
   } catch (e) {
@@ -59,8 +59,7 @@ class PadStore {
 
         public targetValue: Writable<string> = writable(''),
         public targetStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
-        public targetIsValidURL: Readable<boolean> = null,
-        public targetFetchValue: Writable<string> = writable(''),
+        public targetURLValue: Writable<string> = writable(''),
         public targetFetchStatus: Writable<InputStatus> = writable(new InputStatus()),
 
         public resultValue: Writable<string> = writable(''),
@@ -71,11 +70,10 @@ class PadStore {
         public enableScope: Writable<boolean | null> = writable(null),
         public enableAutoformat: Writable<boolean> = writable(false),
 
-    ) {
-      this.targetIsValidURL = derived(targetValue, $targetValue => isValidURL($targetValue))
-    };
+    ) {};
 
     saveState() {
+      const targetURLParam = get(this.targetURLValue) ? get(this.targetURLValue) : get(this.targetValue);
       const newState = {
         "specValue": get(this.specValue),
         "scopeValue": get(this.scopeValue),
@@ -89,7 +87,7 @@ class PadStore {
 
       const urlParams = {
         "spec": newState.specValue,
-        "target": newState.targetValue,
+        "target": targetURLParam,
       }
       if (newState.scopeValue) {
         urlParams['scope'] = newState.scopeValue;
