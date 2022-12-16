@@ -1,5 +1,5 @@
-import type {Writable} from 'svelte/store';
-import { writable, get } from 'svelte/store';
+import type {Writable, Readable} from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
 
 import { createMediaStore } from 'svelte-media-queries'
 
@@ -40,6 +40,14 @@ function deproxyWritable(initial) {
   }
 }
 
+const isValidURL = (text) => {
+  try {
+    return !!(text.match(/https?:\/\/.+[./].+/) && new URL(text));
+  } catch (e) {
+    return false;
+  }
+};
+
 
 class PadStore {
     constructor(
@@ -51,6 +59,9 @@ class PadStore {
 
         public targetValue: Writable<string> = writable(''),
         public targetStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
+        public targetIsValidURL: Readable<boolean> = null,
+        public targetFetchValue: Writable<string> = writable(''),
+        public targetFetchStatus: Writable<InputStatus> = writable(new InputStatus()),
 
         public resultValue: Writable<string> = writable(''),
         public resultStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
@@ -60,7 +71,9 @@ class PadStore {
         public enableScope: Writable<boolean | null> = writable(null),
         public enableAutoformat: Writable<boolean> = writable(false),
 
-    ) {};
+    ) {
+      this.targetIsValidURL = derived(targetValue, $targetValue => isValidURL($targetValue))
+    };
 
     saveState() {
       const newState = {

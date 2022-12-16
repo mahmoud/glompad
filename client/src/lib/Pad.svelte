@@ -13,6 +13,9 @@
     specStatus,
     targetValue,
     targetStatus,
+    targetIsValidURL,
+    targetFetchValue,
+    targetFetchStatus,
     resultValue,
     resultStatus,
     enableScope,
@@ -27,6 +30,8 @@
     }
   });
 
+  // TODO: use this to create targetIsURL derived store
+
   function copySuccess(e) {
     // TODO: toast or something
     window.console.warn("copy success!");
@@ -37,10 +42,30 @@
   // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
   stateStack.subscribe(executeGlom);
 
+  let tmpdata;
   let wrap_class: string;
+  let showTargetPreview: boolean = false;
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
+
+    showTargetPreview = !!$targetValue.match(/https?:\/\//);
+
+    if ($targetIsValidURL) {
+      fetch($targetValue)
+        .then((resp) => resp.text())
+        .then((data) => ($targetFetchValue = data));
+    } else {
+      tmpdata = null;
+    }
   }
+
+  /*
+  - if target data starts with http(s):// (is a valid URL)
+  - shrink down the target data field (no flex-grow)
+  - add read-only target data field
+  - statusbadge needs loading state?
+
+  */
 </script>
 
 <div class="gp-container {classes}">
@@ -56,7 +81,7 @@
       destStore={specValue}
       lang={python()}
       cmClass="{wrap_class} cm-spec-wrap"
-      placeholder="Insert your glom spec here"
+      placeholder="Insert your glom spec here, or try one of the examples on the left."
     />
   </Panel>
   {#if $enableScope}
@@ -72,13 +97,6 @@
         lang={python()}
         cmClass="{wrap_class} cm-scope-wrap"
         placeholder="Insert your scope data here. JSON and Python literals supported."
-        styles={{
-          "&": {
-            "min-width": "100px",
-            "max-width": "100%",
-            overflow: "scroll",
-          },
-        }}
       />
     </Panel>
   {/if}
@@ -86,7 +104,7 @@
     title="Target Data"
     class="glom-target-container"
     status={$targetStatus}
-    flex_grow="1"
+    flex_grow={showTargetPreview ? 0 : 1}
   >
     <PadInput
       execute={executeGlom}
@@ -94,15 +112,33 @@
       lang={python()}
       cmClass="{wrap_class} cm-target-wrap"
       placeholder="Insert your target data here. JSON and Python literals supported."
-      styles={{
-        "&": {
-          "min-width": "100px",
-          "max-width": "100%",
-          overflow: "scroll",
-        },
-      }}
     />
   </Panel>
+  {#if showTargetPreview}
+    <Panel
+      title="Target Data Preview"
+      class="glom-target-preview-container"
+      status={$targetFetchStatus}
+      flex_grow="1"
+    >
+      <PadInput
+        execute={executeGlom}
+        destStore={targetFetchValue}
+        lang={python()}
+        readonly={true}
+        cmClass="{wrap_class} cm-target-preview-wrap"
+        placeholder={"Data from the target API will be shown here once run. " +
+          $targetIsValidURL +
+          "   " +
+          tmpdata}
+        styles={{
+          "&": {
+            "max-height": "25vh",
+          },
+        }}
+      />
+    </Panel>
+  {/if}
   <!-- {JSON.stringify( $resultStatus)} -->
   <Panel
     title="Result"

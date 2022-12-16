@@ -72,8 +72,10 @@
         basic={true}
         styles={{
             "&": {
-                "min-width": "70px",
                 height: "100%",
+                "min-width": "100px",
+                "max-width": "100%",
+                overflow: "scroll",
                 ...styles,
             },
         }}
