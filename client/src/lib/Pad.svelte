@@ -23,6 +23,7 @@
     stateStack,
   } = padStore;
 
+  // TODO: move to stores.ts?
   urlStore.subscribe((value) => {
     if (window && window.location.href != value) {
       window.location.href = value;
@@ -42,6 +43,7 @@
   stateStack.subscribe(executeGlom);
 
   let targetDestStore = targetValue;
+  let targetDestStatus = targetStatus;
   let wrap_class: string;
   let showTargetPreview: boolean = false;
   $: {
@@ -50,8 +52,8 @@
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
       $targetURLValue = $targetValue;
-      //$targetValue = "";
       targetDestStore = targetURLValue;
+      targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
     }
     if ($targetURLValue && !isValidURL($targetURLValue)) {
@@ -59,12 +61,18 @@
       $targetValue = $targetURLValue;
       $targetURLValue = "";
       targetDestStore = targetValue;
+      targetDestStatus = targetStatus;
       showTargetPreview = false;
     }
     if ($targetURLValue) {
       fetch($targetURLValue)
         .then((resp) => resp.text())
-        .then((data) => ($targetValue = data));
+        .then((data) => {
+          $targetValue = data;
+          const [loaded_target, loaded_status] =
+            window.pyg.get("load_target")(data);
+          $targetStatus = loaded_status;
+        }); // TODO: Fetch status
     }
   }
 
@@ -109,7 +117,7 @@
   <Panel
     title="Target Data"
     class="glom-target-container"
-    status={$targetStatus}
+    status={$targetDestStatus}
     flex_grow={showTargetPreview ? 0 : 1}
   >
     <PadInput
@@ -124,7 +132,7 @@
     <Panel
       title="Target Data Preview"
       class="glom-target-preview-container"
-      status={$targetFetchStatus}
+      status={$targetStatus}
       flex_grow="1"
     >
       <PadInput

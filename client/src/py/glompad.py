@@ -4,8 +4,8 @@ import json
 import time
 import pprint
 
-import js
-from pyodide.ffi import create_proxy
+import js  # type: ignore
+from pyodide.ffi import create_proxy  # type: ignore
 
 import glom
 import black
@@ -60,12 +60,36 @@ def get_store_value(store):
     return ret
 
 
+def load_target(target_input):
+    target = None
+    try:
+        start_time = time.time()
+        target = json.loads(target_input)
+    except json.JSONDecodeError as jde:
+        # js.window.console.log(repr(jde))
+        try:
+            start_time = time.time()
+            target = ast.literal_eval(target_input)
+        except SyntaxError as se:
+            load_error = f"Target must be a JSON or Python literal.\n\n{se}"
+            status = InputStatus.error(detail=load_error, start_time=start_time)
+        else:
+            status = InputStatus.success(subtitle="Python", start_time=start_time)
+    else:
+        status = InputStatus.success(subtitle="JSON", start_time=start_time)
+
+    return target, status
+
+
 def run():
     js.createObject(create_proxy(globals()), "pyg")
     glom_kwargs = {}
     padStore = js.window.SvelteApp.padStore
 
     stateStack = get_store_value(padStore.stateStack)
+    cur_run_id = get_store_value(padStore.curRunID)
+    padStore.curRunID.set(cur_run_id + 1)
+
     spec_val = glom.glom(stateStack, glom.T[0].specValue, default='').strip()
     scope_val = glom.glom(stateStack, glom.T[0].scopeValue, default='').strip()
     target_input = glom.glom(stateStack, glom.T[0].targetValue, default='').strip()
@@ -102,24 +126,12 @@ def run():
             InputStatus.success(start_time=start_time).store(padStore.scopeStatus)
 
     if not load_error:
-        try:
-            start_time = time.time()
-            target = json.loads(target_input)
-        except json.JSONDecodeError as jde:
-            # js.window.console.log(repr(jde))
-            try:
-                start_time = time.time()
-                target = ast.literal_eval(target_input)
-            except SyntaxError as se:
-                load_error = f"Target must JSON or Python literal.\n\n{se}"
-                InputStatus.error(detail=load_error, start_time=start_time).store(padStore.targetStatus)
-            else:
-                # TODO: subtitle
-                InputStatus.success(subtitle="Python", start_time=start_time).store(padStore.targetStatus)
-        else:
-            InputStatus.success(subtitle="JSON", start_time=start_time).store(padStore.targetStatus)
+        target, load_status = load_target(target_input)
+        load_status.store(padStore.targetStatus)
+        if load_status.kind == 'error':
+            load_error = load_status
 
-        if enable_autoformat:
+        if load_status.kind == 'success' and enable_autoformat:
             fmtd_target_val = autoformat(target_input)
             padStore.targetValue.set(fmtd_target_val)
 

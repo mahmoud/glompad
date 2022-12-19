@@ -5,13 +5,12 @@
   import tooltip from "./lib/actions/tooltip";
   import copyText from "./lib/actions/copyText";
 
-  import { padStore, darkModeStore } from "./lib/stores";
+  import { padStore } from "./lib/stores";
 
-  const { executeGlom } = padStore;
+  const { executeGlom, curRunID } = padStore;
 
   let drawer;
   let innerWidth = 0;
-
 </script>
 
 <svelte:window bind:innerWidth />
@@ -32,13 +31,16 @@
       <a href="{import.meta.env.BASE_URL}#"> glompad </a>
     </h1>
     <div id="pad-actions">
+      {#if $curRunID > 0}
+        [{$curRunID}]
+      {/if}
       <button
         id="run-button"
         on:click={executeGlom}
         use:tooltip={{
           content: "Run (or Ctrl-Enter via keyboard)",
           placement: "bottom",
-          delay: [400, 0]
+          delay: [400, 0],
         }}><Icon name="play" /></button
       >
       <button
@@ -46,7 +48,7 @@
         use:tooltip={{
           content: "Copy shareable link to clipboard",
           placement: "bottom",
-          delay: [400, 0]
+          delay: [400, 0],
         }}
         use:copyText={() => window.location.href}
       >

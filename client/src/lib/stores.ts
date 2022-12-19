@@ -1,5 +1,5 @@
-import type {Writable, Readable} from 'svelte/store';
-import { writable, derived, get } from 'svelte/store';
+import type {Writable} from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 import { createMediaStore } from 'svelte-media-queries'
 
@@ -11,24 +11,30 @@ class PadState {
       public specValue: string = '',
       public targetValue: string = '',
       public scopeValue: string = '',
+      public runID: number = 0,
     ) {};
 }
 
+type StatusKindValue = 'success' | 'error' | 'info';  // TODO: info or pending?
+
 class InputStatus {
   constructor(
-    public kind: string = 'success',
+    public kind: StatusKindValue = 'success',
     public title: string = 'OK',
     public subtitle: string = '',
     public detail: string = '',
-    public timing: number = -0.0
+    public timing: number = -0.0,
   ) {};
 }
 
+function override<T>(template: T, overrides: Partial<T>): T {
+  return {...template, ...overrides};
+}
 
 // NB: there's an extra song and dance to getting data out of pyodide, 
 // as most of the objects have to be wrapped in pyproxy objects. 
 // see the other half of the dance in glompad.py
-function deproxyWritable(initial) {
+function deproxyWritable(initial: any) {
   const store = writable(initial);
 
   return {
@@ -40,7 +46,7 @@ function deproxyWritable(initial) {
   }
 }
 
-export const isValidURL = (text) => {
+export const isValidURL = (text: string) => {
   try {
     return !!(text.match(/https?:\/\/.+[./].+/) && new URL(text));
   } catch (e) {
@@ -66,6 +72,7 @@ class PadStore {
         public resultStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
 
         public stateStack: Writable<Array<PadState>> = writable([new PadState()]),
+        public curRunID: Writable<number> = writable(0),
 
         public enableScope: Writable<boolean | null> = writable(null),
         public enableAutoformat: Writable<boolean> = writable(false),
@@ -74,16 +81,16 @@ class PadStore {
 
     saveState() {
       const targetURLParam = get(this.targetURLValue) ? get(this.targetURLValue) : get(this.targetValue);
-      const newState = {
+      const newState: Partial<PadState> = {
         "specValue": get(this.specValue),
         "scopeValue": get(this.scopeValue),
         "targetValue": get(this.targetValue),
       }
-      const curStack = get(this.stateStack)
-      if (curStack.length > 0 && shallowEqual(curStack[0], newState)) {
+      if (this.stateValueCurrent(newState)) {
         return;
       }
-      padStore.stateStack.update((curVal) => [newState, ...curVal])
+      newState['runID'] = get(this.curRunID)
+      padStore.stateStack.update((curVal) => [newState as PadState, ...curVal])
 
       const urlParams = {
         "spec": newState.specValue,
@@ -101,6 +108,15 @@ class PadStore {
         console.log(new_url.toString())
         urlStore.set(new_url.toString());
       }
+    }
+
+    stateValueCurrent(state: Partial<PadState>) {
+      const newState = {...state}
+      delete newState['runID']
+      const curState = {...get(this.stateStack)[0]}
+      delete curState['runID']
+
+      return shallowEqual(curState, newState)
     }
 
     executeGlom() {
@@ -126,10 +142,10 @@ export const urlStore = createUrlStore(window && window.location)
 
 export const largeScreenStore = createMediaStore('(min-width: 500px');
 
-urlStore.subscribe((val) => {
+urlStore.subscribe((val: URL) => {
     const hash = val.hash && val.hash.slice(1)
     const params = new URLSearchParams(hash);
-    const newState: PadState = {
+    const newState: Partial<PadState> = {
         "specValue": params.get('spec') || '',
         "targetValue": params.get('target') || '',
         "scopeValue": params.get('scope') || '',
@@ -141,16 +157,18 @@ urlStore.subscribe((val) => {
     if (!!newState.scopeValue && get(padStore.enableScope) === null) {
       padStore.enableScope.set(true);
     }
+    padStore.saveState()
 
-    const curStack = get(padStore.stateStack)
+    /*const curStack = get(padStore.stateStack)
     if (curStack.length == 0 || !shallowEqual(curStack[0], newState)) {
         padStore.stateStack.update((curVal) => [newState, ...curVal])
     }
+    */
 });
 
 
 
-function shallowEqual(o1, o2) {
+function shallowEqual(o1: any, o2: any): boolean {
     const entries1 = Object.entries(o1);
     const entries2 = Object.entries(o2);
     if (entries1.length !== entries2.length) {

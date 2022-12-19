@@ -9,7 +9,7 @@
     import tooltip from "./actions/tooltip";
     import Icon from "./Icon.svelte";
 
-    export let execute;
+    export let execute: Function;
     export let destStore;
     export let lang;
 
