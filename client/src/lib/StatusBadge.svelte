@@ -12,6 +12,7 @@
         return " (" + timing.toFixed(3) + unit + ")";
     };
 
+    let tooltip_content_div: HTMLDivElement;
     let debug_text = "";
     let detail = "";
     $: {
@@ -25,7 +26,7 @@
 <div
     class="panel-status-badge {status.kind}"
     use:tooltip={{
-        content: detail,
+        content: tooltip_content_div,
         disabled: detail == "",
         placement: "bottom",
         delay: [400, 0],
@@ -37,6 +38,14 @@
     {:else}
         {status.title}
     {/if}
+</div>
+
+<div bind:this={tooltip_content_div} style:display="block">
+    {#if status.detail}
+        {status.detail}
+        <br />
+    {/if}
+    {fmt_timing(status.timing)}
 </div>
 
 <style>
