@@ -178,7 +178,8 @@ def build_examples():
         print(f'{name} - {obj.label}')
         try:
             # sanity check
-            examples_mod.glom(obj.target, obj.spec)
+            if not obj.target_url:
+                examples_mod.glom(obj.target, obj.spec)
         except Exception as e:
             raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
 
@@ -188,11 +189,16 @@ def build_examples():
         formatted_spec = black.format_str(repr(obj.spec), mode=black.Mode())
         formatted_spec = formatted_desc + '\n' + formatted_spec
 
+        if obj.target_url:
+            formatted_target = obj.target_url
+        else:
+            formatted_target = black.format_str(repr(obj.target), mode=black.Mode())
+
         example_dict = {
             'label': obj.label,
             'icon': obj.icon,
             'desc': desc,
-            'url': make_url(spec=formatted_spec, target=repr(obj.target)),
+            'url': make_url(spec=formatted_spec, target=formatted_target),
         }
         example_list.append(example_dict)
 

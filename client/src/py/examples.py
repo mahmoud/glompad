@@ -10,6 +10,7 @@ class Example:
     label: str
     spec: object
     target: object
+    target_url: str = ''
 
     # a name from https://feathericons.com/
     icon: str = ''
@@ -50,3 +51,12 @@ class TutorialNestedLists(Example):
             ]
         }
     }
+
+
+class GHEvents(Example):
+    '''
+    Restructuring a live GitHub API response.
+    '''
+    label = 'GitHub API Events'
+    spec = [{'user': 'actor.login', 'type': 'type'}]
+    target_url = 'https://api.github.com/repos/mahmoud/glom/events'

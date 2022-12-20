@@ -4,13 +4,19 @@
       "label": "Basic Deep Get",
       "icon": "",
       "desc": "",
-      "url": "#spec=%0A%22a.b.c%22%0A&target=%7B%27a%27%3A%20%7B%27b%27%3A%20%7B%27c%27%3A%20%27d%27%7D%7D%7D&v=1"
+      "url": "#spec=%0A%22a.b.c%22%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
     },
     {
       "label": "Nested Lists",
       "icon": "list",
       "desc": "\nSee https://glom.readthedocs.io/en/latest/tutorial.html#handling-nested-lists\n",
-      "url": "#spec=%23%20%20See%20https%3A%2F%2Fglom.readthedocs.io%2Fen%2Flatest%2Ftutorial.html%23handling-nested-lists%0A%7B%0A%20%20%20%20%22planet_names%22%3A%20%28%22system.planets%22%2C%20%5B%22name%22%5D%29%2C%0A%20%20%20%20%22moon_names%22%3A%20%28%22system.planets%22%2C%20%5B%28%22moons%22%2C%20%5B%22name%22%5D%29%5D%29%2C%0A%7D%0A&target=%7B%27system%27%3A%20%7B%27planets%27%3A%20%5B%7B%27name%27%3A%20%27earth%27%2C%20%27moons%27%3A%20%5B%7B%27name%27%3A%20%27luna%27%7D%5D%7D%2C%20%7B%27name%27%3A%20%27jupiter%27%2C%20%27moons%27%3A%20%5B%7B%27name%27%3A%20%27io%27%7D%2C%20%7B%27name%27%3A%20%27europa%27%7D%5D%7D%5D%7D%7D&v=1"
+      "url": "#spec=%23%20%20See%20https%3A%2F%2Fglom.readthedocs.io%2Fen%2Flatest%2Ftutorial.html%23handling-nested-lists%0A%7B%0A%20%20%20%20%22planet_names%22%3A%20%28%22system.planets%22%2C%20%5B%22name%22%5D%29%2C%0A%20%20%20%20%22moon_names%22%3A%20%28%22system.planets%22%2C%20%5B%28%22moons%22%2C%20%5B%22name%22%5D%29%5D%29%2C%0A%7D%0A&target=%7B%0A%20%20%20%20%22system%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%22planets%22%3A%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%22name%22%3A%20%22earth%22%2C%20%22moons%22%3A%20%5B%7B%22name%22%3A%20%22luna%22%7D%5D%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%22name%22%3A%20%22jupiter%22%2C%20%22moons%22%3A%20%5B%7B%22name%22%3A%20%22io%22%7D%2C%20%7B%22name%22%3A%20%22europa%22%7D%5D%7D%2C%0A%20%20%20%20%20%20%20%20%5D%0A%20%20%20%20%7D%0A%7D%0A&v=1"
+    },
+    {
+      "label": "GitHub API Events",
+      "icon": "",
+      "desc": "\nRestructuring a live GitHub API response.\n",
+      "url": "#spec=%23%20%20Restructuring%20a%20live%20GitHub%20API%20response.%0A%5B%7B%22user%22%3A%20%22actor.login%22%2C%20%22type%22%3A%20%22type%22%7D%5D%0A&target=https%3A%2F%2Fapi.github.com%2Frepos%2Fmahmoud%2Fglom%2Fevents&v=1"
     }
   ]
 }
