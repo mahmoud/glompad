@@ -46,11 +46,10 @@
   let showTargetPreview: boolean = false;
 
   targetValue.subscribe((val) => {
-    console.warn(val);
     if ($settlingHref) {
       //reset
       $targetURLValue = "";
-      //targetDestStore = targetValue;
+      targetDestStore = targetValue;
       targetDestStatus = targetStatus;
       showTargetPreview = false;
     }
