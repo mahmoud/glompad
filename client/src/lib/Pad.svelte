@@ -25,8 +25,6 @@
     settlingHref,
   } = padStore;
 
-  // TODO: use this to create targetIsURL derived store
-
   function copySuccess(e) {
     // TODO: toast or something
     window.console.warn("copy success!");

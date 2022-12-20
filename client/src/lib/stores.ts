@@ -169,12 +169,7 @@ export const urlStore = createUrlStore(window && window.location)
 
 export const largeScreenStore = createMediaStore('(min-width: 500px');
 
-urlStore.subscribe((value) => {
-  if (window && window.location.href != value) {
-    console.warn('setting window href', value);
-    window.location.href = value;
-  }
-});
+
 urlStore.subscribe((val: URL) => {
   const hash = val.hash && val.hash.slice(1)
   const params = new URLSearchParams(hash);
