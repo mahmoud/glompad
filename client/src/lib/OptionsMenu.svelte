@@ -5,7 +5,7 @@
 
   export let domNode = null;
   export let withTitle = true;
-  let { enableAutoformat, enableScope } = padStore;
+  let { enableAutoformat, enableScope, enableDebug } = padStore;
 </script>
 
 <div id="optionsMenu" bind:this={domNode}>
@@ -43,6 +43,18 @@
       href="https://glom.readthedocs.io/en/latest/api.html#the-glom-scope"
       ><Icon name="help-circle" /></a
     >
+  </div>
+  <div class="option" id="debug-item">
+    <label
+      use:tooltip={{
+        content: "Show debug tools. For glompad development and debugging.",
+        placement: "right",
+        delay: [400, 0],
+      }}
+    >
+      <input type="checkbox" bind:checked={$enableDebug} />
+      Glompad debug
+    </label>
   </div>
   <div class="option" id="darkmode-item">
     <label

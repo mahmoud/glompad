@@ -21,14 +21,9 @@
     scopeValue,
     scopeStatus,
     stateStack,
+    enableDebug,
+    settlingHref,
   } = padStore;
-
-  // TODO: move to stores.ts?
-  urlStore.subscribe((value) => {
-    if (window && window.location.href != value) {
-      window.location.href = value;
-    }
-  });
 
   // TODO: use this to create targetIsURL derived store
 
@@ -42,13 +37,25 @@
   // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
   stateStack.subscribe(executeGlom);
 
+  let storeDebug;
+  padStore.deriveAll().subscribe(() => {
+    storeDebug = padStore.toJson();
+  });
+
   let targetDestStore = targetValue;
   let targetDestStatus = targetStatus;
   let wrap_class: string;
   let showTargetPreview: boolean = false;
-  $: {
-    wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 
+  targetValue.subscribe((val) => {
+    console.warn(val);
+    if ($settlingHref) {
+      //reset
+      $targetURLValue = "";
+      //targetDestStore = targetValue;
+      targetDestStatus = targetStatus;
+      showTargetPreview = false;
+    }
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
       $targetURLValue = $targetValue;
@@ -56,7 +63,12 @@
       targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
     }
-    if ($targetURLValue && !isValidURL($targetURLValue)) {
+  });
+
+  $: {
+    wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
+
+    if (!isValidURL($targetURLValue)) {
       //switch back
       $targetValue = $targetURLValue;
       $targetURLValue = "";
@@ -69,9 +81,11 @@
         .then((resp) => resp.text())
         .then((data) => {
           $targetValue = data;
-          const [loaded_target, loaded_status] =
-            window.pyg.get("load_target")(data);
-          $targetStatus = loaded_status;
+          if (window && window.pyg) {
+            const [loaded_target, loaded_status] =
+              window.pyg.get("load_target")(data);
+            $targetStatus = loaded_status;
+          }
         }); // TODO: Fetch status
     }
   }
@@ -173,6 +187,19 @@
       }}
     />
   </Panel>
+
+  {#if $enableDebug}
+    <Panel
+      title="Debug: Stores"
+      status={$resultStatus}
+      flex_grow="3"
+      collapsed={true}
+    >
+      <pre style:font-size="10px">
+        {storeDebug}
+      </pre>
+    </Panel>
+  {/if}
 </div>
 
 <style>

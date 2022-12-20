@@ -7,7 +7,7 @@
 
   import { padStore } from "./lib/stores";
 
-  const { executeGlom, curRunID } = padStore;
+  const { executeGlom, curRunID, enableDebug } = padStore;
 
   let drawer;
   let innerWidth = 0;
@@ -70,9 +70,12 @@
     >
   </div>
 </div>
-<div>
-  <py-repl id="bottom-repl" auto-generate="true" />
-</div>
+{#if $enableDebug}
+  <div style:max-width="80vw">
+    <h3>REPL</h3>
+    <py-repl id="bottom-repl" auto-generate="true" />
+  </div>
+{/if}
 
 <style>
   h1 {
