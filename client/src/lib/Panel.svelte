@@ -30,7 +30,7 @@
 </script>
 
 <div
-  class="panel {classes}"
+  class="panel {classes} {collapsed ? 'collapsed' : ''}"
   style:min-height={min_height}
   style:flex-grow={flex_grow}
 >
@@ -49,7 +49,7 @@
       </span>
       {title}
     </h3>
-    <StatusBadge status={status} />
+    <StatusBadge {status} />
   </div>
   <div class="panel-content {content_class}">
     <slot />
@@ -63,8 +63,15 @@
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 30px;
     max-width: 1200px;
     width: 100%;
+    flex-basis: 10%;
+  }
+
+  div.panel.collapsed {
+    flex: 0 1 fit-content;
   }
 
   .collapser {
@@ -96,7 +103,8 @@
   }
 
   .panel-content {
-    flex-grow: 1;
+    flex: 1;
+    min-height: 0;
   }
 
   .panel-content > :global(:first-child) {

@@ -95,7 +95,6 @@
     title="Glom Spec"
     status={$specStatus}
     class="glom-spec-container"
-    min_height="80px"
     flex_grow="1"
   >
     <PadInput
@@ -154,9 +153,7 @@
         cmClass="{wrap_class} cm-target-preview-wrap"
         placeholder={"Data from the target API will be shown here once run."}
         styles={{
-          "&": {
-            "max-height": "25vh",
-          },
+          "&": {},
         }}
       />
     </Panel>
@@ -175,13 +172,6 @@
       readonly={true}
       cmClass="{wrap_class} cm-result-wrap"
       placeholder="Result will be displayed here after executing your glom spec."
-      styles={{
-        "&": {
-          "min-width": "100px",
-          "max-width": "100%",
-          overflow: "scroll",
-        },
-      }}
     />
   </Panel>
 
@@ -215,6 +205,7 @@
     flex: 1;
     padding: 10px;
     align-items: center;
+    height: calc(100vh - 150px);
   }
 
   :global(.cm-spec-wrap),

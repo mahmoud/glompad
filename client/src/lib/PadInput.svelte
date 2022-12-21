@@ -33,7 +33,8 @@
     }
 
     const getText = () => {
-        return padInput.querySelector(".cm-wrap .cm-content").innerText;
+        // padInput.querySelector(".cm-wrap .cm-content").innerText only returns the visible text
+        return $destStore;
     };
 
     const delayedExecute = () => {
@@ -109,6 +110,7 @@
         padding: 0;
         width: 100%;
         max-width: 100vw;
+        height: 100%;
     }
 
     button {

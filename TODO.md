@@ -2,6 +2,7 @@
 
 # Tasks
 
+* Fix URL update on execute
 * Target fetch status?
 * Fix flex growth on target data preview
 * handle fetch errors

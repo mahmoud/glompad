@@ -121,6 +121,7 @@
     flex-direction: column;
     height: 100%;
     min-height: 100%;
+    max-height: calc(100vh - 88px);
   }
 
   .box {
