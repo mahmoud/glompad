@@ -8,10 +8,12 @@
     import copyText from "./actions/copyText";
     import tooltip from "./actions/tooltip";
     import Icon from "./Icon.svelte";
+    import type { python } from "@codemirror/lang-python";
 
     export let execute: Function;
-    export let destStore;
-    export let lang;
+    export let destStore: SvelteStore<any>;
+    type LangSupport = ReturnType<typeof python>;
+    export let lang: LangSupport;
 
     export let readonly = false;
     let classes = "";
@@ -34,24 +36,21 @@
         return padInput.querySelector(".cm-wrap .cm-content").innerText;
     };
 
+    const delayedExecute = () => {
+        // can get the event, too, by defining "any"
+        // TODO: deal with delays either coming from codemirror or svelte storage
+        setTimeout(execute, 100);
+        return true;
+    };
+
     const ctrlEnterKeymap = keymap.of([
         {
             key: "Ctrl-Enter",
-            run: (view) => {
-                // can get the event, too, by defining "any"
-                // TODO: deal with delays either coming from codemirror or svelte storage
-                setTimeout(execute, 100);
-                return true;
-            },
+            run: delayedExecute,
         },
         {
             key: "Shift-Enter",
-            run: (view) => {
-                // can get the event, too, by defining "any"
-                // TODO: deal with delays either coming from codemirror or svelte storage
-                setTimeout(execute, 100);
-                return true;
-            },
+            run: delayedExecute,
         },
     ]);
 

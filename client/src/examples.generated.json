@@ -4,7 +4,7 @@
       "label": "Basic Deep Get",
       "icon": "",
       "desc": "",
-      "url": "#spec=%0A%22a.b.c%22%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
+      "url": "#spec=%22a.b.c%22%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
     },
     {
       "label": "Nested Lists",

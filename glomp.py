@@ -183,11 +183,13 @@ def build_examples():
         except Exception as e:
             raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
 
-        desc = textwrap.dedent(obj.__doc__ or '')
-        formatted_desc = '\n'.join(['# ' + line for line in textwrap.wrap(desc, width=100, break_long_words=False, break_on_hyphens=False)])
-
         formatted_spec = black.format_str(repr(obj.spec), mode=black.Mode())
-        formatted_spec = formatted_desc + '\n' + formatted_spec
+
+        desc = formatted_desc = ''
+        if obj.__doc__:
+            desc = textwrap.dedent(obj.__doc__)
+            formatted_desc = '\n'.join(['# ' + line for line in textwrap.wrap(desc, width=100, break_long_words=False, break_on_hyphens=False)])
+            formatted_spec = formatted_desc + '\n' + formatted_spec
 
         if obj.target_url:
             formatted_target = obj.target_url
@@ -209,9 +211,6 @@ def build_examples():
         json.dump(examples_wrapper, f, indent=2)
 
     return
-
-    
-
     
 
  
