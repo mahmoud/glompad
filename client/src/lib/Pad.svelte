@@ -65,7 +65,7 @@
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 
-    if (!isValidURL($targetURLValue)) {
+    if (!isValidURL($targetURLValue) && !settlingHref) {
       //switch back
       $targetValue = $targetURLValue;
       $targetURLValue = "";
@@ -181,6 +181,7 @@
       status={$resultStatus}
       flex_grow="3"
       collapsed={true}
+      scroll={true}
     >
       <pre style:font-size="10px">
         {storeDebug}

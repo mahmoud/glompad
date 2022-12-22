@@ -9,6 +9,7 @@
   export let collapsed = false;
   export let min_height = null;
   export let flex_grow = null;
+  export let scroll = false;
   const orig_flex_grow = flex_grow;
 
   let content_class = "";
@@ -30,7 +31,9 @@
 </script>
 
 <div
-  class="panel {classes} {collapsed ? 'collapsed' : ''}"
+  class="panel {classes} {collapsed ? 'collapsed' : ''} {scroll
+    ? 'scroll'
+    : ''}"
   style:min-height={min_height}
   style:flex-grow={flex_grow}
 >
@@ -72,6 +75,10 @@
 
   div.panel.collapsed {
     flex: 0 1 fit-content;
+  }
+
+  div.panel.scroll {
+    overflow: scroll;
   }
 
   .collapser {
