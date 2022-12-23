@@ -14,6 +14,7 @@
     targetValue,
     targetStatus,
     targetURLValue,
+    targetDestStore,
     targetFetchStatus,
     resultValue,
     resultStatus,
@@ -40,7 +41,6 @@
     storeDebug = padStore.toJson();
   });
 
-  let targetDestStore = targetValue;
   let targetDestStatus = targetStatus;
   let wrap_class: string;
   let showTargetPreview: boolean = false;
@@ -50,23 +50,20 @@
       //reset
       targetDestStore = targetValue;
       $targetURLValue = "";
-      console.warn("dest store is targetValue");
       targetDestStatus = targetStatus;
       showTargetPreview = false;
 
       // without this hack, codemirror doesn't rerender when the store changes out from underneath it.
-      // May be fixable by adding another store which points to the right store.
+      // Adding another store which points to the right store did not fix this.
       setTimeout(() => {
         if ($targetDestStore) {
           $targetDestStore = $targetDestStore + " ";
-          console.log("touched");
         }
       }, 10);
     }
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
       targetDestStore = targetURLValue;
-      console.warn("dest store is targetURLValue");
       $targetURLValue = $targetValue;
       targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
@@ -77,12 +74,9 @@
     if (targetDestStore == targetURLValue && !isValidURL($targetURLValue)) {
       //switch back
       targetDestStore = targetValue;
-      console.log("tv: " + $targetValue);
-      console.warn("dest store is targetValue");
       if (!$settlingHref) {
         $targetValue = $targetURLValue;
       }
-      console.log("tv: " + $targetValue);
       $targetURLValue = "";
       targetDestStatus = targetStatus;
       showTargetPreview = false;
