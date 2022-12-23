@@ -48,31 +48,50 @@
   targetValue.subscribe((val) => {
     if ($settlingHref) {
       //reset
-      $targetURLValue = "";
       targetDestStore = targetValue;
+      $targetURLValue = "";
+      console.warn("dest store is targetValue");
       targetDestStatus = targetStatus;
       showTargetPreview = false;
+
+      // without this hack, codemirror doesn't rerender when the store changes out from underneath it.
+      // May be fixable by adding another store which points to the right store.
+      setTimeout(() => {
+        if ($targetDestStore) {
+          $targetDestStore = $targetDestStore + " ";
+          console.log("touched");
+        }
+      }, 10);
     }
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
-      $targetURLValue = $targetValue;
       targetDestStore = targetURLValue;
+      console.warn("dest store is targetURLValue");
+      $targetURLValue = $targetValue;
       targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
+    }
+  });
+
+  targetURLValue.subscribe((val) => {
+    if (targetDestStore == targetURLValue && !isValidURL($targetURLValue)) {
+      //switch back
+      targetDestStore = targetValue;
+      console.log("tv: " + $targetValue);
+      console.warn("dest store is targetValue");
+      if (!$settlingHref) {
+        $targetValue = $targetURLValue;
+      }
+      console.log("tv: " + $targetValue);
+      $targetURLValue = "";
+      targetDestStatus = targetStatus;
+      showTargetPreview = false;
     }
   });
 
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 
-    if (!isValidURL($targetURLValue) && !settlingHref) {
-      //switch back
-      $targetValue = $targetURLValue;
-      $targetURLValue = "";
-      targetDestStore = targetValue;
-      targetDestStatus = targetStatus;
-      showTargetPreview = false;
-    }
     if ($targetURLValue) {
       fetch($targetURLValue)
         .then((resp) => resp.text())
