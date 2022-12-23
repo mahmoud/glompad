@@ -14,7 +14,6 @@
     targetValue,
     targetStatus,
     targetURLValue,
-    targetDestStore,
     targetFetchStatus,
     resultValue,
     resultStatus,
@@ -41,6 +40,7 @@
     storeDebug = padStore.toJson();
   });
 
+  let targetDestStore = targetValue;
   let targetDestStatus = targetStatus;
   let wrap_class: string;
   let showTargetPreview: boolean = false;
