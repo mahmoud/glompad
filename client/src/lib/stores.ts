@@ -178,7 +178,7 @@ class PadStore {
     // TODO: option to only save successful specs?
     // Right now (2022-12-15) glompad.run expects to read from stateStack
     padStore.saveState();
-    window.pyg.get("run_click")();
+    window.pyg.get("run")();
     if (get(padStore.enableAutoformat)) {
       // TODO: hack in case the spec/scope/target got reformatted updated
       padStore.saveState();
@@ -194,6 +194,11 @@ export const largeScreenStore = createMediaStore('(min-width: 500px');
 
 
 urlStore.subscribe((val: URL) => {
+  if (window && window.location.href != val.toString()) {
+    window.location.href = val.toString();
+    // return;
+  }
+
   const hash = val.hash && val.hash.slice(1)
   const params = new URLSearchParams(hash);
   const newState: Partial<PadState> = {

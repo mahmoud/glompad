@@ -165,10 +165,6 @@ def build_spec(spec_str):
     return res
 
 
-def run_click(e=None):
-    run()
-
-
 def autoformat(code):
     return black.format_str(code, mode=black.Mode())
 
