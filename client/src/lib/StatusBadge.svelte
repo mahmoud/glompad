@@ -1,7 +1,9 @@
 <script lang="ts">
+    import Icon from "./Icon.svelte";
     import tooltip from "./actions/tooltip";
 
     export let status;
+    export let isChanged: Function = null;
 
     const fmt_timing = (timing: number) => {
         let unit = "ms";
@@ -9,7 +11,17 @@
             timing *= 1000;
             unit = "s";
         }
-        return " (" + timing.toFixed(3) + unit + ")";
+        return timing.toFixed(3) + unit;
+    };
+
+    const fmt_created_at = (created_at: string) => {
+        try {
+            const date = new Date(created_at);
+            return date.toLocaleTimeString();
+        } catch {
+            console.warn(created_at);
+            console.trace();
+        }
     };
 
     let tooltip_content_div: HTMLDivElement;
@@ -33,19 +45,36 @@
         interactive: true,
     }}
 >
-    {#if status.subtitle}
-        {status.title}: {status.subtitle}
-    {:else}
-        {status.title}
+    {#if isChanged}
+        <Icon name="edit-3" stroke="currentColor" />
+    {:else if status.kind == "success"}
+        <Icon name="check" stroke="currentColor" />
+    {:else if status.kind == "error"}
+        <Icon name="alert-circle" stroke="currentColor" />
+    {:else if status.kind == "pending"}
+        <Icon name="loader" stroke="currentColor" />
     {/if}
 </div>
 
 <div bind:this={tooltip_content_div} style:display="block">
-    {#if status.detail}
-        {status.detail}
-        <br />
+    {#if isChanged}
+        <p>
+            Modified since last run.
+            {#if status.detail}
+                Last message:
+            {/if}
+        </p>
     {/if}
-    {fmt_timing(status.timing)}
+    {#if status.subtitle}
+        {status.subtitle}
+    {/if}
+    {#if status.detail}
+        <pre style="font-size:90%">{status.detail}</pre>
+    {/if}
+    <p>
+        {#if status.run_id}[{status.run_id}]{/if}
+        Took {fmt_timing(status.timing)} at {fmt_created_at(status.created_at)}.
+    </p>
 </div>
 
 <style>
@@ -61,13 +90,7 @@
     }
 
     .error {
-        color: var(--gray-9);
+        color: var(--gray-8);
         background: var(--primary-color-3);
-        font-weight: bold;
-    }
-
-    .warning {
-        background: var(--gray-3);
-        font-weight: bold;
     }
 </style>

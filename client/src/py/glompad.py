@@ -3,6 +3,7 @@ import ast
 import json
 import time
 import pprint
+import datetime
 
 import js  # type: ignore
 from pyodide.ffi import create_proxy  # type: ignore
@@ -13,31 +14,26 @@ import black
 # TODO: try dataclasses here again. 
 # First time it seemed to introduce a delay, possibly due to eval/compilation.
 class InputStatus:
-    def __init__(self, kind, title, subtitle='', detail='', timing=-0.0, start_time=None):
-        self.title = title
+    def __init__(self, kind, run_id=0, subtitle='', detail='', timing=-0.0, start_time=None):
         self.subtitle = subtitle
         self.detail = detail
         self.timing = timing
         self.kind = kind
+        self.run_id = run_id
+        self.created_at = datetime.datetime.now().isoformat()
         if not self.timing and start_time is not None:
             self.timing = time.time() - start_time
 
     @classmethod
     def success(cls, **kw):
-        if not kw.get('title'):
-            kw['title'] = 'OK'
         return cls(kind='success', **kw)
 
     @classmethod
-    def warning(cls, *a, **kw):
-        if not kw.get('title'):
-            kw['title'] = 'Warning'
-        return cls(kind='warning', *a, **kw)
+    def pending(cls, *a, **kw):
+        return cls(kind='pending', *a, **kw)
 
     @classmethod
     def error(cls, *a, **kw):
-        if not kw.get('title'):
-            kw['title'] = 'Error'
         return cls(kind='error', *a, **kw)
 
     def to_dict(self):
@@ -60,7 +56,7 @@ def get_store_value(store):
     return ret
 
 
-def load_target(target_input):
+def load_target(target_input, run_id=0):
     target = None
     try:
         start_time = time.time()
@@ -72,11 +68,11 @@ def load_target(target_input):
             target = ast.literal_eval(target_input)
         except SyntaxError as se:
             load_error = f"Target must be a JSON or Python literal.\n\n{se}"
-            status = InputStatus.error(detail=load_error, start_time=start_time)
+            status = InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id)
         else:
-            status = InputStatus.success(subtitle="Python", start_time=start_time)
+            status = InputStatus.success(subtitle="Python", start_time=start_time, run_id=run_id)
     else:
-        status = InputStatus.success(subtitle="JSON", start_time=start_time)
+        status = InputStatus.success(subtitle="JSON", start_time=start_time, run_id=run_id)
 
     return target, status
 
@@ -87,8 +83,8 @@ def run():
     padStore = js.window.SvelteApp.padStore
 
     stateStack = get_store_value(padStore.stateStack)
-    cur_run_id = get_store_value(padStore.curRunID)
-    padStore.curRunID.set(cur_run_id + 1)
+    run_id = get_store_value(padStore.curRunID)
+    padStore.curRunID.set(run_id + 1)
 
     spec_val = glom.glom(stateStack, glom.T[0].specValue, default='').strip()
     scope_val = glom.glom(stateStack, glom.T[0].scopeValue, default='').strip()
@@ -96,6 +92,10 @@ def run():
 
     enable_autoformat = bool(get_store_value(padStore.enableAutoformat))
     enable_scope = bool(get_store_value(padStore.enableScope))
+
+    if not spec_val and not run_id:
+        InputStatus.pending().store(padStore.specStatus)
+        return
 
     load_error = None
     try:
@@ -106,9 +106,9 @@ def run():
             padStore.specValue.set(fmtd_spec_val)
     except Exception as e:
         load_error = str(e)
-        InputStatus.error(detail=load_error, start_time=start_time).store(padStore.specStatus)
+        InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id).store(padStore.specStatus)
     else:
-        InputStatus.success(start_time=start_time).store(padStore.specStatus)
+        InputStatus.success(start_time=start_time, run_id=run_id).store(padStore.specStatus)
 
     if enable_scope:
         try:
@@ -121,12 +121,12 @@ def run():
                 padStore.scopeValue.set(fmtd_scope_val)
         except Exception as e:
             load_error = str(e)
-            InputStatus.error(detail=load_error, start_time=start_time).store(padStore.scopeStatus)
+            InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id).store(padStore.scopeStatus)
         else:
-            InputStatus.success(start_time=start_time).store(padStore.scopeStatus)
+            InputStatus.success(start_time=start_time, run_id=run_id).store(padStore.scopeStatus)
 
     if not load_error:
-        target, load_status = load_target(target_input)
+        target, load_status = load_target(target_input, run_id=run_id)
         load_status.store(padStore.targetStatus)
         if load_status.kind == 'error':
             load_error = load_status
@@ -146,10 +146,10 @@ def run():
         except glom.GlomError as ge:
             err = str(ge)
             result = err
-            InputStatus.error(title=type(ge).__name__, detail=err, start_time=start_time).store(padStore.resultStatus)
+            InputStatus.error(subtitle=type(ge).__name__, detail=err, start_time=start_time, run_id=run_id).store(padStore.resultStatus)
             padStore.resultValue.set(err)
         else:
-            InputStatus.success(start_time=start_time).store(padStore.resultStatus)
+            InputStatus.success(start_time=start_time, run_id=run_id).store(padStore.resultStatus)
             padStore.resultValue.set(result)
 
     return

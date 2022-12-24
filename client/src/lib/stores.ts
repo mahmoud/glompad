@@ -15,16 +15,19 @@ class PadState {
   ) { };
 }
 
-type StatusKindValue = 'success' | 'error' | 'info';  // TODO: info or pending?
+type StatusKindValue = 'success' | 'error' | 'pending';
 
 class InputStatus {
   constructor(
     public kind: StatusKindValue = 'success',
-    public title: string = 'OK',
+    public run_id: number = 0,
+    public created_at: string = null,
     public subtitle: string = '',
     public detail: string = '',
     public timing: number = -0.0,
-  ) { };
+  ) {
+    this.created_at = this.created_at ?? new Date().toISOString();
+  };
 }
 
 function override<T>(template: T, overrides: Partial<T>): T {
@@ -66,6 +69,7 @@ class PadStore {
     public targetValue: Writable<string> = writable(''),
     public targetStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
     public targetURLValue: Writable<string> = writable(''),
+    public targetDestStore: Writable<Writable<string>> = writable(null),
     public targetFetchStatus: Writable<InputStatus> = writable(new InputStatus()),
 
     public resultValue: Writable<string> = writable(''),
@@ -83,7 +87,26 @@ class PadStore {
     // versus a write from the target data preview fetch.
     public settlingHref: Writable<boolean> = writable(false),
 
-  ) { };
+    public targetChanged: Readable<boolean> = null,
+    public specChanged: Readable<boolean> = null,
+    public scopeChanged: Readable<boolean> = null,
+  ) {
+    this.targetDestStore.set(targetValue);
+    this.targetChanged = derived([this.targetValue, this.stateStack],
+      ([tv, stateStack]) => {
+        return tv.trim() != stateStack[0].targetValue.trim();
+      })
+
+    this.specChanged = derived([this.specValue, this.stateStack],
+      ([sv, stateStack]) => {
+        return sv != stateStack[0].specValue;
+      })
+
+    this.scopeChanged = derived([this.scopeValue, this.stateStack],
+      ([sv, stateStack]) => {
+        return sv != stateStack[0].scopeValue;
+      })
+  };
 
   deriveAll(): Readable<unknown> {
     let storeList = Object.values(this);

@@ -10,6 +10,7 @@
   export let min_height = null;
   export let flex_grow = null;
   export let scroll = false;
+  export let isChanged = null;
   const orig_flex_grow = flex_grow;
 
   let content_class = "";
@@ -52,7 +53,7 @@
       </span>
       {title}
     </h3>
-    <StatusBadge {status} />
+    <StatusBadge {status} {isChanged} />
   </div>
   <div class="panel-content {content_class}">
     <slot />
