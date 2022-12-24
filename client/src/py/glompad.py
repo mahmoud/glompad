@@ -83,19 +83,21 @@ def run():
     padStore = js.window.SvelteApp.padStore
 
     stateStack = get_store_value(padStore.stateStack)
-    run_id = get_store_value(padStore.curRunID)
-    padStore.curRunID.set(run_id + 1)
-
     spec_val = glom.glom(stateStack, glom.T[0].specValue, default='').strip()
     scope_val = glom.glom(stateStack, glom.T[0].scopeValue, default='').strip()
     target_input = glom.glom(stateStack, glom.T[0].targetValue, default='').strip()
 
-    enable_autoformat = bool(get_store_value(padStore.enableAutoformat))
-    enable_scope = bool(get_store_value(padStore.enableScope))
+    run_id = get_store_value(padStore.curRunID)
 
     if not spec_val and not run_id:
         InputStatus.pending().store(padStore.specStatus)
         return
+
+    run_id += 1
+    padStore.curRunID.set(run_id)
+
+    enable_autoformat = bool(get_store_value(padStore.enableAutoformat))
+    enable_scope = bool(get_store_value(padStore.enableScope))
 
     load_error = None
     try:

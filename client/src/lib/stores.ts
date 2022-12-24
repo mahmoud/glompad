@@ -92,6 +92,10 @@ class PadStore {
     public scopeChanged: Readable<boolean> = null,
   ) {
     this.targetDestStore.set(targetValue);
+
+    // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
+    this.stateStack.subscribe(this.executeGlom);
+
     this.targetChanged = derived([this.targetValue, this.stateStack],
       ([tv, stateStack]) => {
         return tv.trim() != stateStack[0].targetValue.trim();
@@ -157,6 +161,7 @@ class PadStore {
     if (new_url.toString() != window.location.toString()) {
       console.log(new_url.toString())
       urlStore.set(new_url.toString());
+      this.executeGlom();
     }
   }
 

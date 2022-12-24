@@ -21,7 +21,6 @@
     enableScope,
     scopeValue,
     scopeStatus,
-    stateStack,
     enableDebug,
     settlingHref,
     specChanged,
@@ -35,9 +34,6 @@
   }
 
   window.addEventListener("copysuccess", copySuccess);
-
-  // doesn't infinite loop bc stateStack shortcircuits when the state is unchanged
-  stateStack.subscribe(executeGlom);
 
   let storeDebug;
   padStore.deriveAll().subscribe(() => {

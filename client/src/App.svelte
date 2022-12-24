@@ -11,9 +11,19 @@
 
   let drawer;
   let innerWidth = 0;
+
+  let pageTitle = "glompad";
+
+  $: {
+    pageTitle = $curRunID ? `[${$curRunID}] glompad` : "glompad";
+  }
 </script>
 
 <svelte:window bind:innerWidth />
+
+<svelte:head>
+  <title>{pageTitle}</title>
+</svelte:head>
 
 <div id="container">
   <Drawer bind:this={drawer} />
