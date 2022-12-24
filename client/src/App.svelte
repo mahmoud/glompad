@@ -6,13 +6,49 @@
   import copyText from "./lib/actions/copyText";
 
   import { padStore } from "./lib/stores";
+  import { onMount } from "svelte";
 
-  const { executeGlom, curRunID, enableDebug } = padStore;
+  const { executeGlom, curRunID, specStatus, enableDebug } = padStore;
 
   let drawer;
   let innerWidth = 0;
 
   let pageTitle = "glompad";
+
+  const fmtRelTime = (status_created_at): string => {
+    const last_run_dt = new Date(status_created_at);
+    const delta = (new Date().valueOf() - last_run_dt.valueOf()) / 1000;
+    let ret: string;
+
+    if (delta < 60) {
+      ret = "just now";
+    } else if (delta < 120) {
+      ret = "about a minute ago";
+    } else if (delta < 2700) {
+      ret = (delta / 60).toFixed().toString() + " minutes ago";
+    } else if (delta < 5400) {
+      ret = "about an hour ago";
+    } else if (delta < 86400) {
+      ret = "about " + (delta / 3600).toFixed().toString() + " hours ago";
+    } else {
+      ret = "on " + last_run_dt.toLocaleString();
+    }
+    return ret;
+  };
+
+  let last_status_time = null;
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      if ($curRunID > 0) {
+        last_status_time = $specStatus.created_at;
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   $: {
     pageTitle = $curRunID ? `[${$curRunID}] glompad` : "glompad";
@@ -41,8 +77,8 @@
       <a href="{import.meta.env.BASE_URL}#"> glompad </a>
     </h1>
     <div id="pad-actions">
-      {#if $curRunID > 0}
-        [{$curRunID}]
+      {#if last_status_time}
+        <span id="last-run">(last run {fmtRelTime(last_status_time)})</span>
       {/if}
       <button
         id="run-button"
@@ -132,6 +168,10 @@
     height: 100%;
     min-height: 100%;
     max-height: calc(100vh - 88px);
+  }
+
+  #last-run {
+    color: var(--gray-4);
   }
 
   .box {

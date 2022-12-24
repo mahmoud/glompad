@@ -32,7 +32,6 @@
     // TODO: toast or something
     window.console.warn("copy success!");
   }
-
   window.addEventListener("copysuccess", copySuccess);
 
   let storeDebug;
