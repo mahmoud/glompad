@@ -2,20 +2,19 @@
 
 # Tasks
 
-* Fix URL update on execute
-* Target fetch status?
-* Fix flex growth on target data preview
-* handle fetch errors
+* Fetch state handling:
+  * Enqueue executeGlom based on subscribe to fetch status
+  * Switch fetch and result status to pending
+  * On success, execute; on failure, bypass execute. Once done, unsubscribe from fetch status
+* Figure out why target data preview refreshes on execute (and hits API again)
+
 * Select and translate examples
 * Message on copy success
 * Should a failure above (e.g., in spec) clear fields below (e.g., latest result), or is badge messaging sufficient?
-* Show edited fields
 
 # Features
 
-* fetch() target
 * auto-run on change
-* Debug developer option
 
 ## Technical improvements
 

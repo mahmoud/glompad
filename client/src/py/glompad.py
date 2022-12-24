@@ -58,6 +58,7 @@ def get_store_value(store):
 
 def load_target(target_input, run_id=0):
     target = None
+    length = len(target_input)
     try:
         start_time = time.time()
         target = json.loads(target_input)
@@ -70,9 +71,9 @@ def load_target(target_input, run_id=0):
             load_error = f"Target must be a JSON or Python literal.\n\n{se}"
             status = InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id)
         else:
-            status = InputStatus.success(subtitle="Python", start_time=start_time, run_id=run_id)
+            status = InputStatus.success(subtitle=f"Python ({length:,} chars)", start_time=start_time, run_id=run_id)
     else:
-        status = InputStatus.success(subtitle="JSON", start_time=start_time, run_id=run_id)
+        status = InputStatus.success(subtitle=f"JSON ({length:,} chars)", start_time=start_time, run_id=run_id)
 
     return target, status
 
