@@ -142,10 +142,19 @@ def run():
         try:
             start_time = time.time()
             result = glom.glom(target, spec, **glom_kwargs)
-            # TODO: if the above was json, try to json it first
-            result = pprint.pformat(result)
+            if 'json' in load_status.subtitle.lower():  # kind of hacky, but we'd like to do JSON in, JSON out
+                try:
+                    result = json.dumps(result, indent=4)
+                except Exception:
+                    result = pprint.pformat(result)
+            else:
+                result = pprint.pformat(result)
             if enable_autoformat:
-                result = autoformat(result)
+                try:
+                    result = autoformat(result)
+                except Exception as e:
+                    print(e)
+                    print(result)
         except glom.GlomError as ge:
             err = str(ge)
             result = err
