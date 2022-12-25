@@ -8,7 +8,7 @@
   import { padStore } from "./lib/stores";
   import { onMount } from "svelte";
 
-  const { executeGlom, curRunID, specStatus, enableDebug } = padStore;
+  const { curRunID, specStatus, enableDebug } = padStore;
 
   let drawer;
   let innerWidth = 0;
@@ -82,7 +82,7 @@
       {/if}
       <button
         id="run-button"
-        on:click={executeGlom}
+        on:click={padStore.executeGlom}
         use:tooltip={{
           content: "Run (or Ctrl-Enter via keyboard)",
           placement: "bottom",

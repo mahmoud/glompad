@@ -2,11 +2,9 @@
 
 # Tasks
 
-* Fetch state handling:
-  * Enqueue executeGlom based on subscribe to fetch status
-  * Switch fetch and result status to pending
-  * On success, execute; on failure, bypass execute. Once done, unsubscribe from fetch status
+* Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
+* Figure out JSON + autoformat breakage
 
 * Select and translate examples
 * Message on copy success

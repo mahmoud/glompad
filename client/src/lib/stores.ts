@@ -17,7 +17,7 @@ class PadState {
 
 type StatusKindValue = 'success' | 'error' | 'pending';
 
-class InputStatus {
+export class InputStatus {
   constructor(
     public kind: StatusKindValue = 'success',
     public run_id: number = 0,
@@ -28,6 +28,16 @@ class InputStatus {
   ) {
     this.created_at = this.created_at ?? new Date().toISOString();
   };
+}
+
+
+export class FetchStatus extends InputStatus {
+  constructor(
+    public url: string,
+    ...params: ConstructorParameters<typeof InputStatus>
+  ) {
+    super(...params);
+  }
 }
 
 function override<T>(template: T, overrides: Partial<T>): T {
@@ -70,7 +80,7 @@ class PadStore {
     public targetStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
     public targetURLValue: Writable<string> = writable(''),
     public targetDestStore: Writable<Writable<string>> = writable(null),
-    public targetFetchStatus: Writable<InputStatus> = writable(new InputStatus()),
+    public targetFetchStatus: Writable<FetchStatus> = writable(new FetchStatus('')),
 
     public resultValue: Writable<string> = writable(''),
     public resultStatus: Writable<InputStatus> = deproxyWritable(new InputStatus()),
@@ -178,6 +188,20 @@ class PadStore {
     if (!window.pyg) {
       console.log("no pyscript yet");
       return;
+    }
+
+    const tfs = get(padStore.targetFetchStatus);
+    console.warn(JSON.stringify(tfs));
+    console.trace()
+    if (tfs.kind == 'pending') {
+      console.warn('subbing delayed execution')
+      const unsub = this.targetFetchStatus.subscribe((new_status) => {
+        if (new_status.kind == 'success') {
+          this.executeGlom();
+        }
+        console.warn('unsubbed delayed execution')
+        unsub();
+      });
     }
 
     // TODO: option to only save successful specs?

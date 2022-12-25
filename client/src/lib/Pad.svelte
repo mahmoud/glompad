@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { padStore, largeScreenStore, isValidURL } from "./stores";
+  import {
+    padStore,
+    largeScreenStore,
+    isValidURL,
+    FetchStatus,
+  } from "./stores";
   import Panel from "./Panel.svelte";
   import PadInput from "./PadInput.svelte";
 
@@ -8,7 +13,6 @@
   let classes = "";
   export { classes as class };
   let {
-    executeGlom,
     specValue,
     specStatus,
     targetValue,
@@ -48,6 +52,7 @@
       //reset
       $targetDestStore = targetValue;
       $targetURLValue = "";
+      $targetFetchStatus = new FetchStatus("");
       targetDestStatus = targetStatus;
       showTargetPreview = false;
 
@@ -62,7 +67,7 @@
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
       $targetDestStore = targetURLValue;
-      $targetURLValue = $targetValue;
+      $targetURLValue = $targetValue.trim();
       targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
     }
@@ -76,6 +81,7 @@
         $targetValue = $targetURLValue;
       }
       $targetURLValue = "";
+      $targetFetchStatus = new FetchStatus("");
       targetDestStatus = targetStatus;
       showTargetPreview = false;
     }
@@ -84,10 +90,26 @@
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
 
-    if ($targetURLValue) {
+    if (
+      $targetURLValue &&
+      $targetFetchStatus &&
+      ($targetFetchStatus.url != $targetURLValue ||
+        $targetFetchStatus.kind == "error")
+    ) {
+      $targetFetchStatus = new FetchStatus(
+        $targetURLValue,
+        "pending",
+        $curRunID
+      );
       fetch($targetURLValue)
         .then((resp) => resp.text())
         .then((data) => {
+          $targetFetchStatus = new FetchStatus(
+            $targetURLValue,
+            "success",
+            $curRunID
+          );
+
           $targetValue = data;
           if (window && window.pyg) {
             const [loaded_target, loaded_status] = window.pyg.get(
@@ -98,8 +120,6 @@
         }); // TODO: Fetch status
     }
   }
-
-  // TODO: status badge loading state for preview.
 </script>
 
 <div class="gp-container {classes}">
@@ -111,7 +131,7 @@
     flex_grow="1"
   >
     <PadInput
-      execute={executeGlom}
+      execute={padStore.executeGlom}
       destStore={specValue}
       lang={python()}
       cmClass="{wrap_class} cm-spec-wrap"
@@ -126,7 +146,7 @@
       flex_grow="1"
     >
       <PadInput
-        execute={executeGlom}
+        execute={padStore.executeGlom}
         destStore={scopeValue}
         lang={python()}
         cmClass="{wrap_class} cm-scope-wrap"
@@ -134,18 +154,16 @@
       />
     </Panel>
   {/if}
-  <!--<div style:max-height="200px" style:overflow="scroll">
-    {$targetDestStore}<br />tuv: {$targetURLValue}<br />tv: {$targetValue}
-  </div> -->
+
   <Panel
     title="Target Data"
     class="glom-target-container"
     status={$targetDestStatus}
-    isChanged={$targetChanged}
+    isChanged={showTargetPreview ? undefined : $targetChanged}
     flex_grow={showTargetPreview ? 0 : 1}
   >
     <PadInput
-      execute={executeGlom}
+      execute={padStore.executeGlom}
       destStore={$targetDestStore}
       lang={python()}
       cmClass="{wrap_class} cm-target-wrap"
@@ -160,7 +178,7 @@
       flex_grow="1"
     >
       <PadInput
-        execute={executeGlom}
+        execute={padStore.executeGlom}
         destStore={targetValue}
         lang={python()}
         readonly={true}
@@ -172,7 +190,7 @@
       />
     </Panel>
   {/if}
-  <!-- {JSON.stringify( $resultStatus)} -->
+
   <Panel
     title="Result"
     class="glom-result-container"
@@ -180,7 +198,7 @@
     flex_grow="2"
   >
     <PadInput
-      execute={executeGlom}
+      execute={padStore.executeGlom}
       destStore={resultValue}
       lang={$resultStatus.kind == "error" ? null : python()}
       readonly={true}
