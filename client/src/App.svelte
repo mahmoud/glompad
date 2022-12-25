@@ -50,8 +50,11 @@
     };
   });
 
+  let last_status_time_text = "";
+
   $: {
     pageTitle = $curRunID ? `[${$curRunID}] glompad` : "glompad";
+    last_status_time_text = fmtRelTime(last_status_time);
   }
 </script>
 
@@ -78,7 +81,7 @@
     </h1>
     <div id="pad-actions">
       {#if last_status_time}
-        <span id="last-run">(last run {fmtRelTime(last_status_time)})</span>
+        <span id="last-run">(last run {last_status_time_text})</span>
       {/if}
       <button
         id="run-button"
