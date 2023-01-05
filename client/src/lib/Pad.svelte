@@ -96,6 +96,8 @@
       ($targetFetchStatus.url != $targetURLValue ||
         $targetFetchStatus.kind == "error")
     ) {
+      const prevStatusRunID = $targetFetchStatus.run_id;
+
       $targetFetchStatus = new FetchStatus(
         $targetURLValue,
         "pending",
@@ -117,7 +119,11 @@
             )(data, $curRunID);
             $targetStatus = loaded_status;
           }
-        }); // TODO: Fetch status
+
+          if (prevStatusRunID < $resultStatus.run_id) {
+            padStore.executeGlom();
+          }
+        }); // TODO: Handle fetch failed
     }
   }
 </script>

@@ -2,9 +2,12 @@
 
 # Tasks
 
+* "Debug" examples (broken specs, json, 500s, 404s, etc.)
 * Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
 * Figure out JSON + autoformat breakage
+* Startup race:
+  * When page is loaded with URL target, URL is fetched faster than pyodide is loaded. load_target/executeGlom are bypassed. When executeGlom finally does run, it looks at stateStack which are still empty states.
 
 * Select and translate examples
 * Message on copy success

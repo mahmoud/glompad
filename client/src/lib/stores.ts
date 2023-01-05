@@ -190,20 +190,6 @@ class PadStore {
       return;
     }
 
-    const tfs = get(padStore.targetFetchStatus);
-    console.warn(JSON.stringify(tfs));
-    console.trace()
-    if (tfs.kind == 'pending') {
-      console.warn('subbing delayed execution')
-      const unsub = this.targetFetchStatus.subscribe((new_status) => {
-        if (new_status.kind == 'success') {
-          this.executeGlom();
-        }
-        console.warn('unsubbed delayed execution')
-        unsub();
-      });
-    }
-
     // TODO: option to only save successful specs?
     // Right now (2022-12-15) glompad.run expects to read from stateStack
     padStore.saveState();
