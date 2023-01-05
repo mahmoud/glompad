@@ -20,6 +20,10 @@
     const delta = (new Date().valueOf() - last_run_dt.valueOf()) / 1000;
     let ret: string;
 
+    if ($enableDebug) {
+      return delta.toFixed().toString() + " seconds ago";
+    }
+
     if (delta < 60) {
       ret = "just now";
     } else if (delta < 120) {
@@ -37,11 +41,13 @@
   };
 
   let last_status_time = null;
+  let last_status_time_text = "";
 
   onMount(() => {
     const interval = setInterval(() => {
       if ($curRunID > 0) {
         last_status_time = $specStatus.created_at;
+        last_status_time_text = fmtRelTime(last_status_time);
       }
     }, 1000);
 
@@ -50,11 +56,8 @@
     };
   });
 
-  let last_status_time_text = "";
-
   $: {
     pageTitle = $curRunID ? `[${$curRunID}] glompad` : "glompad";
-    last_status_time_text = fmtRelTime(last_status_time);
   }
 </script>
 

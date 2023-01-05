@@ -5,10 +5,15 @@
   import VersionPicker from "./VersionPicker.svelte";
   import Icon from "./Icon.svelte";
   import OptionsMenu from "./OptionsMenu.svelte";
+  import { padStore } from "./stores";
+
+  const { enableDebug } = padStore;
 
   let isWide, isOpen;
   let innerWidth = 0;
   let isOpened = false;
+  let visible_examples = [],
+    example_sections = {};
   $: {
     isWide = innerWidth > 1000;
     isOpen = isOpened || isWide;
@@ -18,9 +23,26 @@
     } else {
       document.body.classList.remove("drawer-open");
     }
+
+    visible_examples = example_info.example_list.filter(
+      (ex) => $enableDebug || !ex.section.match(/debug/i)
+    );
+    example_sections = bucketize(visible_examples, "section");
   }
   const closeDrawer = () => (isOpened = false);
   export const toggleOpen = () => (isOpened = !isOpened);
+
+  const bucketize = (list, key) => {
+    let ret = {};
+    let cur_key_val, cur_list;
+    for (let i = 0; i < list.length; i++) {
+      cur_key_val = list[i][key];
+      cur_list = ret[cur_key_val] ?? [];
+      cur_list.push(list[i]);
+      ret[cur_key_val] = cur_list;
+    }
+    return ret;
+  };
 </script>
 
 <svelte:window bind:innerWidth />
@@ -62,27 +84,29 @@
         >
       </li>
     </ul>
-    <h2 class="section-heading">Examples</h2>
-    <ul>
-      {#each example_info.example_list as ex}
-        <li>
-          {#if ex.icon}
-            <Icon name={ex.icon} />
-          {:else}
-            <Icon name="droplet" direction="ne" />
-          {/if}
-          <a
-            href={ex.url}
-            use:tooltip={{
-              content: ex.desc,
-              disabled: !ex.desc,
-              placement: "right",
-              delay: [400, 0],
-            }}>{ex.label}</a
-          >
-        </li>
-      {/each}
-    </ul>
+    {#each Object.entries(example_sections) as [title, examples]}
+      <h2 class="section-heading">{title}</h2>
+      <ul>
+        {#each examples as ex}
+          <li>
+            {#if ex.icon}
+              <Icon name={ex.icon} />
+            {:else}
+              <Icon name="droplet" direction="ne" />
+            {/if}
+            <a
+              href={ex.url}
+              use:tooltip={{
+                content: ex.desc,
+                disabled: !ex.desc,
+                placement: "right",
+                delay: [400, 0],
+              }}>{ex.label}</a
+            >
+          </li>
+        {/each}
+      </ul>
+    {/each}
     <h2 class="section-heading">Options</h2>
     <OptionsMenu withTitle={false} />
   </div>

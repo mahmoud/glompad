@@ -11,6 +11,7 @@ class Example:
     spec: object
     target: object
     target_url: str = ''
+    section: str = 'Examples'
 
     # a name from https://feathericons.com/
     icon: str = ''
@@ -60,3 +61,19 @@ class GHEvents(Example):
     label = 'GitHub API Events'
     spec = [{'user': 'actor.login', 'type': 'type'}]
     target_url = 'https://api.github.com/repos/mahmoud/glom/events'
+
+
+class BadJSONURL(Example):
+    label = 'Bad JSON URL'
+    spec = {"a": "a"}
+    target_url = 'https://gist.githubusercontent.com/mahmoud/31182331fb5d4f1b99609d7867b96183/raw/fb2f7635191720834cd7ef866ee7d0e6d30630bb/bad_json.json'
+    section = 'Debug Examples'
+    icon = 'x-square'
+
+
+class Bad404URL(Example):
+    label = '404 URL'
+    spec = {"c": "c"}
+    section = 'Debug Examples'
+    icon = 'x-square'
+    target_url = 'https://gist.githubusercontent.com/mahmoud/31182331fb5d4f1b99609d7867b96183/raw/fb2f7635191720834cd7ef866ee7d0e6d30630bb/does_not_exist.json'

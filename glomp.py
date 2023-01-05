@@ -200,6 +200,7 @@ def build_examples():
             'label': obj.label,
             'icon': obj.icon,
             'desc': desc,
+            'section': obj.section,
             'url': make_url(spec=formatted_spec, target=formatted_target),
         }
         example_list.append(example_dict)
