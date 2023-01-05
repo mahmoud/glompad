@@ -1,3 +1,4 @@
+import copy
 import os
 import os.path
 import json
@@ -179,7 +180,7 @@ def build_examples():
         try:
             # sanity check
             if not obj.target_url:
-                examples_mod.glom(obj.target, obj.spec)
+                examples_mod.glom(copy.deepcopy(obj.target), copy.deepcopy(obj.spec))
         except Exception as e:
             raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
 

@@ -19,6 +19,7 @@ class Example:
 
 class BasicDeepGet(Example):
     label = 'Basic Deep Get'
+    icon = 'triangle'
     spec = 'a.b.c'
     target = {'a': {'b': {'c': 'd'}}}
 
@@ -28,7 +29,7 @@ class TutorialNestedLists(Example):
     See https://glom.readthedocs.io/en/latest/tutorial.html#handling-nested-lists
     '''
     label = 'Nested Lists'
-    icon = 'list'
+    icon = 'triangle'
     spec = {
         'planet_names': ('system.planets', ['name']),
         'moon_names': ('system.planets', [('moons', ['name'])])
@@ -54,13 +55,43 @@ class TutorialNestedLists(Example):
     }
 
 
+class DeepAssign(Example):
+    label = 'Deep Assign'
+    spec = Assign("a.e", "new value")
+    target = {"a": {"b": {"c": "d"}}}
+    icon = 'triangle'
+
+
+class DeepAssignSpec(Example):
+    label = 'Deep Assign (spec-based)'
+    spec = Assign("a.e", Spec('a.b'))
+    target = {"a": {"b": {"c": "d"}}}
+    icon = 'triangle'
+
+
 class GHEvents(Example):
     '''
     Restructuring a live GitHub API response.
     '''
     label = 'GitHub API Events'
+    icon = 'square'
     spec = [{'user': 'actor.login', 'type': 'type'}]
     target_url = 'https://api.github.com/repos/mahmoud/glom/events'
+
+
+class JSONRecursiveTransform(Example):
+    'Uses Ref and pattern matching to automatically traverse JSON-compatible recursive structures'
+    label = 'Tree Transformation'
+    spec = Ref('json',
+        Match(Switch({
+            dict: {str: Ref('json')},
+            list: [Ref('json')],
+            str: Auto(str),
+            object: T}))
+        )
+    target_url = 'https://api.github.com/repos/mahmoud/glom'
+    icon = 'hexagon'
+
 
 
 class BadJSONURL(Example):

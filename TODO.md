@@ -26,7 +26,6 @@
 # Ideas
 
 * Error visualization (overlaid on target/spec?)
-* Beginner/Intermediate/Advanced icons on examples?
 * Enable more python execution in spec field (setup panel?)
 * panel for generated glom code
 * multiple targets/results (tabbed)

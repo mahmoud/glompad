@@ -2,24 +2,45 @@
   "example_list": [
     {
       "label": "Basic Deep Get",
-      "icon": "",
+      "icon": "triangle",
       "desc": "",
       "section": "Examples",
       "url": "#spec=%22a.b.c%22%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
     },
     {
       "label": "Nested Lists",
-      "icon": "list",
+      "icon": "triangle",
       "desc": "\nSee https://glom.readthedocs.io/en/latest/tutorial.html#handling-nested-lists\n",
       "section": "Examples",
       "url": "#spec=%23%20%20See%20https%3A%2F%2Fglom.readthedocs.io%2Fen%2Flatest%2Ftutorial.html%23handling-nested-lists%0A%7B%0A%20%20%20%20%22planet_names%22%3A%20%28%22system.planets%22%2C%20%5B%22name%22%5D%29%2C%0A%20%20%20%20%22moon_names%22%3A%20%28%22system.planets%22%2C%20%5B%28%22moons%22%2C%20%5B%22name%22%5D%29%5D%29%2C%0A%7D%0A&target=%7B%0A%20%20%20%20%22system%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%22planets%22%3A%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%22name%22%3A%20%22earth%22%2C%20%22moons%22%3A%20%5B%7B%22name%22%3A%20%22luna%22%7D%5D%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%22name%22%3A%20%22jupiter%22%2C%20%22moons%22%3A%20%5B%7B%22name%22%3A%20%22io%22%7D%2C%20%7B%22name%22%3A%20%22europa%22%7D%5D%7D%2C%0A%20%20%20%20%20%20%20%20%5D%0A%20%20%20%20%7D%0A%7D%0A&v=1"
     },
     {
+      "label": "Deep Assign",
+      "icon": "triangle",
+      "desc": "",
+      "section": "Examples",
+      "url": "#spec=Assign%28Path%28%22a%22%2C%20%22e%22%29%2C%20%22new%20value%22%29%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
+    },
+    {
+      "label": "Deep Assign (spec-based)",
+      "icon": "triangle",
+      "desc": "",
+      "section": "Examples",
+      "url": "#spec=Assign%28Path%28%22a%22%2C%20%22e%22%29%2C%20Spec%28%22a.b%22%29%29%0A&target=%7B%22a%22%3A%20%7B%22b%22%3A%20%7B%22c%22%3A%20%22d%22%7D%7D%7D%0A&v=1"
+    },
+    {
       "label": "GitHub API Events",
-      "icon": "",
+      "icon": "square",
       "desc": "\nRestructuring a live GitHub API response.\n",
       "section": "Examples",
       "url": "#spec=%23%20%20Restructuring%20a%20live%20GitHub%20API%20response.%0A%5B%7B%22user%22%3A%20%22actor.login%22%2C%20%22type%22%3A%20%22type%22%7D%5D%0A&target=https%3A%2F%2Fapi.github.com%2Frepos%2Fmahmoud%2Fglom%2Fevents&v=1"
+    },
+    {
+      "label": "Tree Transformation",
+      "icon": "hexagon",
+      "desc": "Uses Ref and pattern matching to automatically traverse JSON-compatible recursive structures",
+      "section": "Examples",
+      "url": "#spec=%23%20Uses%20Ref%20and%20pattern%20matching%20to%20automatically%20traverse%20JSON-compatible%20recursive%20structures%0ARef%28%0A%20%20%20%20%22json%22%2C%0A%20%20%20%20Match%28%0A%20%20%20%20%20%20%20%20Switch%28%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28dict%2C%20%7Bstr%3A%20Ref%28%22json%22%29%7D%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28list%2C%20%5BRef%28%22json%22%29%5D%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28str%2C%20Auto%28str%29%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28object%2C%20T%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5D%0A%20%20%20%20%20%20%20%20%29%0A%20%20%20%20%29%2C%0A%29%0A&target=https%3A%2F%2Fapi.github.com%2Frepos%2Fmahmoud%2Fglom&v=1"
     },
     {
       "label": "Bad JSON URL",
