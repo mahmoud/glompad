@@ -81,9 +81,9 @@
     .panel-status-badge {
         color: var(--gray-7);
         background: var(--secondary-color-2);
-        display: inline-flexbox;
+        display: inline-flex;
         font-size: 0.85rem;
-        padding: 0.15rem 1rem 0 1rem;
+        padding: 0.4rem 1rem;
         border-radius: 7px;
         margin: 1px 0 0 auto;
         white-space: nowrap;
