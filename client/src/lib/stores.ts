@@ -108,6 +108,9 @@ class PadStore {
 
     this.targetChanged = derived([this.targetValue, this.stateStack],
       ([tv, stateStack]) => {
+        if (!tv.trim) {
+          console.log({'tv': tv})
+        }
         return tv.trim() != stateStack[0].targetValue.trim();
       })
 

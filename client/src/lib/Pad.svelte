@@ -93,8 +93,7 @@
     if (
       $targetURLValue &&
       $targetFetchStatus &&
-      ($targetFetchStatus.url != $targetURLValue ||
-        $targetFetchStatus.kind == "error")
+      $targetFetchStatus.url != $targetURLValue
     ) {
       const prevStatusRunID = $targetFetchStatus.run_id;
 
@@ -104,26 +103,46 @@
         $curRunID
       );
       fetch($targetURLValue)
-        .then((resp) => resp.text())
-        .then((data) => {
+        .catch((err) => {
+          $targetFetchStatus = new FetchStatus(
+            $targetURLValue,
+            "error",
+            $curRunID,
+            null,
+            err.toString()
+          );
+          $targetValue = "";
+          return { text: () => err.toString(), error: err };
+        })
+        .then((resp) => {
+          let ret = { text: resp.text(), error: null };
+          if ("error" in resp) {
+            ret.error = resp.error;
+          }
+          return ret;
+        })
+        .then((res) => {
+          if (res.error) {
+            return; // status set above
+          }
           $targetFetchStatus = new FetchStatus(
             $targetURLValue,
             "success",
             $curRunID
           );
 
-          $targetValue = data;
+          $targetValue = res.text.value;
           if (window && window.pyg) {
             const [loaded_target, loaded_status] = window.pyg.get(
               "load_target"
-            )(data, $curRunID);
+            )(res.text.value, $curRunID);
             $targetStatus = loaded_status;
           }
 
           if (prevStatusRunID < $resultStatus.run_id) {
             padStore.executeGlom();
           }
-        }); // TODO: Handle fetch failed
+        });
     }
   }
 </script>
