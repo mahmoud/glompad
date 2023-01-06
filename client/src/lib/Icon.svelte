@@ -9,11 +9,20 @@
   export let width = "1em";
   export let height = "1em";
 
-  $: icon = feather.icons[name];
-  $: rotation = directions.indexOf(direction) * 45;
-  $: if (icon) {
-    if (stroke) icon.attrs["stroke"] = stroke;
-    if (strokeWidth) icon.attrs["stroke-width"] = strokeWidth;
+  let icon, rotation;
+
+  $: {
+    if (name == "diamond") {
+      icon = feather.icons["square"];
+      rotation = 45;
+    } else {
+      icon = feather.icons[name];
+      rotation = directions.indexOf(direction) * 45;
+    }
+    if (icon) {
+      if (stroke) icon.attrs["stroke"] = stroke;
+      if (strokeWidth) icon.attrs["stroke-width"] = strokeWidth;
+    }
   }
 </script>
 
