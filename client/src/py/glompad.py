@@ -4,6 +4,7 @@ import json
 import time
 import pprint
 import datetime
+import traceback
 
 import js  # type: ignore
 from pyodide.ffi import create_proxy  # type: ignore
@@ -67,8 +68,9 @@ def load_target(target_input, run_id=0):
         try:
             start_time = time.time()
             target = ast.literal_eval(target_input)
-        except SyntaxError as se:
-            load_error = f"Target must be a JSON or Python literal.\n\n{se}"
+        except (NameError, SyntaxError) as se:
+            tb = ''.join(traceback.format_exception(se))
+            load_error = f"Target must be a JSON or Python literal.\n\n{tb}"
             status = InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id)
         else:
             status = InputStatus.success(subtitle=f"Python ({length:,} chars)", start_time=start_time, run_id=run_id)
@@ -135,10 +137,15 @@ def run():
             load_error = load_status
 
         if load_status.kind == 'success' and enable_autoformat:
-            fmtd_target_val = autoformat(target_input)
+            if load_status.subtitle.startswith('JSON'):
+                fmtd_target_val = json.dumps(target_input, indent=2)
+            else:
+                fmtd_target_val = autoformat(target_input)
             padStore.targetValue.set(fmtd_target_val)
 
-    if not load_error:
+    if load_error:
+        padStore.resultValue.set(load_error.detail)
+    else:
         try:
             start_time = time.time()
             result = glom.glom(target, spec, **glom_kwargs)
