@@ -5,11 +5,11 @@
 * Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
 * Figure out JSON + autoformat breakage
-* Startup race:
-  * When page is loaded with URL target, URL is fetched faster than pyodide is loaded. load_target/executeGlom are bypassed. When executeGlom finally does run, it looks at stateStack which are still empty states.
+* Races:
+  * Startup: When page is loaded with URL target, URL is fetched faster than pyodide is loaded. load_target/executeGlom are bypassed. When executeGlom finally does run, it looks at stateStack which are still empty states.
+  * Clicking Bad JSON URL results in trying to use the URL as the target data itself.
 * Select and translate examples
 * Message on copy success
-* Should a failure above (e.g., in spec) clear fields below (e.g., latest result), or is badge messaging sufficient?
 
 # Features
 
