@@ -36,13 +36,13 @@
       <input type="checkbox" bind:checked={$enableScope} />
 
       Enable glom scope
+      <!-- svelte-ignore security-anchor-rel-noreferrer -->
+      <a
+        target="_blank"
+        href="https://glom.readthedocs.io/en/latest/api.html#the-glom-scope"
+        ><Icon name="help-circle" /></a
+      >
     </label>
-    <!-- svelte-ignore security-anchor-rel-noreferrer -->
-    <a
-      target="_blank"
-      href="https://glom.readthedocs.io/en/latest/api.html#the-glom-scope"
-      ><Icon name="help-circle" /></a
-    >
   </div>
   <div class="option" id="debug-item">
     <label

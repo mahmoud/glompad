@@ -4,6 +4,7 @@
     largeScreenStore,
     isValidURL,
     FetchStatus,
+    InputStatus,
   } from "./stores";
   import Panel from "./Panel.svelte";
   import PadInput from "./PadInput.svelte";
@@ -96,6 +97,8 @@
       const prevStatusRunID = $targetFetchStatus.run_id;
 
       $targetFetchStatus = new FetchStatus(target_url, "pending", $curRunID);
+      $targetValue = "";
+      $targetStatus = new InputStatus("pending", $curRunID);
 
       try {
         const resp = await fetch(target_url);
@@ -136,8 +139,15 @@
 
   targetURLValue.subscribe(updateFetch);
 
+  let target_placeholder;
   $: {
     wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
+    if ($targetFetchStatus.kind == "pending") {
+      target_placeholder = "Loading data from target API...";
+    } else {
+      target_placeholder =
+        "Data from the target API will be shown here once run.";
+    }
   }
 </script>
 
@@ -202,7 +212,7 @@
         lang={python()}
         readonly={true}
         cmClass="{wrap_class} cm-target-preview-wrap"
-        placeholder={"Data from the target API will be shown here once run."}
+        placeholder={target_placeholder}
         styles={{
           "&": {},
         }}

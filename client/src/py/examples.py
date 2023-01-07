@@ -106,6 +106,14 @@ class JSONRecursiveTransform(Example):
     icon = "codesandbox"
 
 
+class SlowURL(Example):
+    label = "Slow URL"
+    spec = T
+    target_url = "https://httpbin.org/delay/3"
+    section = "Debug Examples"
+    icon = "clock"
+
+
 class BadJSONURL(Example):
     label = "Bad JSON URL"
     spec = {"a": "a"}

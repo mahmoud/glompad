@@ -50,6 +50,13 @@
       "url": "#spec=%23%20Uses%20Ref%20and%20pattern%20matching%20to%20automatically%20traverse%20JSON-compatible%20recursive%20structures%0ARef%28%0A%20%20%20%20%22json%22%2C%0A%20%20%20%20Match%28%0A%20%20%20%20%20%20%20%20Switch%28%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28dict%2C%20%7Bstr%3A%20Ref%28%22json%22%29%7D%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28list%2C%20%5BRef%28%22json%22%29%5D%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28str%2C%20Auto%28str%29%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28object%2C%20T%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5D%0A%20%20%20%20%20%20%20%20%29%0A%20%20%20%20%29%2C%0A%29%0A&target=https%3A%2F%2Fapi.github.com%2Frepos%2Fmahmoud%2Fglom&v=1"
     },
     {
+      "label": "Slow URL",
+      "icon": "clock",
+      "desc": "",
+      "section": "Debug Examples",
+      "url": "#spec=T%0A&target=https%3A%2F%2Fhttpbin.org%2Fdelay%2F3&v=1"
+    },
+    {
       "label": "Bad JSON URL",
       "icon": "x-square",
       "desc": "",

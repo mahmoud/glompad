@@ -93,4 +93,8 @@
         color: var(--gray-8);
         background: var(--primary-color-3);
     }
+
+    .pending {
+        background: var(--primary-color-3);
+    }
 </style>
