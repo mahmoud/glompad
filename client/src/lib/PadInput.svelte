@@ -1,7 +1,7 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
     import { githubLight, githubDark } from "@uiw/codemirror-theme-github";
-    import { keymap } from "@codemirror/view";
+    import { EditorView, keymap } from "@codemirror/view";
     import { Prec } from "@codemirror/state";
 
     import { darkModeStore } from "./stores";
@@ -33,7 +33,6 @@
     }
 
     const getText = () => {
-        // padInput.querySelector(".cm-wrap .cm-content").innerText only returns the visible text
         return $destStore;
     };
 
@@ -55,7 +54,11 @@
         },
     ]);
 
-    let extensions = [Prec.highest(ctrlEnterKeymap), ...extraExtensions];
+    let extensions = [
+        Prec.highest(ctrlEnterKeymap),
+        EditorView.lineWrapping,
+        ...extraExtensions,
+    ];
 </script>
 
 <div bind:this={padInput} class="padInput {classes}">
