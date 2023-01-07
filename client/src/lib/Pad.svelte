@@ -87,63 +87,57 @@
     }
   });
 
-  $: {
-    wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
-
+  async function updateFetch(target_url) {
     if (
-      $targetURLValue &&
+      target_url &&
       $targetFetchStatus &&
-      $targetFetchStatus.url != $targetURLValue
+      $targetFetchStatus.url != target_url
     ) {
       const prevStatusRunID = $targetFetchStatus.run_id;
 
-      $targetFetchStatus = new FetchStatus(
-        $targetURLValue,
-        "pending",
-        $curRunID
-      );
-      fetch($targetURLValue)
-        .catch((err) => {
+      $targetFetchStatus = new FetchStatus(target_url, "pending", $curRunID);
+
+      try {
+        const resp = await fetch(target_url);
+        const text = await resp.text();
+        try {
           $targetFetchStatus = new FetchStatus(
-            $targetURLValue,
-            "error",
-            $curRunID,
-            null,
-            err.toString()
-          );
-          $targetValue = "";
-          return { text: () => err.toString(), error: err };
-        })
-        .then((resp) => {
-          let ret = { text: resp.text(), error: null };
-          if ("error" in resp) {
-            ret.error = resp.error;
-          }
-          return ret;
-        })
-        .then((res) => {
-          if (res.error) {
-            return; // status set above
-          }
-          $targetFetchStatus = new FetchStatus(
-            $targetURLValue,
+            target_url,
             "success",
             $curRunID
           );
 
-          $targetValue = res.text.value;
+          $targetValue = text;
           if (window && window.pyg) {
             const [loaded_target, loaded_status] = window.pyg.get(
               "load_target"
-            )(res.text.value, $curRunID);
+            )(text, $curRunID);
             $targetStatus = loaded_status;
           }
 
           if (prevStatusRunID < $resultStatus.run_id) {
             padStore.executeGlom();
           }
-        });
+        } catch (load_err) {
+          console.warn(load_err); // TODO?
+        }
+      } catch (err) {
+        $targetFetchStatus = new FetchStatus(
+          target_url,
+          "error",
+          $curRunID,
+          null,
+          err.toString()
+        );
+        $targetValue = "";
+      }
     }
+  }
+
+  targetURLValue.subscribe(updateFetch);
+
+  $: {
+    wrap_class = $largeScreenStore ? "cm-wrap-large" : "cm-wrap-small";
   }
 </script>
 
