@@ -24,8 +24,13 @@ WHEEL_PLATFORM = 'emscripten-3.1.14-wasm32'
 # These historical versions don't have wheels: (TODO: could upload wheels for these)
 IGNORED_VERSIONS = ['20.5.0', '19.10.0', '19.2.0', '19.1.0', '18.4.0', '18.3.1', '18.3.0', '18.2.0', '18.1.1', '18.1.0', '18.0.0', '0.0.3', '0.0.2']
 
+GLOBAL_ENV_VARS = {}
+
 def _subproc_run(*a, **kw):
     print(f'{a} -- {kw}')
+    env = dict(GLOBAL_ENV_VARS)
+    env.update(kw.get('env', os.environ))
+    kw['env'] = env
     return subprocess.run(*a, **kw)
 
 
@@ -102,16 +107,21 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     return
 
 
-def build(latest, versions, deploy, basepath='/'):
+def build(latest, versions, deploy, basepath='/', sentry_key_path=''):
     # make build directory
     if not CUR_DIR.endswith('/glompad/') and os.path.isdir(CUR_DIR + '.git'):
         raise face.UsageError('glompad build expected to run from project root')
     if not os.path.isfile(PYSCRIPT_CONFIG_PATH):
         raise face.UsageError(f'could not find config at: {PYSCRIPT_CONFIG_PATH}')
 
-
     if not (basepath.startswith('/') and basepath.endswith('/')):
         raise face.UsageError('basepath must start and end with /')
+
+    if sentry_key_path:
+        with open(os.path.expanduser(sentry_key_path)) as f:
+            sentry_key = f.read().strip()
+            GLOBAL_ENV_VARS['SENTRY_AUTH_TOKEN'] = sentry_key
+            print(f'sentry_key: {sentry_key[:5]}...')
 
     res = _subproc_run(['pip', 'index', 'versions', 'glom'], capture_output=True)
     output_lines = res.stdout.decode('utf8').splitlines()
@@ -223,6 +233,7 @@ build_cmd.add('--latest', parse_as=True, doc='only build/deploy latest version o
 build_cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
 build_cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
 build_cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
+build_cmd.add('--sentry-key-path', parse_as=str, missing='~/api_keys/glompad_sentry_build.txt')
 
 cmd.add(build_cmd)
 cmd.add(make_url)

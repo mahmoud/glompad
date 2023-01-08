@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@codemirror/lang-python": "^6.0.4",
+    "@sentry/vite-plugin": "^0.3.0",
     "@sveltejs/vite-plugin-svelte": "^1.1.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/codemirror": "^5.60.5",
@@ -26,9 +27,11 @@
   },
   "dependencies": {
     "@codemirror/commands": "^6.1.2",
+    "@codemirror/language": "^6.3.2",
     "@codemirror/state": "^6.1.2",
     "@codemirror/view": "^6.4.1",
     "@popperjs/core": "^2.11.6",
+    "@sentry/svelte": "^7.29.0",
     "@uiw/codemirror-theme-github": "^4.13.2",
     "feather-icons": "^4.29.0",
     "svelte-codemirror-editor": "^1.1.0",

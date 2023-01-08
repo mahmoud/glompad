@@ -43,6 +43,14 @@
     }
     return ret;
   };
+
+  function testSentry() {
+    if (import.meta.env.PROD) {
+      throw new Error("production Sentry test");
+    } else {
+      throw new Error("local Sentry test");
+    }
+  }
 </script>
 
 <svelte:window bind:innerWidth />
@@ -107,6 +115,10 @@
         {/each}
       </ul>
     {/each}
+    {#if $enableDebug}
+      <!-- svelte-ignore missing-declaration -->
+      <button type="button" on:click={testSentry}>Test Sentry</button>
+    {/if}
     <h2 class="section-heading">Options</h2>
     <OptionsMenu withTitle={false} />
   </div>
