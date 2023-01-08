@@ -2,9 +2,9 @@
 
 # Tasks
 
+* About modal
 * Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
-* Figure out JSON + autoformat breakage
 * Races:
   * Startup: When page is loaded with URL target, URL is fetched faster than pyodide is loaded. load_target/executeGlom are bypassed. When executeGlom finally does run, it looks at stateStack which are still empty states.
   * Clicking Bad JSON URL results in trying to use the URL as the target data itself.
