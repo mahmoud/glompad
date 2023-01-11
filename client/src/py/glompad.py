@@ -110,8 +110,7 @@ def run():
             fmtd_spec_val = autoformat(spec_val)
             padStore.specValue.set(fmtd_spec_val)
     except Exception as e:
-        load_error = str(e)
-        InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id).store(padStore.specStatus)
+        load_error = InputStatus.error(detail=str(e), start_time=start_time, run_id=run_id).store(padStore.specStatus)
     else:
         InputStatus.success(start_time=start_time, run_id=run_id).store(padStore.specStatus)
 
@@ -125,8 +124,7 @@ def run():
                 fmtd_scope_val = autoformat(scope_val)
                 padStore.scopeValue.set(fmtd_scope_val)
         except Exception as e:
-            load_error = str(e)
-            InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id).store(padStore.scopeStatus)
+            load_error = InputStatus.error(detail=str(e), start_time=start_time, run_id=run_id).store(padStore.scopeStatus)
         else:
             InputStatus.success(start_time=start_time, run_id=run_id).store(padStore.scopeStatus)
 
@@ -144,7 +142,8 @@ def run():
             padStore.targetValue.set(fmtd_target_val)
 
     if load_error:
-        padStore.resultValue.set(load_error.detail)
+        error_detail = load_error.detail if spec_val else ''
+        padStore.resultValue.set(error_detail)
     else:
         try:
             start_time = time.time()

@@ -49,10 +49,15 @@
   let showTargetPreview: boolean = false;
 
   targetValue.subscribe((val) => {
+    const isURL = isValidURL($targetValue);
     if ($settlingHref) {
       //reset
-      $targetDestStore = targetValue;
-      $targetURLValue = "";
+      if (!isURL) {
+        // hack which, if missing, shows targetData field as
+        // blank instead of targetURLValue
+        $targetDestStore = targetValue;
+        $targetURLValue = "";
+      }
       $targetFetchStatus = new FetchStatus("");
       targetDestStatus = targetStatus;
       showTargetPreview = false;
@@ -67,8 +72,9 @@
     }
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
-      $targetDestStore = targetURLValue;
       $targetURLValue = $targetValue.trim();
+      $targetDestStore = targetURLValue;
+      console.log("yes", $targetURLValue);
       targetDestStatus = targetFetchStatus;
       showTargetPreview = true;
     }
@@ -164,7 +170,7 @@
       destStore={specValue}
       lang={python()}
       cmClass="{wrap_class} cm-spec-wrap"
-      placeholder="Insert your glom spec here, or try one of the examples on the left."
+      placeholder="Insert your glom spec here, or try one of the examples in the menu."
     />
   </Panel>
   {#if $enableScope}
