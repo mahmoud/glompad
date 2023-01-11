@@ -1,5 +1,6 @@
 import { derived, type Readable, type Unsubscriber, type Writable } from 'svelte/store';
 import { writable, get } from 'svelte/store';
+import * as Sentry from "@sentry/browser";
 
 import { createMediaStore } from 'svelte-media-queries'
 
@@ -108,9 +109,6 @@ class PadStore {
 
     this.targetChanged = derived([this.targetValue, this.stateStack],
       ([tv, stateStack]) => {
-        if (!tv.trim) {
-          console.log({'tv': tv})
-        }
         return tv.trim() != stateStack[0].targetValue.trim();
       })
 
@@ -196,7 +194,12 @@ class PadStore {
     // TODO: option to only save successful specs?
     // Right now (2022-12-15) glompad.run expects to read from stateStack
     padStore.saveState();
-    window.pyg.get("run")();
+    try {
+      window.pyg.get("run")();
+    } catch (error) {
+      console.warn(error)
+      Sentry.captureException(error);
+    }
     if (get(padStore.enableAutoformat)) {
       // TODO: hack in case the spec/scope/target got reformatted updated
       padStore.saveState();
