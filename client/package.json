@@ -29,7 +29,7 @@
     "@codemirror/commands": "^6.1.2",
     "@codemirror/language": "^6.3.2",
     "@codemirror/state": "^6.1.2",
-    "@codemirror/view": "^6.4.1",
+    "@codemirror/view": "^6.7.2",
     "@popperjs/core": "^2.11.6",
     "@sentry/svelte": "^7.29.0",
     "@uiw/codemirror-theme-github": "^4.13.2",
