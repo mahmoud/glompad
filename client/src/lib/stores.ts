@@ -2,10 +2,10 @@ import { derived, type Readable, type Unsubscriber, type Writable } from 'svelte
 import { writable, get } from 'svelte/store';
 import * as Sentry from "@sentry/browser";
 
-import { createMediaStore } from 'svelte-media-queries'
+import { createMediaStore } from 'svelte-media-queries';
 
-import { createUrlStore } from './urlStore'
-export { darkModeStore } from './darkModeStore'
+import { createUrlStore } from './urlStore';
+export { darkModeStore } from './darkModeStore';
 
 class PadState {
   constructor(
@@ -144,18 +144,63 @@ class PadStore {
     return JSON.stringify(copy, undefined, 2).trim();
   }
 
+  saveStateFromURL(url: URL) {
+    // pushes URL values into stores
+    const hash = url.hash && url.hash.slice(1)
+    const params = new URLSearchParams(hash);
+    const newState: Partial<PadState> = {
+      "specValue": params.get('spec') || '',
+      "targetValue": params.get('target') || '',
+      "scopeValue": params.get('scope') || '',
+    }
+    this.settlingHref.set(true);
+    let pushedNewState = false;
+    try {
+      this.specValue.set(newState.specValue);
+      this.scopeValue.set(newState.scopeValue);
+      this.targetValue.set(newState.targetValue);
+  
+      if (!!newState.scopeValue && get(this.enableScope) === null) {
+        this.enableScope.set(true);
+      }
+
+      pushedNewState = this._pushNewState(newState);
+    } finally {
+      this.settlingHref.set(false)
+    }
+    if (pushedNewState) {
+      this.executeGlom();
+    }
+  }
+
+  _pushNewState(newState: Partial<PadState>) {
+    const newStateCopy = { ...newState }
+    delete newStateCopy['runID']
+    const curState = { ...get(this.stateStack)[0] }
+    delete curState['runID']
+
+    const isCurrent = shallowEqual(curState, newStateCopy)
+
+    if (isCurrent) {
+      return false;
+    }
+    newState['runID'] = get(this.curRunID)
+    this.stateStack.update((curVal) => [newState as PadState, ...curVal])
+    return true;
+  }
+
   saveState() {
+    // pushes store values into URL
     const targetURLParam = get(this.targetURLValue) && !get(this.settlingHref) ? get(this.targetURLValue) : get(this.targetValue);
     const newState: Partial<PadState> = {
       "specValue": get(this.specValue),
       "scopeValue": get(this.scopeValue),
       "targetValue": get(this.targetValue),
     }
-    if (this.stateValueCurrent(newState)) {
+    const pushedNewState = this._pushNewState(newState);
+    if (!pushedNewState) {
       return;
     }
-    newState['runID'] = get(this.curRunID)
-    padStore.stateStack.update((curVal) => [newState as PadState, ...curVal])
 
     const urlParams = {
       "spec": newState.specValue,
@@ -166,23 +211,13 @@ class PadStore {
     }
     urlParams['v'] = '1';
 
-    let new_url = new URL(window.location.toString())
+    let new_url = new URL(window.location.toString());
     new_url.hash = new URLSearchParams(Object.entries(urlParams)).toString();
 
     if (new_url.toString() != window.location.toString()) {
       console.log(new_url.toString())
       urlStore.set(new_url.toString());
-      this.executeGlom();
     }
-  }
-
-  stateValueCurrent(state: Partial<PadState>) {
-    const newState = { ...state }
-    delete newState['runID']
-    const curState = { ...get(this.stateStack)[0] }
-    delete curState['runID']
-
-    return shallowEqual(curState, newState)
   }
 
   executeGlom() {
@@ -202,44 +237,26 @@ class PadStore {
     }
     if (get(padStore.enableAutoformat)) {
       // TODO: hack in case the spec/scope/target got reformatted updated
-      padStore.saveState();
+      // padStore.saveState();
     }
   };
 }
 
 export const padStore = new PadStore();
 
-export const urlStore = createUrlStore(window && window.location)
+export const urlStore = createUrlStore(window && window.location.href);
 
 export const largeScreenStore = createMediaStore('(min-width: 500px');
 
 
-urlStore.subscribe((val: URL) => {
-  if (window && window.location.href != val.toString()) {
-    window.location.href = val.toString();
-    // return;
+urlStore.subscribe((val: string) => {
+  if (window && window.location.href != val) {
+    window.location.href = val;
+    return;
   }
+  const url = new URL(val);
 
-  const hash = val.hash && val.hash.slice(1)
-  const params = new URLSearchParams(hash);
-  const newState: Partial<PadState> = {
-    "specValue": params.get('spec') || '',
-    "targetValue": params.get('target') || '',
-    "scopeValue": params.get('scope') || '',
-  }
-  padStore.settlingHref.set(true)
-  try {
-    padStore.specValue.set(newState.specValue);
-    padStore.scopeValue.set(newState.scopeValue);
-    padStore.targetValue.set(newState.targetValue);
-
-    if (!!newState.scopeValue && get(padStore.enableScope) === null) {
-      padStore.enableScope.set(true);
-    }
-    padStore.saveState()
-  } finally {
-    padStore.settlingHref.set(false)
-  }
+  padStore.saveStateFromURL(url);
 });
 
 
