@@ -8,6 +8,7 @@
   } from "./stores";
   import Panel from "./Panel.svelte";
   import PadInput from "./PadInput.svelte";
+  import { tick } from "svelte";
 
   import { python } from "@codemirror/lang-python";
 
@@ -48,7 +49,7 @@
   let wrap_class: string;
   let showTargetPreview: boolean = false;
 
-  targetValue.subscribe((val) => {
+  targetValue.subscribe(async (val) => {
     const isURL = isValidURL($targetValue);
     if ($settlingHref) {
       //reset
@@ -64,15 +65,15 @@
 
       // without this hack, codemirror doesn't rerender when the store changes out from underneath it.
       // Adding another store which points to the right store did not fix this.
-      setTimeout(() => {
-        if ($targetValue) {
-          $targetValue = $targetValue + " ";
-        }
-      }, 10);
+      await tick();
+      if ($targetValue) {
+        $targetValue = $targetValue + " ";
+      }
     }
     if (isValidURL($targetValue)) {
       //switch forward  // TODO: infinite loop technically possible if API returns url, could check that the first char is json?
       $targetURLValue = $targetValue.trim();
+      await tick();
       $targetDestStore = targetURLValue;
       console.log("yes", $targetURLValue);
       targetDestStatus = targetFetchStatus;
