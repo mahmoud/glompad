@@ -43,6 +43,13 @@
       "url": "#spec=%23%20%20Restructuring%20a%20live%20GitHub%20API%20response.%0A%5B%7B%22user%22%3A%20%22actor.login%22%2C%20%22type%22%3A%20%22type%22%7D%5D%0A&target=https%3A%2F%2Fapi.github.com%2Frepos%2Fmahmoud%2Fglom%2Fevents&v=1"
     },
     {
+      "label": "Streaming Showcase",
+      "icon": "diamond",
+      "desc": "\nRestructuring a live GitHub API response.\n",
+      "section": "Examples",
+      "url": "#spec=%7B%27unique%27%3A%20Iter%28%29.unique%28%29.all%28%29%2C%0A%20%27chunked%27%3A%20Iter%28%29.chunked%282%29.all%28%29%2C%0A%20%27unique_chunked%27%3A%20Iter%28%29.unique%28%29.chunked%282%29.all%28%29%2C%0A%20%27unique_chunked_limit%27%3A%20Iter%28%29.unique%28%29.chunked%282%29.limit%282%29.all%28%29%2C%0A%20%27first%27%3A%20Iter%28%29.first%28%29%7D%0A&target=%5B0%2C%201%2C%202%2C%203%2C%200%2C%201%2C%202%2C%203%2C%200%2C%201%5D%0A&v=1"
+    },
+    {
       "label": "Tree Transformation",
       "icon": "codesandbox",
       "desc": "Uses Ref and pattern matching to automatically traverse JSON-compatible recursive structures",

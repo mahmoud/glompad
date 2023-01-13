@@ -187,20 +187,27 @@ def build_examples():
         if obj is example_cls:
             continue
         print(f'{name} - {obj.label}')
-        try:
+
+        if obj.formatted_spec:
+            # override for specs that are better formatted by hand (e.g., Iter().all())
+            formatted_spec = textwrap.dedent(obj.formatted_spec)
             # sanity check
-            if not obj.target_url:
-                examples_mod.glom(copy.deepcopy(obj.target), copy.deepcopy(obj.spec))
-        except Exception as e:
-            raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
+            eval(formatted_spec, copy.copy(examples_mod.__dict__))
+        else:
+            try:
+                # sanity check
+                if not obj.target_url:
+                    examples_mod.glom(copy.deepcopy(obj.target), copy.deepcopy(obj.spec))
+            except Exception as e:
+                raise face.UsageError(f'problem with example {obj.__name__}:\n{str(e)}')
 
-        formatted_spec = black.format_str(repr(obj.spec), mode=black.Mode())
+            formatted_spec = black.format_str(repr(obj.spec), mode=black.Mode())
 
-        desc = formatted_desc = ''
-        if obj.__doc__:
-            desc = textwrap.dedent(obj.__doc__)
-            formatted_desc = '\n'.join(['# ' + line for line in textwrap.wrap(desc, width=100, break_long_words=False, break_on_hyphens=False)])
-            formatted_spec = formatted_desc + '\n' + formatted_spec
+            desc = formatted_desc = ''
+            if obj.__doc__:
+                desc = textwrap.dedent(obj.__doc__)
+                formatted_desc = '\n'.join(['# ' + line for line in textwrap.wrap(desc, width=100, break_long_words=False, break_on_hyphens=False)])
+                formatted_spec = formatted_desc + '\n' + formatted_spec
 
         if obj.target_url:
             formatted_target = obj.target_url

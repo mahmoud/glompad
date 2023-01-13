@@ -13,6 +13,7 @@ class Example:
     target: object
     target_url: str = ""
     section: str = "Examples"
+    formatted_spec: str = ''  # override for specs that are better formatted by hand (e.g., Iter().all())
 
     # a name from https://feathericons.com/
     icon: str = ""
@@ -86,6 +87,30 @@ class GHEvents(Example):
     target_url = "https://api.github.com/repos/mahmoud/glom/events"
 
 
+class IterShowcase(Example):
+    """
+    Shows off a few Iter() techniques. 
+    Iter().all() outputs lists for easy inspection. 
+    Remove it to get generators/streaming behavior.
+    """
+    label = "Streaming Showcase"
+    icon = 'diamond'
+    formatted_spec = '''\
+        {'unique': Iter().unique().all(),
+         'chunked': Iter().chunked(2).all(),
+         'unique_chunked': Iter().unique().chunked(2).all(),
+         'unique_chunked_limit': Iter().unique().chunked(2).limit(2).all(),
+         'first': Iter().first()}
+    '''
+    spec = {'unique': Iter().unique().all(),
+            'chunked': Iter().chunked(2).all(),
+            'unique_chunked': Iter().unique().chunked(2).all(),
+            'unique_chunked_limit': Iter().unique().chunked(2).limit(2).all(),
+            'first': Iter().first()}
+    target = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1]
+    
+
+
 class JSONRecursiveTransform(Example):
     "Uses Ref and pattern matching to automatically traverse JSON-compatible recursive structures"
     label = "Tree Transformation"
@@ -105,6 +130,8 @@ class JSONRecursiveTransform(Example):
     target_url = "https://api.github.com/repos/mahmoud/glom"
     icon = "codesandbox"
 
+
+## Debug/Bad examples
 
 class SlowURL(Example):
     label = "Slow URL"
@@ -128,3 +155,5 @@ class Bad404URL(Example):
     section = "Debug Examples"
     icon = "x-square"
     target_url = "https://gist.githubusercontent.com/mahmoud/31182331fb5d4f1b99609d7867b96183/raw/fb2f7635191720834cd7ef866ee7d0e6d30630bb/does_not_exist.json"
+
+
