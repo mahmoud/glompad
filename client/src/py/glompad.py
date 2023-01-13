@@ -138,7 +138,7 @@ def run():
 
         if load_status.kind == 'success' and enable_autoformat:
             if load_status.subtitle.startswith('JSON'):
-                fmtd_target_val = json.dumps(target_input, indent=2)
+                fmtd_target_val = json.dumps(target, indent=2)
             else:
                 fmtd_target_val = autoformat(target_input)
             padStore.targetValue.set(fmtd_target_val)
