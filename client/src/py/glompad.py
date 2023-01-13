@@ -68,7 +68,7 @@ def load_target(target_input, run_id=0):
         try:
             start_time = time.time()
             target = ast.literal_eval(target_input)
-        except (NameError, SyntaxError) as se:
+        except Exception as se:
             tb = ''.join(traceback.format_exception(se))
             load_error = f"Target must be a JSON or Python literal.\n\n{tb}"
             status = InputStatus.error(detail=load_error, start_time=start_time, run_id=run_id)
