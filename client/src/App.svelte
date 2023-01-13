@@ -183,7 +183,7 @@
   }
 
   :global(.small-screen) .last-run {
-    font-size: 2.6vw !important;
+    display: none;
   }
 
   .box {
