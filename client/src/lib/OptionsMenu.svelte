@@ -59,7 +59,8 @@
   <div class="option" id="darkmode-item">
     <label
       use:tooltip={{
-        content: "Override browser/OS preference and force dark mode.",
+        content:
+          '"Glom of Nigt": Override browser/OS preference and force dark mode.',
         placement: "right",
         delay: [400, 0],
       }}
