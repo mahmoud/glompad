@@ -3,7 +3,6 @@
 # Bugs
 
 * CodeMirror cursor not showing up after upgrade?
-* "last run" text needs to be smaller on mobile
 
 # Tasks
 

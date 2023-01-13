@@ -5,7 +5,7 @@
   import tooltip from "./lib/actions/tooltip";
   import copyText from "./lib/actions/copyText";
 
-  import { padStore } from "./lib/stores";
+  import { largeScreenStore, padStore } from "./lib/stores";
   import { onMount } from "svelte";
 
   const { curRunID, specStatus, enableDebug } = padStore;
@@ -56,7 +56,9 @@
     };
   });
 
+  let container_class = "";
   $: {
+    container_class = $largeScreenStore ? "large-screen" : "small-screen";
     pageTitle = $curRunID ? `[${$curRunID}] glompad` : "glompad";
   }
 </script>
@@ -67,7 +69,7 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
-<div id="container">
+<div id="container" class={container_class}>
   <Drawer bind:this={drawer} />
 
   <div class="box header">
@@ -84,7 +86,7 @@
     </h1>
     <div id="pad-actions">
       {#if last_status_time}
-        <span id="last-run">(last run {last_status_time_text})</span>
+        <span class="last-run">(last run {last_status_time_text})</span>
       {/if}
       <button
         id="run-button"
@@ -176,8 +178,12 @@
     max-height: calc(100vh - 88px);
   }
 
-  #last-run {
+  .last-run {
     color: var(--gray-4);
+  }
+
+  :global(.small-screen) .last-run {
+    font-size: 2.6vw !important;
   }
 
   .box {
