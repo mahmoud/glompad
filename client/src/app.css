@@ -79,6 +79,11 @@ body {
   font-size: 16px;
 }
 
+p {
+  line-height: 1.4rem;
+  margin: 1rem 0;
+}
+
 ::selection {
   background: var(--secondary-color);
   color: var(--gray-0);

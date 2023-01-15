@@ -5,7 +5,9 @@
   import VersionPicker from "./VersionPicker.svelte";
   import Icon from "./Icon.svelte";
   import OptionsMenu from "./OptionsMenu.svelte";
+  import Modal from "./Modal.svelte";
   import { padStore } from "./stores";
+  import Link from "./Link.svelte";
 
   const { enableDebug } = padStore;
 
@@ -51,6 +53,8 @@
       throw new Error("local Sentry test");
     }
   }
+
+  let show_about = false;
 </script>
 
 <svelte:window bind:innerWidth />
@@ -80,7 +84,7 @@
         <Icon name="book" />
         <!-- svelte-ignore security-anchor-rel-noreferrer -->
         <a href="https://glom.readthedocs.io/en/latest/" target="_blank"
-          >glom docs</a
+          >glom Docs</a
         >
       </li>
       <li>
@@ -89,6 +93,15 @@
         <a
           href="https://glom.readthedocs.io/en/latest/tutorial.html"
           target="_blank">glom Tutorial</a
+        >
+      </li>
+      <li>
+        <Icon name="info" />
+        <a
+          href="#show=about"
+          on:click|preventDefault={() => {
+            show_about = true;
+          }}>About</a
         >
       </li>
     </ul>
@@ -128,6 +141,33 @@
   </div>
 </div>
 <div class={isOpen && !isWide ? "shade" : ""} />
+
+{#if show_about}
+  <Modal on:close={() => (show_about = false)}>
+    <h2 slot="header">About glompad</h2>
+    <p>
+      glompad is a sandbox for experimenting with and prototyping
+      <Link href="https://github.com/mahmoud/glom">glom</Link>
+      specs in the spirit of
+      <Link href="https://jsfiddle.net/">JSFiddle</Link>
+      and
+      <Link href="https://codepen.io/">Codepen</Link>.
+    </p>
+    <p>
+      glompad is built on top of
+      <Link href="https://pyscript.net">PyScript</Link>/
+      <Link href="https://pyodide.org">Pyodide</Link>, a
+      <Link href="https://webassembly.org/">WebAssembly</Link>
+      implementation of Python.
+    </p>
+    <p>
+      That means this is the real glom, just as you would
+      <code>pip install</code> from
+      <Link href="https://pypi.org/project/glom">PyPI</Link>, running in your
+      browser.
+    </p>
+  </Modal>
+{/if}
 
 <style>
   .shade {
