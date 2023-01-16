@@ -9,6 +9,7 @@
     import tooltip from "./actions/tooltip";
     import Icon from "./Icon.svelte";
     import type { python } from "@codemirror/lang-python";
+    import { basicSetup } from "./cmSetup";
 
     export let execute: Function;
     export let destStore: SvelteStore<any>;
@@ -57,6 +58,7 @@
     let extensions = [
         Prec.highest(ctrlEnterKeymap),
         EditorView.lineWrapping,
+        ...basicSetup,
         ...extraExtensions,
     ];
 </script>
@@ -72,7 +74,7 @@
         {placeholder}
         {readonly}
         editable={!readonly}
-        basic={true}
+        basic={false}
         styles={{
             "&": {
                 height: "100%",
