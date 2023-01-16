@@ -134,14 +134,15 @@
 <style>
   h1 {
     user-select: none;
+    font-family: Nunito, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu,
+      Cantarell, "Noto Sans", sans-serif;
+    letter-spacing: -0.8px;
+    font-weight: 700;
   }
 
   #title * {
     text-decoration: none;
     color: var(--primary-color-8);
-    font-weight: 500;
-    font: monospace;
-    letter-spacing: -1.5px;
   }
 
   .menu-icon-bg :global(*) {

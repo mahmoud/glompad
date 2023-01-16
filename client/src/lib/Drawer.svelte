@@ -189,10 +189,11 @@
   }
 
   h1 {
-    font-weight: 500;
-    font: monospace;
-    letter-spacing: -1.5px;
     padding: 0;
+    font-family: Nunito, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu,
+      Cantarell, "Noto Sans", sans-serif;
+    letter-spacing: -0.8px;
+    font-weight: 700;
   }
 
   .drawer-container {
