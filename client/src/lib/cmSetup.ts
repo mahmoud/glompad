@@ -4,10 +4,10 @@ import { EditorState } from '@codemirror/state';
 import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language';
 import { history, defaultKeymap, historyKeymap } from '@codemirror/commands';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'; 
-import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 
 
-const basicSetup = /*@__PURE__*/(() => [
+const baseExtensions = /*@__PURE__*/(() => [
     lineNumbers(),
     highlightActiveLineGutter(),
     highlightSpecialChars(),
@@ -52,4 +52,4 @@ style](https://codemirror.net/6/docs/ref/#language.defaultHighlightStyle).
 //     ])
 // ])();
 
-export { basicSetup };
+export { baseExtensions };

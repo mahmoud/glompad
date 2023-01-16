@@ -9,7 +9,7 @@
     import tooltip from "./actions/tooltip";
     import Icon from "./Icon.svelte";
     import type { python } from "@codemirror/lang-python";
-    import { basicSetup } from "./cmSetup";
+    import { baseExtensions } from "./cmSetup";
 
     export let execute: Function;
     export let destStore: SvelteStore<any>;
@@ -58,7 +58,7 @@
     let extensions = [
         Prec.highest(ctrlEnterKeymap),
         EditorView.lineWrapping,
-        ...basicSetup,
+        ...baseExtensions,
         ...extraExtensions,
     ];
 </script>

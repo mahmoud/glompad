@@ -26,8 +26,10 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.4.0",
     "@codemirror/commands": "^6.1.3",
     "@codemirror/language": "^6.3.2",
+    "@codemirror/search": "github:codemirror/search",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.7.2",
     "@popperjs/core": "^2.11.6",
