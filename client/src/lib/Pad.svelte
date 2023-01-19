@@ -38,13 +38,11 @@
   } = padStore;
 
   function copySuccess(e) {
-    // TODO: toast or something
     const targetname = e.target.attributes["data-name"].value;
-    const message =
-      "Successfully copied" +
-      (targetname ? " " + targetname : "") +
-      " to clipboard.";
-    window.console.warn(message);
+    if (!targetname) {
+      return;
+    }
+    const message = "Successfully copied " + targetname + " to clipboard.";
     addToast({ message, type: "success" });
   }
   window.addEventListener("copysuccess", copySuccess);

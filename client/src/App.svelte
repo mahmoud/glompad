@@ -99,6 +99,7 @@
       >
       <button
         class="link-button"
+        data-name="permalink"
         use:tooltip={{
           content: "Copy shareable link to clipboard",
           placement: "bottom",

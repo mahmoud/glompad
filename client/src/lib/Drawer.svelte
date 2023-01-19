@@ -52,11 +52,7 @@
       addToast({ message: "throwing prod error", type: "error" });
       throw new Error("production Sentry test");
     } else {
-      addToast({
-        message: "throwing local error",
-        type: "error",
-        timeout: 0,
-      });
+      addToast({ message: "throwing local error", type: "error" });
       throw new Error("local Sentry test");
     }
   }

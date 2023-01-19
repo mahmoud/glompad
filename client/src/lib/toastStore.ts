@@ -11,10 +11,11 @@ export const addToast = (toast) => {
   const message : string = toast.message ?? ''; 
   // timeout based on 200wpm reading speed
   const default_timeout = (message.split(/s+/).length / (200/60)) * 1000 + 500;
+  const default_dismissible = toast.timeout === 0 || toast.timeout > 5000 || (!toast.timeout && default_timeout > 5000);
   const defaults = {
     id,
     type: "info",
-    dismissible: true,
+    dismissible: default_dismissible,
     timeout: default_timeout,
   };
 
