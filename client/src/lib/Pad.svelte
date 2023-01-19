@@ -6,8 +6,11 @@
     FetchStatus,
     InputStatus,
   } from "./stores";
+  import Toasts from "./Toasts.svelte";
   import Panel from "./Panel.svelte";
   import PadInput from "./PadInput.svelte";
+  import { addToast } from "./toastStore";
+
   import { tick } from "svelte";
 
   import { python } from "@codemirror/lang-python";
@@ -36,7 +39,13 @@
 
   function copySuccess(e) {
     // TODO: toast or something
-    window.console.warn("copy success!");
+    const targetname = e.target.attributes["data-name"].value;
+    const message =
+      "Successfully copied" +
+      (targetname ? " " + targetname : "") +
+      " to clipboard.";
+    window.console.warn(message);
+    addToast({ message, type: "success" });
   }
   window.addEventListener("copysuccess", copySuccess);
 
@@ -159,6 +168,7 @@
 </script>
 
 <div class="gp-container {classes}">
+  <Toasts />
   <Panel
     title="Glom Spec"
     status={$specStatus}
@@ -167,6 +177,7 @@
     flex_grow="1"
   >
     <PadInput
+      name="glom spec"
       execute={padStore.executeGlom}
       destStore={specValue}
       lang={python()}
@@ -182,6 +193,7 @@
       flex_grow="1"
     >
       <PadInput
+        name="glom scope"
         execute={padStore.executeGlom}
         destStore={scopeValue}
         lang={python()}
@@ -199,6 +211,7 @@
     flex_grow={showTargetPreview ? 0 : 1}
   >
     <PadInput
+      name={showTargetPreview ? "target URL" : "target data"}
       execute={padStore.executeGlom}
       destStore={$targetDestStore}
       lang={python()}
@@ -214,6 +227,7 @@
       flex_grow="1"
     >
       <PadInput
+        name="target data"
         execute={padStore.executeGlom}
         destStore={targetValue}
         lang={python()}
@@ -234,6 +248,7 @@
     flex_grow="2"
   >
     <PadInput
+      name="glom result"
       execute={padStore.executeGlom}
       destStore={resultValue}
       lang={$resultStatus.kind == "error" ? null : python()}

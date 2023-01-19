@@ -25,12 +25,15 @@
     export let extraExtensions = [];
     export let styles = {};
     export let copyTooltip = "Copy to clipboard";
+    export let name = "";
 
     let padInput;
     let editor;
     let theme;
+    let enableCopy;
     $: {
         theme = $darkModeStore ? githubDark : githubLight;
+        enableCopy = !$destStore;
     }
 
     const getText = () => {
@@ -88,11 +91,13 @@
 
     <button
         class="copy-button"
+        disabled={enableCopy}
         use:tooltip={{
             content: copyTooltip,
             placement: "top",
         }}
         use:copyText={getText}
+        data-name={name}
     >
         <Icon name="copy" />
     </button>
@@ -131,7 +136,12 @@
         background: var(--gray-1);
     }
 
-    button:hover {
+    button:disabled {
+        color: var(--gray-2);
+        cursor: default;
+    }
+
+    button:hover:enabled {
         background: var(--gray-0);
         border-color: var(--primary-color-8);
         color: var(--primary-color-8);

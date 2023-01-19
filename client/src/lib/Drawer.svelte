@@ -8,6 +8,7 @@
   import Modal from "./Modal.svelte";
   import { padStore } from "./stores";
   import Link from "./Link.svelte";
+  import { addToast } from "./toastStore";
 
   const { enableDebug } = padStore;
 
@@ -48,8 +49,14 @@
 
   function testSentry() {
     if (import.meta.env.PROD) {
+      addToast({ message: "throwing prod error", type: "error" });
       throw new Error("production Sentry test");
     } else {
+      addToast({
+        message: "throwing local error",
+        type: "error",
+        timeout: 0,
+      });
       throw new Error("local Sentry test");
     }
   }

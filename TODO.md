@@ -2,21 +2,21 @@
 
 # Bugs
 
-* CodeMirror cursor not showing up after upgrade?
+* CodeMirror cursor not showing up after upgrade?    
+   * https://discuss.codemirror.net/t/cant-see-cursor-at-all/5267/7
+   * Possibly fighting with pyscript's codemirror integration
 
 # Tasks
 
-* About modal
 * Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
 * Races:
   * Startup: When page is loaded with URL target, URL is fetched faster than pyodide is loaded. load_target/executeGlom are bypassed. When executeGlom finally does run, it looks at stateStack which are still empty states.
   * Clicking Bad JSON URL results in trying to use the URL as the target data itself.
-* Select and translate examples
-* Message on copy success
 
 # Features
 
+* Custom autocompletion: https://codemirror.net/examples/autocompletion/
 * auto-run on change
 
 ## Technical improvements

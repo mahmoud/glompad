@@ -246,7 +246,7 @@ export const padStore = new PadStore();
 
 export const urlStore = createUrlStore(window && window.location.href);
 
-export const largeScreenStore = createMediaStore('(min-width: 510px');
+export const largeScreenStore = createMediaStore('(min-width: 520px');
 
 
 urlStore.subscribe((val: string) => {
