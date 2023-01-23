@@ -22,7 +22,7 @@ PYSCRIPT_CONFIG_PATH = CUR_DIR + PYSCRIPT_CONFIG_REL_PATH
 WHEEL_PLATFORM = 'emscripten-3.1.14-wasm32'
 
 # These historical versions don't have wheels: (TODO: could upload wheels for these)
-IGNORED_VERSIONS = ['20.5.0', '19.10.0', '19.2.0', '19.1.0', '18.4.0', '18.3.1', '18.3.0', '18.2.0', '18.1.1', '18.1.0', '18.0.0', '0.0.3', '0.0.2']
+IGNORED_VERSIONS = ['23.1.0', '20.5.0', '19.10.0', '19.2.0', '19.1.0', '18.4.0', '18.3.1', '18.3.0', '18.2.0', '18.1.1', '18.1.0', '18.0.0', '0.0.3', '0.0.2']
 
 GLOBAL_ENV_VARS = {}
 

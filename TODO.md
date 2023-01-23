@@ -8,6 +8,7 @@
 
 # Tasks
 
+* Indicate Result type (JSON/Python repr)
 * Fetch state handling
 * Figure out why target data preview refreshes on execute (and hits API again)
 * Races:
