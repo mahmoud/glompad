@@ -11,10 +11,12 @@
   },
   "devDependencies": {
     "@codemirror/lang-python": "^6.1.1",
+    "@playwright/test": "^1.29.2",
     "@sentry/vite-plugin": "^0.3.0",
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
     "@tsconfig/svelte": "^3.0.0",
     "@types/codemirror": "^5.60.6",
+    "@types/node": "^18.11.18",
     "codemirror": "^6.0.1",
     "prettier": "^2.8.2",
     "prettier-plugin-svelte": "^2.9.0",
