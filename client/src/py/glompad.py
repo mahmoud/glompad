@@ -188,6 +188,8 @@ def build_spec(spec_str):
 def autoformat(code):
     return black.format_str(code, mode=black.Mode())
 
+py_ready_div = js.document.getElementById("python-ready")
+py_ready_div.innerHTML = datetime.datetime.now().isoformat()
 run()
 js.createObject(create_proxy(globals()), "pyg")
 
