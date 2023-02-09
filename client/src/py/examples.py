@@ -110,6 +110,17 @@ class IterShowcase(Example):
     target = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1]
     
 
+class MatchDataValidation(Example):
+    """
+    Validating data with the Match spec.
+    """
+    label = 'Match Data Validation'
+    icon = 'diamond'
+    spec = Match([{'id': int, 'email': str}])
+    target = [{'id': 1, 'email': 'alice@example.com'}, {'id': 2, 'email': 'bob@example.com'}]
+
+
+
 
 class JSONRecursiveTransform(Example):
     "Uses Ref and pattern matching to automatically traverse JSON-compatible recursive structures"

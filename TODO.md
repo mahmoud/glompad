@@ -17,6 +17,7 @@
 
 # Features
 
+* Embeddability
 * Custom autocompletion: https://codemirror.net/examples/autocompletion/
 * auto-run on change
 
@@ -24,9 +25,8 @@
 
 * Unplugin plugin for autogenerating the examples (currently in glomp.py)
 * Unplugin plugin for transcluding the python (currently in glomp.py build)
-* iframe-ability for glom docs?
 * Version filter on examples (or colocate examples with glom itself)
-* Automated tests
+* Component tests (or some way to speed up the e2e tests)
 
 # Ideas
 
