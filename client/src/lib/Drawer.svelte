@@ -157,17 +157,22 @@
       <Link href="https://codepen.io/">Codepen</Link>.
     </p>
     <p>
-      glompad is built on top of
-      <Link href="https://pyscript.net">PyScript</Link>/
+      glompad was built by
+      <Link href="https://sedimental.org">Mahmoud Hashemi</Link>, on top of
+      <Link href="https://pyscript.net">PyScript</Link> /
       <Link href="https://pyodide.org">Pyodide</Link>, a
       <Link href="https://webassembly.org/">WebAssembly</Link>
-      implementation of Python.
+      implementation of Python. For more information about how glompad is built,
+      see
+      <Link href="https://www.youtube.com/watch?v=ks24SpWwRmg"
+        >this 2023 SF Python talk</Link
+      >.
     </p>
     <p>
       That means this is the real glom, just as you would
       <code>pip install</code> from
       <Link href="https://pypi.org/project/glom">PyPI</Link>, running in your
-      browser.
+      browser. No data is saved on the server. All state is stored in the URL.
     </p>
   </Modal>
 {/if}
@@ -193,8 +198,16 @@
 
   h1 {
     padding: 0;
-    font-family: Nunito, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu,
-      Cantarell, "Noto Sans", sans-serif;
+    font-family:
+      Nunito,
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      Ubuntu,
+      Cantarell,
+      "Noto Sans",
+      sans-serif;
     letter-spacing: -0.8px;
     font-weight: 700;
   }
