@@ -4,6 +4,7 @@
 \#*\#
 auto-save-list
 .\#*
+nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

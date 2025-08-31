@@ -54,7 +54,7 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
         base_url_path = base_url_path + f'v{version}/'
         out_dir = out_base + f'v{version}/'
     _subproc_run([
-        'pnpm', 'exec', 'vite', 'build', 
+        'npm', 'run', 'build', '--', 
         '--outDir', '../' + out_dir,
         '--base', base_url_path], 
       cwd='./client')
@@ -73,13 +73,22 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
 
     index_text = open(out_dir + 'index.html').read()
     html = html_text_to_tree(index_text)
-    py_src = open('client/' + html.find('.//py-script').attrib['src']).read()
-    html.find('.//py-script').text = py_src
-    _script_path = html.find('.//py-script').attrib.pop('src')
+    
+    py_script_el = None
+    for script_el in html.findall('.//script'):
+        if script_el.attrib.get('type') == 'py':
+            py_script_el = script_el
+            break
+    
+    if py_script_el is None:
+        raise ValueError("Could not find script element with type='py'")
+    
+    py_src = open('client/' + py_script_el.attrib['src']).read()
+    py_script_el.text = py_src
+    _script_path = py_script_el.attrib.pop('src')
     pyscript_config['paths'].remove(_script_path)
-
-    html.find('.//py-config').text = json.dumps(pyscript_config, indent=2)
-    html.find('.//py-config').attrib.pop('src')
+    
+    py_script_el.attrib['config'] = json.dumps(pyscript_config)
 
     build_metadata = {
         "version": version,
