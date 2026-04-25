@@ -7,6 +7,7 @@ import shutil
 import datetime
 from importlib.machinery import SourceFileLoader
 import textwrap
+import http.server
 
 
 import face
@@ -206,6 +207,48 @@ def build_examples():
     return
     
 
+
+class COIRequestHandler(http.server.SimpleHTTPRequestHandler):
+    """HTTP handler that adds Cross-Origin Isolation headers.
+
+    Required for SharedArrayBuffer, which Pyodide uses for
+    KeyboardInterrupt-based cancellation of running Python code.
+    """
+    def end_headers(self):
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
+        super().end_headers()
+
+
+def serve(port=8000, directory=''):
+    """Serve the build output with cross-origin isolation headers.
+
+    Builds the latest version first if build/dist/ doesn't exist,
+    then starts a local HTTP server with COOP/COEP headers so that
+    SharedArrayBuffer is available for Pyodide interrupt support.
+    """
+    serve_dir = directory or os.path.join(CUR_DIR, 'build', 'dist')
+    if not os.path.isdir(serve_dir):
+        if directory:
+            raise face.UsageError(f'directory does not exist: {serve_dir}')
+        print(f'No build found at {serve_dir}, building latest...')
+        build(latest=True, versions=None, deploy=None)
+
+    os.chdir(serve_dir)
+    handler = COIRequestHandler
+    with http.server.HTTPServer(('', port), handler) as httpd:
+        url = f'http://localhost:{port}/'
+        print(f'Serving {serve_dir} at {url}')
+        print(f'  Cross-Origin-Opener-Policy: same-origin')
+        print(f'  Cross-Origin-Embedder-Policy: credentialless')
+        print(f'  crossOriginIsolated: true (SharedArrayBuffer available)')
+        print(f'Press Ctrl+C to stop.')
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print('\nStopped.')
+
+
 cmd = face.Command(name='glomp', func=None)
 
 build_cmd = face.Command(build, doc='build and optionally deploy glompad')
@@ -214,7 +257,12 @@ build_cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
 build_cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
 build_cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
 
+serve_cmd = face.Command(serve, doc='build and serve with cross-origin isolation headers')
+serve_cmd.add('--port', parse_as=int, missing=8000, doc='port to listen on')
+serve_cmd.add('--directory', parse_as=str, missing='', doc='directory to serve (default: build/dist/)')
+
 cmd.add(build_cmd)
+cmd.add(serve_cmd)
 cmd.add(make_url)
 cmd.add(build_examples)
 
