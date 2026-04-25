@@ -52,7 +52,7 @@ async function install_packages(py: PyodideInterface): Promise<void> {
   // Write our runner module to the virtual FS
   const pathlib = py.pyimport('pathlib');
   const runner_dir = '/tmp/glom_runner/';
-  pathlib.Path(runner_dir).mkdir({ exist_ok: true });
+  pathlib.Path(runner_dir).mkdir();
   pathlib.Path(runner_dir + 'glom_runner.py').write_text(glom_runner_py);
 
   const sys = py.pyimport('sys');
