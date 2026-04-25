@@ -125,12 +125,6 @@
           );
 
           $targetValue = text;
-          if (window && window.pyg) {
-            const [loaded_target, loaded_status] = window.pyg.get(
-              "load_target"
-            )(text, $curRunID);
-            $targetStatus = loaded_status;
-          }
 
           if (prevStatusRunID < $resultStatus.run_id) {
             padStore.executeGlom();

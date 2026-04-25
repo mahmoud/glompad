@@ -11,11 +11,10 @@ Sentry.init({
 });
 
 const app = new App({
-  target: document.getElementById("app"),
+  target: document.getElementById("app")!,
 });
 
-app.padStore = padStore;
-
-window.SvelteApp = app;
+// Start loading Pyodide in the background immediately
+padStore.warmup();
 
 export default app;

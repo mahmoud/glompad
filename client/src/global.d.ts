@@ -1,6 +1,8 @@
 declare interface Window {
-  SvelteApp: any;
-  pyg: any;
-  glompad_meta: any;
-  copysuccess: Function;
+  glompad_meta: {
+    version: string;
+    all_versions: string[];
+    build_timestamp: string;
+  } | undefined;
+  copysuccess: (e: Event) => void;
 }

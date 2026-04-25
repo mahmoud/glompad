@@ -16,15 +16,19 @@ from hyperlink import DecodedURL
 import black
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__)) + '/'
-PYSCRIPT_CONFIG_REL_PATH = './client/src/py/pyscript_config.json'
-PYSCRIPT_CONFIG_PATH = CUR_DIR + PYSCRIPT_CONFIG_REL_PATH
 
-WHEEL_PLATFORM = 'emscripten-3.1.14-wasm32'
+# Pyodide 0.27.7 uses emscripten 3.1.46, wasm32 platform
+WHEEL_PLATFORM = 'emscripten_3_1_46_wasm32'
+PYODIDE_VERSION = '0.27.7'
 
-# These historical versions don't have wheels: (TODO: could upload wheels for these)
+# Packages to install via micropip in the worker
+PYODIDE_PACKAGES = ['glom', 'black']
+
+# These historical glom versions don't have wheels
 IGNORED_VERSIONS = ['23.1.0', '20.5.0', '19.10.0', '19.2.0', '19.1.0', '18.4.0', '18.3.1', '18.3.0', '18.2.0', '18.1.1', '18.1.0', '18.0.0', '0.0.3', '0.0.2']
 
 GLOBAL_ENV_VARS = {}
+
 
 def _subproc_run(*a, **kw):
     print(f'{a} -- {kw}')
@@ -59,40 +63,14 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
         '--base', base_url_path], 
       cwd='./client')
 
-    pyscript_config = json.load(open(PYSCRIPT_CONFIG_PATH))
-    packages = list(pyscript_config['packages'])
-    packages.remove('glom')
-    packages.append(f'glom=={version}')
-    whl_dir = out_dir + 'whl/'
-    mkdir_p(whl_dir)
-    _subproc_run(['pip', 'download', '--dest', whl_dir, '--platform', WHEEL_PLATFORM, "--only-binary=:all:"] + packages)
-
-    whl_packages = sorted(['whl/' + p for p in os.listdir(whl_dir)], key=lambda f: os.path.getmtime(out_dir + f))
-    assert 2 < len(whl_packages) < 50, "unexpected number of packages"
-    pyscript_config['packages'] = whl_packages
-
+    # Inject build metadata into the built index.html
     index_text = open(out_dir + 'index.html').read()
     html = html_text_to_tree(index_text)
-    
-    py_script_el = None
-    for script_el in html.findall('.//script'):
-        if script_el.attrib.get('type') == 'py':
-            py_script_el = script_el
-            break
-    
-    if py_script_el is None:
-        raise ValueError("Could not find script element with type='py'")
-    
-    py_src = open('client/' + py_script_el.attrib['src']).read()
-    py_script_el.text = py_src
-    _script_path = py_script_el.attrib.pop('src')
-    pyscript_config['paths'].remove(_script_path)
-    
-    py_script_el.attrib['config'] = json.dumps(pyscript_config)
 
     build_metadata = {
         "version": version,
         "all_versions": all_versions,
+        "pyodide_version": PYODIDE_VERSION,
         "build_timestamp": datetime.datetime.utcnow().isoformat()
     }
     head_el = html.find('.//head')
@@ -105,7 +83,6 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
         f.write(new_index_text)
 
     if is_latest:
-        # Quick way to get the latest version's own version-qualified build dir
         _build_client(
             out_base=out_base, 
             base_url_path=base_url_path, 
@@ -116,21 +93,13 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     return
 
 
-def build(latest, versions, deploy, basepath='/', sentry_key_path=''):
+def build(latest, versions, deploy, basepath='/'):
     # make build directory
     if not CUR_DIR.endswith('/glompad/') and os.path.isdir(CUR_DIR + '.git'):
         raise face.UsageError('glompad build expected to run from project root')
-    if not os.path.isfile(PYSCRIPT_CONFIG_PATH):
-        raise face.UsageError(f'could not find config at: {PYSCRIPT_CONFIG_PATH}')
 
     if not (basepath.startswith('/') and basepath.endswith('/')):
         raise face.UsageError('basepath must start and end with /')
-
-    if sentry_key_path:
-        with open(os.path.expanduser(sentry_key_path)) as f:
-            sentry_key = f.read().strip()
-            GLOBAL_ENV_VARS['SENTRY_AUTH_TOKEN'] = sentry_key
-            print(f'sentry_key: {sentry_key[:5]}...')
 
     res = _subproc_run(['pip', 'index', 'versions', 'glom'], capture_output=True)
     output_lines = res.stdout.decode('utf8').splitlines()
@@ -139,7 +108,6 @@ def build(latest, versions, deploy, basepath='/', sentry_key_path=''):
         v.strip() for v in 
         output_lines[1].partition(':')[2].split(',')
         if v.strip() not in IGNORED_VERSIONS]
-    # NB: we rely on pip to sort the versions in version order (glompad's calver is not 0-padded, so lexical order doesn't help)
     latest_version = all_versions[0]
     if latest:
         if versions:
@@ -152,8 +120,8 @@ def build(latest, versions, deploy, basepath='/', sentry_key_path=''):
     else:
         versions = all_versions
 
-    assert 'v18' in os.getenv('NVM_BIN', 'v18.'), 'expected node 18'
-    shutil.rmtree('./build')
+    if os.path.exists('./build'):
+        shutil.rmtree('./build')
     mkdir_p('./build/dist/')
 
     for version in versions:
@@ -164,7 +132,6 @@ def build(latest, versions, deploy, basepath='/', sentry_key_path=''):
             is_latest=(version == latest_version),
             all_versions=all_versions,
         )
-        # TODO: future: build manifest
 
     if not deploy:
         return
@@ -198,7 +165,6 @@ def build_examples():
         print(f'{name} - {obj.label}')
 
         if obj.formatted_spec:
-            # override for specs that are better formatted by hand (e.g., Iter().all())
             formatted_spec = textwrap.dedent(obj.formatted_spec)
             # sanity check
             eval(formatted_spec, copy.copy(examples_mod.__dict__))
@@ -232,7 +198,6 @@ def build_examples():
         }
         example_list.append(example_dict)
 
-    # wrap in an object to give us some flexibility to do sections or something
     examples_wrapper = {'example_list': example_list} 
 
     with atomic_save('./client/src/examples.generated.json', text_mode=True) as f:
@@ -241,7 +206,6 @@ def build_examples():
     return
     
 
- 
 cmd = face.Command(name='glomp', func=None)
 
 build_cmd = face.Command(build, doc='build and optionally deploy glompad')
@@ -249,7 +213,6 @@ build_cmd.add('--latest', parse_as=True, doc='only build/deploy latest version o
 build_cmd.add('--versions', parse_as=face.ListParam(str), missing=None)
 build_cmd.add('--deploy', parse_as=str, doc='deploy destination (server:/path/to/public/html)')
 build_cmd.add('--basepath', parse_as=str, missing='/', doc='server path prefix')
-build_cmd.add('--sentry-key-path', parse_as=str, missing='~/api_keys/glompad_sentry_build.txt')
 
 cmd.add(build_cmd)
 cmd.add(make_url)
