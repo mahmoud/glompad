@@ -2,31 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/img/comet.png" /> 
-    <!-- <link rel="manifest" href="manifest.json" /> -->
+    <link rel="icon" type="image/png" href="/img/comet.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>glompad</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"/>
-    <!-- <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer type="module" src="/js/pyscript.js"></script> -->
-
-    <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css" />
-    <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
-
-    <script>
-      function createObject(object, variableName) {
-        //Bind a variable whose name is the string variableName
-        // to the object called 'object'
-        let execString = variableName + ' = object';
-        eval(execString);
-      }
-    </script>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4a90d9" />
   </head>
   <body>
     <div id="app" style="height: 100vh"></div>
-    <script type="module" src="/src/main.ts">
-    </script>
-    <div id="python-ready" style="display: none;"></div>
-    <script type="py" src="./src/py/glompad.py" config="./src/py/pyscript_config.json"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,50 +1,35 @@
-name: Playwright Tests
+name: Tests
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 jobs:
   test:
     defaults:
       run:
         working-directory: client
-    timeout-minutes: 60
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
-    # pnpm + caching
-    - uses: pnpm/action-setup@v2
-      name: Install pnpm
-      id: pnpm-install
-      with:
-        version: 7
-        run_install: false
-    - name: Get pnpm store directory
-      id: pnpm-cache
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-    - uses: actions/cache@v3
-      name: Setup pnpm cache
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
-    # standard deps + testing
-    - name: Install dependencies
-      run: pnpm install
+        node-version: 20
+        cache: npm
+        cache-dependency-path: client/package-lock.json
+    - run: npm ci
+    - name: Unit tests
+      run: npm test
+    - name: Build
+      run: npm run build
     - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps
-    - name: Run Playwright tests
-      run: pnpm exec playwright test
-    - uses: actions/upload-artifact@v3
+      run: npx playwright install --with-deps chromium
+    - name: Playwright E2E
+      run: npx playwright test --config playwright.dev.config.ts --project chromium
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+        path: client/playwright-report/
+        retention-days: 14

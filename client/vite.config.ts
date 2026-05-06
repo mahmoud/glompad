@@ -1,40 +1,65 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import sentryVitePlugin from "@sentry/vite-plugin";
+import { VitePWA } from 'vite-plugin-pwa';
 
+/**
+ * Vite plugin that adds Cross-Origin Isolation headers to the dev server.
+ * Required for SharedArrayBuffer (used by Pyodide interrupt).
+ *
+ * In production, these headers should be set by the web server (nginx).
+ */
+function crossOriginIsolation(): Plugin {
+  return {
+    name: 'cross-origin-isolation',
+    configureServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+        res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+        next();
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+        res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+        next();
+      });
+    },
+  };
+}
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     svelte(),
-    // Put the Sentry vite plugin after all other plugins
-    sentryVitePlugin({
-      org: "hatnote",
-      project: "glompad",
-
-      // Specify the directory containing build artifacts
-      include: "./dist",
-
-      // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
-      // and need `project:releases` and `org:read` scopes
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-
-      // Optionally uncomment the line below to override automatic release name detection
-      // release: process.env.RELEASE,
+    crossOriginIsolation(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.hostname === 'cdn.jsdelivr.net' && url.pathname.includes('pyodide'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pyodide-runtime',
+              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
+      },
+      manifest: false, // Use static manifest.json in public/
     }),
   ],
-  define: {
-    global: "window", // very required for pyscript
-  },
   build: {
-    sourcemap: true, // Source map generation must be turned on for sentry
+    sourcemap: true,
     rollupOptions: {
       output: {
         name: "app",
       },
     },
   },
-  assetsInclude: ["./src/py/**"],
   optimizeDeps: {
     exclude: [
       "codemirror",
@@ -43,5 +68,8 @@ export default defineConfig({
       "@codemirror/lint",
       "@codemirror/state",
     ],
+  },
+  worker: {
+    format: 'es',
   },
 });

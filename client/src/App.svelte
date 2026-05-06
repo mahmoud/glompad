@@ -8,7 +8,7 @@
   import { largeScreenStore, padStore } from "./lib/stores";
   import { onMount } from "svelte";
 
-  const { curRunID, specStatus, enableDebug } = padStore;
+  const { curRunID, specStatus, enableDebug, workerStatus } = padStore;
 
   let drawer;
   let innerWidth = 0;
@@ -88,15 +88,29 @@
       {#if last_status_time}
         <span class="last-run">(last run {last_status_time_text})</span>
       {/if}
-      <button
-        id="run-button"
-        on:click={padStore.executeGlom}
-        use:tooltip={{
-          content: "Run (or Ctrl-Enter via keyboard)",
-          placement: "bottom",
-          delay: [400, 0],
-        }}><Icon name="play" /></button
-      >
+      {#if $workerStatus === 'running'}
+        <button
+          id="run-button"
+          class="cancel"
+          on:click={padStore.interruptGlom}
+          use:tooltip={{
+            content: "Cancel running computation",
+            placement: "bottom",
+            delay: [400, 0],
+          }}><Icon name="x" /></button
+        >
+      {:else}
+        <button
+          id="run-button"
+          disabled={$workerStatus === 'loading'}
+          on:click={padStore.executeGlom}
+          use:tooltip={{
+            content: $workerStatus === 'loading' ? 'Loading Python...' : 'Run (or Ctrl-Enter via keyboard)',
+            placement: "bottom",
+            delay: [400, 0],
+          }}><Icon name="play" /></button
+        >
+      {/if}
       <button
         class="link-button"
         data-name="permalink"
@@ -125,10 +139,13 @@
     >
   </div>
 </div>
+{#if $workerStatus === 'loading'}
+  <div class="loading-banner" data-testid="python-status">Loading Python environment...</div>
+{/if}
 {#if $enableDebug}
   <div style:max-width="80vw">
-    <h3>REPL</h3>
-    <py-repl id="bottom-repl" auto-generate="true" />
+    <h3>Debug</h3>
+    <p>Worker: {$workerStatus}</p>
   </div>
 {/if}
 

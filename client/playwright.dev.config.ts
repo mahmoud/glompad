@@ -4,7 +4,7 @@ const devConfig = {
   ...config,
 
   webServer: {
-    command: "pnpm exec vite --port 5775 --strictPort",
+    command: "npx vite preview --port 5775 --strictPort",
     port: 5775,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
