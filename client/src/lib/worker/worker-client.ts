@@ -50,6 +50,14 @@ function create_worker_client(): WorkerClient {
 
   const cross_origin_isolated = typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated;
 
+  // Timeout: two-tier escalation (SIGINT via SAB → hard kill)
+  const DEFAULT_TIMEOUT_MS = 10_000;
+  const TIER1_GRACE_MS = 1_000;
+
+  // Track active RPC calls so we can reject them on worker respawn
+  type PendingEntry = { reject: (err: Error) => void };
+  const pending = new Set<PendingEntry>();
+
   function create_worker(): void {
     // Vite handles the ?worker import URL; we use the standard Worker constructor
     // with type: 'module' for ES module workers.
@@ -105,14 +113,26 @@ function create_worker_client(): WorkerClient {
 
   async function run_glom(input: GlomInput): Promise<GlomResult> {
     await ensure_ready();
-
     status.set('running');
+
+    let entry: PendingEntry | null = null;
+    let timeout_id: ReturnType<typeof setTimeout> | null = null;
+
     try {
-      const result = await proxy!.run_glom(input);
+      const result = await new Promise<GlomResult>((resolve, reject) => {
+        entry = { reject };
+        pending.add(entry);
+
+        // Start the RPC call
+        proxy!.run_glom(input).then(resolve, reject);
+
+        // Start the timeout
+        timeout_id = setTimeout(() => handle_timeout(entry!), DEFAULT_TIMEOUT_MS);
+      });
+
       status.set('ready');
       return result;
     } catch (err: unknown) {
-      // Check for fatal Pyodide error — auto-recover
       if (err && typeof err === 'object' && 'pyodide_fatal_error' in err) {
         console.error('[worker-client] Fatal Pyodide error, restarting worker');
         await restart();
@@ -120,12 +140,34 @@ function create_worker_client(): WorkerClient {
       }
       status.set('ready');
       throw err;
+    } finally {
+      if (entry) pending.delete(entry);
+      if (timeout_id) clearTimeout(timeout_id);
     }
   }
 
   async function autoformat(code: string): Promise<string> {
     await ensure_ready();
     return proxy!.autoformat(code);
+  }
+
+  function handle_timeout(entry: PendingEntry): void {
+    if (cross_origin_isolated && interrupt_buffer) {
+      // Tier 1: graceful SIGINT via SharedArrayBuffer
+      interrupt_buffer[0] = 2;
+
+      setTimeout(() => {
+        // Reset buffer for next use
+        if (interrupt_buffer) interrupt_buffer[0] = 0;
+        // If still pending after grace period, escalate to hard kill
+        if (pending.has(entry)) {
+          hard_restart();
+        }
+      }, TIER1_GRACE_MS);
+    } else {
+      // No SharedArrayBuffer — go straight to hard kill
+      hard_restart();
+    }
   }
 
   function interrupt(): void {
@@ -139,6 +181,13 @@ function create_worker_client(): WorkerClient {
   }
 
   function hard_restart(): void {
+    // Reject all pending RPC calls before terminating the worker
+    const err = new Error('Worker restarted due to timeout');
+    for (const entry of pending) {
+      entry.reject(err);
+    }
+    pending.clear();
+
     if (worker) {
       worker.terminate();
       worker = null;
@@ -159,6 +208,13 @@ function create_worker_client(): WorkerClient {
   }
 
   function destroy(): void {
+    // Reject any in-flight calls
+    const err = new Error('Worker destroyed');
+    for (const entry of pending) {
+      entry.reject(err);
+    }
+    pending.clear();
+
     if (worker) {
       worker.terminate();
       worker = null;
