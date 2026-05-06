@@ -61,6 +61,7 @@
     let extensions = [
         Prec.highest(ctrlEnterKeymap),
         EditorView.lineWrapping,
+        EditorView.contentAttributes.of({ "aria-label": name || "editor" }),
         ...baseExtensions,
         ...extraExtensions,
     ];
@@ -92,6 +93,7 @@
     <button
         class="copy-button"
         disabled={enableCopy}
+        aria-label="Copy {name} to clipboard"
         use:tooltip={{
             content: copyTooltip,
             placement: "top",

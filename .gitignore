@@ -103,3 +103,10 @@ node_modules/
 test-results/
 playwright-report/
 playwright/.cache/
+
+
+# Local dev / agent artifacts
+.claude/
+.omp/
+.env
+.workstream-plans/

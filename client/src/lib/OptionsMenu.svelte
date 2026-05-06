@@ -39,6 +39,7 @@
       <!-- svelte-ignore security-anchor-rel-noreferrer -->
       <a
         target="_blank"
+        aria-label="Scope documentation"
         href="https://glom.readthedocs.io/en/latest/api.html#the-glom-scope"
         ><Icon name="help-circle" /></a
       >

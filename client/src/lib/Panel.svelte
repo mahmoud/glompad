@@ -39,7 +39,7 @@
   style:flex-grow={flex_grow}
 >
   <div class="panel-label">
-    <h3 class="panel-label-text" on:click={expand} on:keydown={expand}>
+    <h2 class="panel-label-text" on:click={expand} on:keydown={expand}>
       <span
         class="collapser"
         on:click|stopPropagation={toggle}
@@ -52,7 +52,7 @@
         {/if}
       </span>
       {title}
-    </h3>
+    </h2>
     <StatusBadge {status} {isChanged} />
   </div>
   <div class="panel-content {content_class}">

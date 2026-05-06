@@ -69,6 +69,8 @@
   <title>{pageTitle}</title>
 </svelte:head>
 
+<a href="#pad-content" class="skip-link">Skip to content</a>
+
 <div id="container" class={container_class}>
   <Drawer bind:this={drawer} />
 
@@ -92,6 +94,7 @@
         <button
           id="run-button"
           class="cancel"
+          aria-label="Cancel computation"
           on:click={padStore.interruptGlom}
           use:tooltip={{
             content: "Cancel running computation",
@@ -102,6 +105,7 @@
       {:else}
         <button
           id="run-button"
+          aria-label="Run glom"
           disabled={$workerStatus === 'loading'}
           on:click={padStore.executeGlom}
           use:tooltip={{
@@ -114,6 +118,7 @@
       <button
         class="link-button"
         data-name="permalink"
+        aria-label="Copy shareable link"
         use:tooltip={{
           content: "Copy shareable link to clipboard",
           placement: "bottom",
@@ -126,15 +131,17 @@
     </div>
   </div>
 
-  <Pad class="box glompad" />
+  <main id="pad-content">
+    <Pad class="box glompad" />
+  </main>
 
   <div class="box footer">
     <!-- svelte-ignore security-anchor-rel-noreferrer -->
-    <a href="https://github.com/mahmoud/glom" target="_blank"
+    <a href="https://github.com/mahmoud/glom" target="_blank" aria-label="glom on GitHub"
       ><Icon name="github" /></a
     >
     <!-- svelte-ignore security-anchor-rel-noreferrer -->
-    <a href="https://glom.readthedocs.io/en/latest/" target="_blank"
+    <a href="https://glom.readthedocs.io/en/latest/" target="_blank" aria-label="glom documentation"
       ><Icon name="book-open" /></a
     >
   </div>
@@ -258,5 +265,28 @@
 
   .footer * {
     margin: 0 5px 0 5px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+  }
+
+  .skip-link:focus {
+    left: 10px;
+    top: 10px;
+    background: var(--gray-0);
+    color: var(--gray-8);
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 2px solid var(--primary-color-8);
+  }
+
+  main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
   }
 </style>

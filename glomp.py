@@ -79,7 +79,7 @@ def _build_client(out_base, base_url_path, version, is_latest, all_versions):
     meta_script_el.text = f"window.glompad_meta = {json.dumps(build_metadata, indent=2)};"
     head_el.insert(len(html), meta_script_el)
 
-    new_index_text = html_tree_to_text(html)
+    new_index_text = '<!DOCTYPE html>\n' + html_tree_to_text(html)
     with atomic_save(out_dir + 'index.html', text_mode=True) as f:
         f.write(new_index_text)
 

@@ -43,6 +43,7 @@
         placement: "bottom",
         delay: [400, 0],
         interactive: true,
+        aria: { content: 'describedby', expanded: false },
     }}
 >
     {#if isChanged}
