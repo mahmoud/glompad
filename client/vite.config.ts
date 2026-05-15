@@ -36,6 +36,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2}'],
+        // Prevent the root SW from hijacking navigation to versioned builds.
+        // Without this, /glompad/sw.js serves its cached index.html for
+        // /glompad/v22.1.0/ etc., delivering the wrong glompad_meta.version.
+        navigateFallbackDenylist: [/\/v\d/],
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
