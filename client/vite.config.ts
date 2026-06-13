@@ -33,6 +33,7 @@ export default defineConfig({
     svelte(),
     crossOriginIsolation(),
     VitePWA({
+      injectRegister: null,
       registerType: 'autoUpdate',
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2}'],

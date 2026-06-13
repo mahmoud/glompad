@@ -1,4 +1,5 @@
 import "./app.css";
+import { registerSW } from 'virtual:pwa-register';
 import App from "./App.svelte";
 import * as Sentry from "@sentry/svelte";
 
@@ -16,5 +17,22 @@ const app = new App({
 
 // Start loading Pyodide in the background immediately
 padStore.warmup();
+
+// Register service worker with retry on transient failure
+let swRetried = false;
+function initServiceWorker() {
+  registerSW({
+    immediate: true,
+    onRegisterError(err: unknown) {
+      if (!swRetried) {
+        swRetried = true;
+        setTimeout(initServiceWorker, 3_000);
+      } else {
+        console.warn('Service worker registration failed:', err);
+      }
+    },
+  });
+}
+initServiceWorker();
 
 export default app;

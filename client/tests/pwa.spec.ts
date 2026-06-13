@@ -4,7 +4,7 @@ test('service worker registers after page load', async ({ page, baseURL }) => {
   test.slow();
   await page.goto(baseURL ?? '#');
 
-  // Wait for SW registration (the PWA plugin auto-registers)
+  // Wait for SW registration (manual via virtual:pwa-register in main.ts)
   const hasServiceWorker = await page.evaluate(async () => {
     if (!('serviceWorker' in navigator)) return false;
     // Wait up to 10s for a registration to appear
