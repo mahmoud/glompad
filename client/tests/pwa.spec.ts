@@ -21,7 +21,8 @@ test('service worker registers after page load', async ({ page, baseURL }) => {
 });
 
 test('manifest.json is accessible', async ({ page, baseURL }) => {
-  const manifestUrl = new URL('/manifest.json', baseURL ?? 'http://localhost:5775');
+  // Relative so it resolves under baseURL's path (/glompad/ in prod, / on the preview server)
+  const manifestUrl = new URL('manifest.json', baseURL ?? 'http://localhost:5775/');
   const response = await page.request.get(manifestUrl.toString());
 
   expect(response.ok()).toBe(true);
