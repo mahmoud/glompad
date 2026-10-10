@@ -88,8 +88,6 @@ class PadStore {
   ) {
     this.targetDestStore.set(targetValue);
 
-    this.stateStack.subscribe(() => this.executeGlom());
-
     this.targetChanged = derived([this.targetValue, this.stateStack],
       ([tv, ss]) => tv.trim() != ss[0].targetValue.trim())
 
@@ -251,6 +249,15 @@ class PadStore {
     }).then((result: GlomResult) => {
       this._applyResult(result, run_id, enable_autoformat);
     }).catch((err: unknown) => {
+      if (err instanceof Error && (err.name === 'InterruptedError' || err.name === 'TimeoutError')) {
+        // User cancel or our own 10s SIGINT: not a bug, don't report it
+        const timed_out = err.name === 'TimeoutError';
+        this.resultStatus.set(new InputStatus('error', run_id, null,
+          timed_out ? 'Timed out' : 'Cancelled',
+          timed_out ? err.message : 'Computation was cancelled before it finished.'));
+        this.resultValue.set('');
+        return;
+      }
       console.warn('[padStore] executeGlom error:', err);
       Sentry.captureException(err);
       this.resultStatus.set(new InputStatus('error', run_id, null, 'Worker Error', String(err)));

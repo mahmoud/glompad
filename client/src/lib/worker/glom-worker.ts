@@ -9,6 +9,7 @@
 
 import * as Comlink from 'comlink';
 import { loadPyodide, type PyodideInterface } from 'pyodide';
+import type { PyProxy } from 'pyodide/ffi';
 import pRetry from 'p-retry';
 import type { GlomInput, GlomResult, GlomWorkerAPI, WorkerReadyInfo } from './types';
 
@@ -19,6 +20,8 @@ const PYODIDE_VERSION = '0.27.7';
 const PYODIDE_CDN = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 
 let pyodide: PyodideInterface | null = null;
+// glom_runner module proxy; importing it pulls in black, so it happens during warmup.
+let runner: PyProxy | null = null;
 let interrupt_buffer: Int32Array | null = null;
 
 /**
@@ -80,12 +83,17 @@ const api: GlomWorkerAPI = {
   async initialize(): Promise<WorkerReadyInfo> {
     const start = performance.now();
 
-    pyodide = await load_pyodide();
-    await install_packages(pyodide);
+    // Assign `pyodide` only once the worker is fully usable, so a restart
+    // can never RPC a half-initialized worker.
+    const py = await load_pyodide();
+    await install_packages(py);
 
-    const glom_mod = pyodide.pyimport('glom');
+    const glom_mod = py.pyimport('glom');
+    runner = py.pyimport('glom_runner');
+    pyodide = py;
+
     const info: WorkerReadyInfo = {
-      pyodide_version: pyodide.version,
+      pyodide_version: py.version,
       glom_version: glom_mod.__version__,
     };
 
@@ -96,7 +104,7 @@ const api: GlomWorkerAPI = {
   },
 
   async run_glom(input: GlomInput): Promise<GlomResult> {
-    if (!pyodide) {
+    if (!pyodide || !runner) {
       throw new Error('Worker not initialized');
     }
 
@@ -105,13 +113,24 @@ const api: GlomWorkerAPI = {
       interrupt_buffer[0] = 0;
     }
 
-    const runner = pyodide.pyimport('glom_runner');
-    const py_result = runner.run_glom(
-      input.spec,
-      input.target,
-      input.scope ?? null,
-      input.autoformat ?? false,
-    );
+    let py_result;
+    try {
+      py_result = runner.run_glom(
+        input.spec,
+        input.target,
+        input.scope ?? null,
+        input.autoformat ?? false,
+      );
+    } catch (err) {
+      // Comlink only forwards message/name/stack, so classify the cancel here
+      // where PythonError.type is still visible.
+      if (err instanceof pyodide.ffi.PythonError && err.type === 'KeyboardInterrupt') {
+        const cancelled = new Error('Computation cancelled');
+        cancelled.name = 'InterruptedError';
+        throw cancelled;
+      }
+      throw err;
+    }
 
     // Convert PyProxy to plain JS object
     const result: GlomResult = py_result.toJs({ dict_converter: Object.fromEntries });
@@ -121,11 +140,10 @@ const api: GlomWorkerAPI = {
   },
 
   async autoformat(code: string): Promise<string> {
-    if (!pyodide) {
+    if (!pyodide || !runner) {
       throw new Error('Worker not initialized');
     }
 
-    const runner = pyodide.pyimport('glom_runner');
     return runner.autoformat(code);
   },
 };

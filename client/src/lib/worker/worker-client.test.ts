@@ -198,6 +198,27 @@ describe('worker-client', () => {
       vi.useRealTimers();
     });
 
+    it('tier 1: a run the SIGINT interrupts rejects with TimeoutError, not InterruptedError', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: false });
+
+      // Worker side: Python raises KeyboardInterrupt shortly after the SIGINT lands
+      mockRunGlom.mockImplementation(() => {
+        const { promise, reject } = Promise.withResolvers<never>();
+        setTimeout(() => reject(Object.assign(new Error('Computation cancelled'), { name: 'InterruptedError' })), 10_100);
+        return promise;
+      });
+      const promise = isolatedClient.run_glom({ spec: '"a"', target: '{}' });
+      promise.catch(() => {});
+
+      await vi.advanceTimersByTimeAsync(10_200);
+
+      await expect(promise).rejects.toMatchObject({ name: 'TimeoutError', message: 'Computation timed out after 10s' });
+      expect(mockTerminate).not.toHaveBeenCalled();
+      expect(get(isolatedClient.status)).toBe('ready');
+
+      vi.useRealTimers();
+    });
+
     it('tier 2: hard_restart fires after TIER1_GRACE_MS if still pending', async () => {
       vi.useFakeTimers({ shouldAdvanceTime: false });
 
@@ -264,6 +285,31 @@ describe('worker-client', () => {
 
       vi.useRealTimers();
     });
+
+    it('keeps status loading while the replacement worker initializes', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: false });
+      await client.start();
+
+      mockInitialize.mockReturnValue(new Promise(() => {}));
+      mockRunGlom.mockReturnValue(new Promise(() => {}));
+      const promise = client.run_glom({ spec: '"a"', target: '{}' });
+      promise.catch(() => {});
+
+      await vi.advanceTimersByTimeAsync(10_000);
+      await expect(promise).rejects.toThrow('Worker restarted due to timeout');
+      await vi.advanceTimersByTimeAsync(0);
+
+      // The rejection's catch must not clobber the restart's 'loading'
+      expect(get(client.status)).toBe('loading');
+
+      // A new run must wait for init rather than RPC a half-initialized worker
+      const p2 = client.run_glom({ spec: '"a"', target: '{}' });
+      p2.catch(() => {});
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockRunGlom).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
+    });
   });
 
   describe('interrupt()', () => {
@@ -295,6 +341,15 @@ describe('worker-client', () => {
       expect(sabBuffer).not.toBeNull();
       const view = new Int32Array(sabBuffer!);
 
+      // No run in flight: interrupt is a no-op
+      isolatedClient.interrupt();
+      expect(view[0]).toBe(0);
+
+      mockRunGlom.mockReturnValue(new Promise(() => {}));
+      const p = isolatedClient.run_glom({ spec: '"a"', target: '{}' });
+      p.catch(() => {});
+      await Promise.resolve();
+
       isolatedClient.interrupt();
       expect(view[0]).toBe(2);
 
@@ -304,6 +359,11 @@ describe('worker-client', () => {
 
     it('without SAB calls hard_restart (terminates worker)', async () => {
       await client.start();
+      mockRunGlom.mockReturnValue(new Promise(() => {}));
+      const p = client.run_glom({ spec: '"a"', target: '{}' });
+      p.catch(() => {});
+      await Promise.resolve();
+
       client.interrupt();
       expect(mockTerminate).toHaveBeenCalled();
     });

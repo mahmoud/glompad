@@ -55,7 +55,7 @@ function create_worker_client(): WorkerClient {
   const TIER1_GRACE_MS = 1_000;
 
   // Track active RPC calls so we can reject them on worker respawn
-  type PendingEntry = { reject: (err: Error) => void };
+  type PendingEntry = { reject: (err: Error) => void; timed_out?: boolean };
   const pending = new Set<PendingEntry>();
 
   function create_worker(): void {
@@ -130,7 +130,8 @@ function create_worker_client(): WorkerClient {
         timeout_id = setTimeout(() => handle_timeout(entry!), DEFAULT_TIMEOUT_MS);
       });
 
-      status.set('ready');
+      // hard_restart() may already have set 'loading' for a replacement worker
+      if (get(status) === 'running') status.set('ready');
       return result;
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'pyodide_fatal_error' in err) {
@@ -138,7 +139,14 @@ function create_worker_client(): WorkerClient {
         await restart();
         throw err;
       }
-      status.set('ready');
+      if (get(status) === 'running') status.set('ready');
+      // The worker reports any KeyboardInterrupt as InterruptedError; if we were the
+      // ones who sent the SIGINT (tier-1 timeout), tell the caller it was a timeout.
+      if ((entry as PendingEntry | null)?.timed_out && err instanceof Error && err.name === 'InterruptedError') {
+        const timeout_err = new Error(`Computation timed out after ${DEFAULT_TIMEOUT_MS / 1000}s`);
+        timeout_err.name = 'TimeoutError';
+        throw timeout_err;
+      }
       throw err;
     } finally {
       if (entry) pending.delete(entry);
@@ -152,6 +160,7 @@ function create_worker_client(): WorkerClient {
   }
 
   function handle_timeout(entry: PendingEntry): void {
+    entry.timed_out = true;
     if (cross_origin_isolated && interrupt_buffer) {
       // Tier 1: graceful SIGINT via SharedArrayBuffer
       interrupt_buffer[0] = 2;
@@ -171,6 +180,9 @@ function create_worker_client(): WorkerClient {
   }
 
   function interrupt(): void {
+    // Nothing to cancel while loading/restarting; a stray SIGINT would hit the next run,
+    // and a hard_restart() here would orphan the init the pending run_glom is awaiting.
+    if (get(status) !== 'running') return;
     if (cross_origin_isolated && interrupt_buffer) {
       // Graceful: sets the Pyodide interrupt flag, triggers KeyboardInterrupt in Python
       interrupt_buffer[0] = 2;

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { get, writable } from 'svelte/store';
+import * as Sentry from '@sentry/browser';
 
 // Polyfill matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {
@@ -232,14 +233,12 @@ describe('padStore.executeGlom', () => {
     padStore.specValue.set('T(int)');
     padStore.targetValue.set('1');
     padStore.executeGlom();
-    // executeGlom -> saveState -> _pushNewState -> stateStack subscriber -> executeGlom
-    // The second recursive call from stateStack also runs because _running is set after saveState.
-    // Record how many times run_glom was called after the first executeGlom + its recursive calls.
-    const callsAfterFirst = mockRunGlom.mock.calls.length;
+    // One click = one RPC, even though saveState pushes a new stateStack entry
+    expect(mockRunGlom).toHaveBeenCalledTimes(1);
 
-    // Now _running IS true (set after saveState). A direct call should be blocked.
+    // Now _running IS true. A direct call should be blocked.
     padStore.executeGlom();
-    expect(mockRunGlom).toHaveBeenCalledTimes(callsAfterFirst);
+    expect(mockRunGlom).toHaveBeenCalledTimes(1);
 
     // Resolve to clean up
     resolveGlom({
@@ -247,6 +246,27 @@ describe('padStore.executeGlom', () => {
       timing: { parse_ms: 0, glom_ms: 0, format_ms: 0, total_ms: 0 },
     });
     await hangingPromise;
+  });
+
+  it.each([
+    ['InterruptedError', 'Computation cancelled', 'Cancelled'],
+    ['TimeoutError', 'Computation timed out after 10s', 'Timed out'],
+  ])('%s (%s) sets an error status without capturing to Sentry', async (name, message, subtitle) => {
+    vi.mocked(Sentry.captureException).mockClear();
+    mockWorkerStatus.set('ready');
+    mockRunGlom.mockImplementation(() =>
+      Promise.reject(Object.assign(new Error(message), { name })),
+    );
+
+    padStore.specValue.set(`T(${name})`);
+    padStore.targetValue.set('1');
+    padStore.executeGlom();
+    await vi.waitFor(() => expect(get(padStore.resultStatus).kind).toBe('error'));
+
+    expect(get(padStore.resultStatus).subtitle).toBe(subtitle);
+    expect(Sentry.captureException).not.toHaveBeenCalled();
+
+    mockRunGlom.mockReset();
   });
 });
 
