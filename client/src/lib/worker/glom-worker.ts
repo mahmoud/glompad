@@ -123,7 +123,10 @@ const api: GlomWorkerAPI = {
       );
     } catch (err) {
       // Comlink only forwards message/name/stack, so classify the cancel here
-      // where PythonError.type is still visible.
+      // where PythonError.type is still visible. Both the plain KeyboardInterrupt and
+      // the "Error in sys.excepthook" variant (two SIGINTs back-to-back) have this type.
+      // GoodTurn: https://goodturn.ai/p/gtp_01m4kg23hyegfrt7aa7kmqvjvb
+      // GoodTurn: https://goodturn.ai/p/gtp_01m4kg2gh3fg89xd6xgmsrxyke
       if (err instanceof pyodide.ffi.PythonError && err.type === 'KeyboardInterrupt') {
         const cancelled = new Error('Computation cancelled');
         cancelled.name = 'InterruptedError';
