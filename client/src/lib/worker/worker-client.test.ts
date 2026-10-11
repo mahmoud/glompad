@@ -202,11 +202,9 @@ describe('worker-client', () => {
       vi.useFakeTimers({ shouldAdvanceTime: false });
 
       // Worker side: Python raises KeyboardInterrupt shortly after the SIGINT lands
-      mockRunGlom.mockImplementation(() => {
-        const { promise, reject } = Promise.withResolvers<never>();
+      mockRunGlom.mockImplementation(() => new Promise<never>((_, reject) => {
         setTimeout(() => reject(Object.assign(new Error('Computation cancelled'), { name: 'InterruptedError' })), 10_100);
-        return promise;
-      });
+      }));
       const promise = isolatedClient.run_glom({ spec: '"a"', target: '{}' });
       promise.catch(() => {});
 
